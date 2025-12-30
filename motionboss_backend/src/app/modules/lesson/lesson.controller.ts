@@ -45,6 +45,37 @@ const bulkCreateLessons = async (req: Request, res: Response, next: NextFunction
 };
 
 /**
+ * Get all lessons with filters and pagination
+ * GET /api/lessons
+ */
+const getAllLessons = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const filters = {
+            searchTerm: req.query.searchTerm as string,
+            course: req.query.course as string,
+            isFree: req.query.isFree === 'true' ? true : req.query.isFree === 'false' ? false : undefined,
+            isPublished: req.query.isPublished === 'true' ? true : req.query.isPublished === 'false' ? false : undefined,
+        };
+
+        const paginationOptions = {
+            page: Number(req.query.page) || 1,
+            limit: Number(req.query.limit) || 100, // Default to a large number for list
+        };
+
+        const result = await LessonService.getAllLessons(filters, paginationOptions);
+
+        res.status(200).json({
+            success: true,
+            message: 'Lessons retrieved successfully',
+            data: result.data,
+            meta: result.meta,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
  * Get all lessons for a course (flat list)
  * GET /api/lessons/course/:courseId
  */
@@ -276,6 +307,7 @@ const formatDuration = (seconds: number): string => {
 export const LessonController = {
     createLesson,
     bulkCreateLessons,
+    getAllLessons,
     getLessonsByCourse,
     getGroupedLessons,
     getLessonById,

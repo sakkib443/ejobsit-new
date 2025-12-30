@@ -1,33 +1,28 @@
 import React from 'react';
 import AdminSidebar from '@/components/Admin/AdminSidebar';
+import DashboardHeader from '@/components/Admin/DashboardHeader';
 import ProtectedRoute from '@/app/providers/protectedRoutes';
 
 const AdminLayout = ({ children }) => {
   return (
     <ProtectedRoute role="admin">
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
         {/* Sidebar */}
         <AdminSidebar />
 
-        {/* Main Content */}
-        <main
-          className="
-            min-h-screen
-            transition-all
-            duration-300
-            lg:ml-72   /* sidebar width */
-          "
-        >
-          <div className="p-6 lg:p-8">
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 min-h-[calc(100vh-4rem)]">
-              {children}
-            </div>
-          </div>
-        </main>
+        {/* Main Content Area */}
+        <div className="lg:ml-72 transition-all duration-300">
+          {/* Header */}
+          <DashboardHeader />
+
+          {/* Page Content */}
+          <main className="p-4 lg:p-6">
+            {children}
+          </main>
+        </div>
       </div>
     </ProtectedRoute>
   );
 };
 
 export default AdminLayout;
-

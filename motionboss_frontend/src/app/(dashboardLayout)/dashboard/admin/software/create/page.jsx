@@ -101,9 +101,9 @@ export default function CreateSoftwarePage() {
         finally { setLoading(false); }
     };
 
-    const inputClass = "w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-4 focus:ring-slate-100 focus:border-slate-400 outline-none text-sm transition-all bg-white font-medium text-slate-700 placeholder:text-slate-300";
-    const labelClass = "block text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-widest";
-    const cardClass = "bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-6";
+    const inputClass = "w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none text-sm transition-all bg-white font-medium text-slate-700 placeholder:text-slate-400";
+    const labelClass = "block text-[11px] font-bold text-slate-600 mb-2 uppercase tracking-wider";
+    const cardClass = "bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm hover:shadow-lg transition-shadow space-y-6";
 
     return (
         <div className="min-h-screen bg-slate-50 p-4 md:p-10">
@@ -112,16 +112,16 @@ export default function CreateSoftwarePage() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
                     <div className="flex items-center gap-4">
-                        <Link href="/dashboard/admin/software" className="p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 hover:text-slate-800 transition-all shadow-sm">
+                        <Link href="/dashboard/admin/software" className="p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 hover:text-slate-800 hover:shadow-lg transition-all shadow-sm">
                             <FiArrowLeft size={20} />
                         </Link>
                         <div>
-                            <h1 className="text-2xl font-black text-slate-800 outfit tracking-tight">Binary Deployment</h1>
-                            <p className="text-slate-500 text-sm italic">Publishing a new software artifact to the ecosystem</p>
+                            <h1 className="text-2xl font-black text-slate-800 outfit">Add New Software</h1>
+                            <p className="text-slate-500 text-sm">Publish a new software artifact to the ecosystem</p>
                         </div>
                     </div>
-                    <button onClick={handleSubmit(onSubmit)} disabled={loading} className="flex items-center gap-2 bg-slate-900 hover:bg-black text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl transition-all disabled:opacity-50 active:scale-95">
-                        {loading ? 'Synthesizing...' : <><FiZap /> Deploy Artifact</>}
+                    <button onClick={handleSubmit(onSubmit)} disabled={loading} className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white px-8 py-4 rounded-2xl font-bold text-sm shadow-xl shadow-violet-500/30 hover:shadow-2xl transition-all disabled:opacity-50 hover:scale-105">
+                        {loading ? 'Publishing...' : <><FiZap size={18} /> Deploy Software</>}
                     </button>
                 </div>
 

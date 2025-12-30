@@ -7,59 +7,123 @@ import {
   FiHome,
   FiBook,
   FiUsers,
-  FiAward,
   FiMessageSquare,
   FiImage,
-  FiList,
   FiMenu,
   FiX,
   FiLogOut,
   FiChevronDown,
+  FiChevronRight,
   FiArrowLeft,
   FiGlobe,
+  FiShoppingBag,
+  FiAward,
+  FiBarChart2,
+  FiSettings,
+  FiLayers,
+  FiCode,
+  FiPlay,
+  FiStar,
+  FiCreditCard,
+  FiUserCheck,
+  FiDownload,
+  FiGrid,
+  FiFileText,
+  FiClipboard,
 } from 'react-icons/fi';
 
 const AdminSidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const [openMenu, setOpenMenu] = useState(null);
+  const [openMenus, setOpenMenus] = useState(['LMS']); // Default open menu
   const pathname = usePathname();
 
   const isActive = (href) =>
     pathname === href || pathname.startsWith(href + '/');
 
   const toggleMenu = (menu) => {
-    setOpenMenu(openMenu === menu ? null : menu);
+    setOpenMenus(prev =>
+      prev.includes(menu)
+        ? prev.filter(m => m !== menu)
+        : [...prev, menu]
+    );
   };
 
+  const isMenuOpen = (menu) => openMenus.includes(menu);
+
   const menuItems = [
-    { title: 'Dashboard', href: '/dashboard/admin', icon: FiHome },
     {
-      title: 'Courses',
+      title: 'Dashboard',
+      href: '/dashboard/admin',
+      icon: FiHome,
+      gradient: 'from-indigo-500 to-purple-500'
+    },
+    {
+      title: 'LMS',
       icon: FiBook,
+      gradient: 'from-amber-500 to-orange-500',
       submenu: [
-        { title: 'All Courses', href: '/dashboard/admin/course' },
-        { title: 'Create Course', href: '/dashboard/admin/course/create' },
+        { title: 'All Courses', href: '/dashboard/admin/course', icon: FiBook },
+        { title: 'Create Course', href: '/dashboard/admin/course/create', icon: FiFileText },
+        { title: 'All Modules', href: '/dashboard/admin/module', icon: FiLayers },
+        { title: 'Create Module', href: '/dashboard/admin/module/create', icon: FiFileText },
+        { title: 'All Lessons', href: '/dashboard/admin/lesson', icon: FiPlay },
+        { title: 'Create Lesson', href: '/dashboard/admin/lesson/create', icon: FiFileText },
+        { title: 'Enrollments', href: '/dashboard/admin/enrollment', icon: FiUserCheck },
       ],
     },
     {
       title: 'Marketplace',
       icon: FiGlobe,
+      gradient: 'from-emerald-500 to-teal-500',
       submenu: [
-        { title: 'Websites', href: '/dashboard/admin/website' },
-        { title: 'Software', href: '/dashboard/admin/software' },
+        { title: 'All Websites', href: '/dashboard/admin/website', icon: FiGlobe },
+        { title: 'Create Website', href: '/dashboard/admin/website/create', icon: FiFileText },
+        { title: 'All Software', href: '/dashboard/admin/software', icon: FiCode },
+        { title: 'Create Software', href: '/dashboard/admin/software/create', icon: FiFileText },
       ],
     },
     {
-      title: 'Taxononmy',
-      icon: FiList,
+      title: 'Categories',
+      icon: FiLayers,
+      gradient: 'from-violet-500 to-purple-500',
       submenu: [
-        { title: 'Categories', href: '/dashboard/admin/category' },
-        { title: 'Certifications', href: '/dashboard/admin/certification' },
+        { title: 'All Categories', href: '/dashboard/admin/category', icon: FiLayers },
+        { title: 'Create Category', href: '/dashboard/admin/category/create', icon: FiFileText },
       ],
     },
-    { title: 'Users', href: '/dashboard/admin/user', icon: FiUsers },
-    { title: 'Feedback', href: '/dashboard/admin/feedback', icon: FiMessageSquare },
-    { title: 'Images', href: '/dashboard/admin/image', icon: FiImage },
+    {
+      title: 'Users',
+      icon: FiUsers,
+      gradient: 'from-blue-500 to-cyan-500',
+      submenu: [
+        { title: 'All Users', href: '/dashboard/admin/user', icon: FiUsers },
+        { title: 'Create User', href: '/dashboard/admin/user/create', icon: FiFileText },
+      ],
+    },
+    {
+      title: 'Orders',
+      href: '/dashboard/admin/orders',
+      icon: FiShoppingBag,
+      gradient: 'from-green-500 to-emerald-500'
+    },
+    {
+      title: 'Reviews',
+      href: '/dashboard/admin/reviews',
+      icon: FiStar,
+      gradient: 'from-yellow-500 to-amber-500'
+    },
+    {
+      title: 'Downloads',
+      href: '/dashboard/admin/downloads',
+      icon: FiDownload,
+      gradient: 'from-cyan-500 to-blue-500'
+    },
+    {
+      title: 'Analytics',
+      href: '/dashboard/admin/analytics',
+      icon: FiBarChart2,
+      gradient: 'from-pink-500 to-rose-500'
+    },
   ];
 
   return (
@@ -67,45 +131,49 @@ const AdminSidebar = () => {
       {/* Mobile Toggle */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 rounded-xl bg-[#41bfb8] text-white shadow-lg hover:bg-[#38a89d] transition-colors"
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40 transition-all"
       >
         {isOpen ? <FiX size={20} /> : <FiMenu size={20} />}
       </button>
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-screen bg-white border-r border-slate-200 transition-all duration-300 z-40
-        ${isOpen ? 'w-72' : 'w-0 lg:w-72'} overflow-hidden shadow-sm`}
+        className={`fixed top-0 left-0 h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 transition-all duration-300 z-40
+        ${isOpen ? 'w-72' : 'w-0 lg:w-72'} overflow-hidden`}
       >
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-purple-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+
         {/* Logo */}
-        <div className="px-6 py-5 border-b border-slate-100">
+        <div className="relative px-6 py-5 border-b border-white/5">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#41bfb8] to-[#F79952] flex items-center justify-center text-white font-bold text-lg">
-              BD
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-indigo-500/30">
+              MB
             </div>
             <div>
-              <h1 className="text-lg font-bold text-slate-800 outfit">
-                BD Calling <span className="text-[#41bfb8]">Academy</span>
+              <h1 className="text-lg font-bold text-white">
+                Motion<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Boss</span>
               </h1>
-              <p className="text-[10px] text-slate-400 uppercase tracking-wider">Admin Panel</p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest">Admin Panel</p>
             </div>
           </Link>
         </div>
 
         {/* Back to Website */}
-        <div className="px-4 py-3 border-b border-slate-100">
+        <div className="px-4 py-3 border-b border-white/5">
           <Link
             href="/"
-            className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-[#41bfb8] transition-all group"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all group"
           >
-            <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+            <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" size={18} />
             <span className="text-sm font-medium">Back to Website</span>
           </Link>
         </div>
 
         {/* Menu */}
-        <nav className="px-4 py-4 space-y-1 overflow-y-auto max-h-[calc(100vh-220px)]">
-          <p className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Main Menu</p>
+        <nav className="relative px-3 py-4 space-y-1 overflow-y-auto max-h-[calc(100vh-180px)]" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <p className="px-3 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Main Menu</p>
 
           {menuItems.map((item) => {
             const Icon = item.icon;
@@ -113,44 +181,53 @@ const AdminSidebar = () => {
             /* SUBMENU */
             if (item.submenu) {
               const activeSub = item.submenu.some((s) => isActive(s.href));
+              const menuOpen = isMenuOpen(item.title);
 
               return (
                 <div key={item.title}>
                   <button
                     onClick={() => toggleMenu(item.title)}
-                    className={`group w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-all
+                    className={`group w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all
                     ${activeSub
-                        ? 'bg-[#41bfb8]/10 text-[#41bfb8]'
-                        : 'text-slate-600 hover:bg-slate-50'
+                        ? 'bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-white'
+                        : 'text-slate-400 hover:text-white hover:bg-white/5'
                       }`}
                   >
                     <span className="flex items-center gap-3">
-                      <Icon size={18} />
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${activeSub
+                        ? `bg-gradient-to-br ${item.gradient} shadow-lg`
+                        : 'bg-slate-800 group-hover:bg-slate-700'
+                        } transition-all`}>
+                        <Icon size={18} className={activeSub ? 'text-white' : 'text-slate-400 group-hover:text-white'} />
+                      </div>
                       <span className="text-sm font-medium">{item.title}</span>
                     </span>
                     <FiChevronDown
-                      className={`transition-transform ${openMenu === item.title ? 'rotate-180' : ''
-                        }`}
+                      className={`transition-transform duration-200 ${menuOpen ? 'rotate-180' : ''}`}
                       size={16}
                     />
                   </button>
 
-                  {/* Submenu */}
-                  <div className={`overflow-hidden transition-all duration-200 ${openMenu === item.title ? 'max-h-40' : 'max-h-0'}`}>
-                    <div className="ml-6 mt-1 pl-4 border-l-2 border-slate-100 space-y-1">
-                      {item.submenu.map((sub) => (
-                        <Link
-                          key={sub.href}
-                          href={sub.href}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all
-                          ${isActive(sub.href)
-                              ? 'bg-[#41bfb8] text-white font-medium'
-                              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
-                            }`}
-                        >
-                          {sub.title}
-                        </Link>
-                      ))}
+                  {/* Submenu Items */}
+                  <div className={`overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-96 mt-1' : 'max-h-0'}`}>
+                    <div className="ml-6 pl-4 border-l-2 border-slate-700/50 space-y-1">
+                      {item.submenu.map((sub) => {
+                        const SubIcon = sub.icon;
+                        return (
+                          <Link
+                            key={sub.href}
+                            href={sub.href}
+                            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all
+                            ${isActive(sub.href)
+                                ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-medium shadow-lg shadow-indigo-500/20'
+                                : 'text-slate-400 hover:text-white hover:bg-white/5'
+                              }`}
+                          >
+                            <SubIcon size={14} />
+                            {sub.title}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -162,35 +239,48 @@ const AdminSidebar = () => {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all
+                className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all
                 ${isActive(item.href)
-                    ? 'bg-[#41bfb8] text-white shadow-md shadow-teal-200'
-                    : 'text-slate-600 hover:bg-slate-50'
+                    ? 'bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
                   }`}
               >
-                <Icon size={18} />
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${isActive(item.href)
+                  ? `bg-gradient-to-br ${item.gradient} shadow-lg`
+                  : 'bg-slate-800 group-hover:bg-slate-700'
+                  } transition-all`}>
+                  <Icon size={18} className={isActive(item.href) ? 'text-white' : 'text-slate-400 group-hover:text-white'} />
+                </div>
                 <span className="text-sm font-medium">{item.title}</span>
               </Link>
             );
           })}
         </nav>
 
-        {/* Bottom */}
-        <div className="absolute bottom-0 left-0 w-full p-4 border-t border-slate-100 bg-white">
-          <Link
-            href="/api/auth/signout"
-            className="flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-rose-500 hover:bg-rose-50 transition-colors"
-          >
-            <FiLogOut size={18} />
-            <span className="text-sm font-medium">Logout</span>
-          </Link>
+        {/* Bottom - Settings & Logout Side by Side */}
+        <div className="absolute bottom-0 left-0 w-full p-3 border-t border-white/5 bg-slate-900/95 backdrop-blur-sm">
+          <div className="flex items-center gap-2">
+            <Link
+              href="/dashboard/admin/settings"
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+            >
+              <FiSettings size={16} />
+              <span className="text-xs font-medium">Settings</span>
+            </Link>
+            <button
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all"
+            >
+              <FiLogOut size={16} />
+              <span className="text-xs font-medium">Logout</span>
+            </button>
+          </div>
         </div>
       </aside>
 
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 lg:hidden z-30"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm lg:hidden z-30"
           onClick={() => setIsOpen(false)}
         />
       )}

@@ -26,18 +26,7 @@ const createLessonSchema = z.object({
         course: z.string({ required_error: 'Course ID is required' }),
 
         // Module info
-        moduleTitle: z
-            .string({ required_error: 'Module title is required' })
-            .min(1, 'Module title is required')
-            .max(200, 'Module title cannot exceed 200 characters'),
-
-        moduleTitleBn: z
-            .string({ required_error: 'Bengali module title is required' })
-            .min(1, 'Bengali module title is required')
-            .max(200, 'Bengali module title cannot exceed 200 characters'),
-
-        moduleOrder: z.number().min(1).optional().default(1),
-        moduleDescription: z.string().max(500).optional(),
+        module: z.string({ required_error: 'Module ID is required' }),
 
         // Lesson info
         title: z
@@ -46,9 +35,11 @@ const createLessonSchema = z.object({
             .max(200, 'Lesson title cannot exceed 200 characters'),
 
         titleBn: z
-            .string({ required_error: 'Bengali lesson title is required' })
+            .string()
             .min(1, 'Bengali lesson title is required')
-            .max(200, 'Bengali lesson title cannot exceed 200 characters'),
+            .max(200, 'Bengali lesson title cannot exceed 200 characters')
+            .optional()
+            .or(z.literal('')),
 
         description: z.string().max(2000).optional(),
         descriptionBn: z.string().max(2000).optional(),
@@ -88,13 +79,10 @@ const createLessonSchema = z.object({
  */
 const updateLessonSchema = z.object({
     body: z.object({
-        moduleTitle: z.string().min(1).max(200).optional(),
-        moduleTitleBn: z.string().min(1).max(200).optional(),
-        moduleOrder: z.number().min(1).optional(),
-        moduleDescription: z.string().max(500).optional(),
+        module: z.string().optional(),
 
         title: z.string().min(1).max(200).optional(),
-        titleBn: z.string().min(1).max(200).optional(),
+        titleBn: z.string().min(1).max(200).optional().or(z.literal('')),
         description: z.string().max(2000).optional(),
         descriptionBn: z.string().max(2000).optional(),
 
@@ -126,13 +114,10 @@ const bulkCreateLessonsSchema = z.object({
         lessons: z
             .array(
                 z.object({
-                    moduleTitle: z.string().min(1).max(200),
-                    moduleTitleBn: z.string().min(1).max(200),
-                    moduleOrder: z.number().min(1),
-                    moduleDescription: z.string().max(500).optional(),
+                    module: z.string({ required_error: 'Module ID is required' }),
 
                     title: z.string().min(1).max(200),
-                    titleBn: z.string().min(1).max(200),
+                    titleBn: z.string().min(1).max(200).optional().or(z.literal('')),
                     description: z.string().max(2000).optional(),
                     descriptionBn: z.string().max(2000).optional(),
 
@@ -162,7 +147,7 @@ const reorderLessonsSchema = z.object({
             .array(
                 z.object({
                     lessonId: z.string(),
-                    moduleOrder: z.number().min(1),
+                    moduleId: z.string(),
                     order: z.number().min(1),
                 })
             )

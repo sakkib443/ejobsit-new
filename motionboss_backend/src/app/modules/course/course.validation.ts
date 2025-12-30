@@ -19,17 +19,21 @@ const createCourseSchema = z.object({
             .max(200, 'Title cannot exceed 200 characters'),
 
         titleBn: z
-            .string({ required_error: 'Bengali title is required' })
+            .string()
             .min(3, 'Bengali title must be at least 3 characters')
-            .max(200, 'Bengali title cannot exceed 200 characters'),
+            .max(200, 'Bengali title cannot exceed 200 characters')
+            .optional()
+            .or(z.literal('')),
 
         description: z
             .string({ required_error: 'Description is required' })
             .min(50, 'Description must be at least 50 characters'),
 
         descriptionBn: z
-            .string({ required_error: 'Bengali description is required' })
-            .min(50, 'Bengali description must be at least 50 characters'),
+            .string()
+            .min(50, 'Bengali description must be at least 50 characters')
+            .optional()
+            .or(z.literal('')),
 
         thumbnail: z
             .string({ required_error: 'Thumbnail is required' })
@@ -51,33 +55,32 @@ const createCourseSchema = z.object({
         shortDescriptionBn: z
             .string()
             .max(500, 'Bengali short description cannot exceed 500 characters')
-            .optional(),
+            .optional()
+            .or(z.literal('')),
 
         previewVideo: z.string().url().optional().or(z.literal('')),
         bannerImage: z.string().url().optional().or(z.literal('')),
 
         tags: z.array(z.string()).optional(),
 
-        instructorName: z.string().max(100).optional(),
-        instructorImage: z.string().url().optional().or(z.literal('')),
-        instructorBio: z.string().max(1000).optional(),
-
         discountPrice: z.number().min(0).optional(),
-        currency: z.enum(['BDT', 'USD']).optional(),
+        currency: z.enum(['BDT', 'USD']).optional().default('BDT'),
         isFree: z.boolean().optional(),
 
-        courseType: z.enum(['online', 'offline', 'recorded']).optional(),
-        level: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
-        language: z.enum(['bangla', 'english', 'both']).optional(),
+        courseType: z.enum(['online', 'offline', 'recorded']).optional().default('recorded'),
+        level: z.enum(['beginner', 'intermediate', 'advanced']).optional().default('beginner'),
+        language: z.enum(['bangla', 'english', 'both']).optional().default('bangla'),
 
         totalDuration: z.number().min(0).optional(),
+        totalLessons: z.number().min(0).optional(),
+        totalModules: z.number().min(0).optional(),
 
         features: z.array(z.string()).optional(),
         requirements: z.array(z.string()).optional(),
         whatYouWillLearn: z.array(z.string()).optional(),
         targetAudience: z.array(z.string()).optional(),
 
-        status: z.enum(['draft', 'published', 'archived']).optional(),
+        status: z.enum(['draft', 'published', 'archived']).optional().default('draft'),
         isFeatured: z.boolean().optional(),
         isPopular: z.boolean().optional(),
 
@@ -94,11 +97,11 @@ const createCourseSchema = z.object({
 const updateCourseSchema = z.object({
     body: z.object({
         title: z.string().min(3).max(200).optional(),
-        titleBn: z.string().min(3).max(200).optional(),
+        titleBn: z.string().min(3).max(200).optional().or(z.literal('')),
         description: z.string().min(50).optional(),
-        descriptionBn: z.string().min(50).optional(),
+        descriptionBn: z.string().min(50).optional().or(z.literal('')),
         shortDescription: z.string().max(500).optional(),
-        shortDescriptionBn: z.string().max(500).optional(),
+        shortDescriptionBn: z.string().max(500).optional().or(z.literal('')),
 
         thumbnail: z.string().url().optional(),
         previewVideo: z.string().url().optional().or(z.literal('')),
@@ -106,10 +109,6 @@ const updateCourseSchema = z.object({
 
         category: z.string().optional(),
         tags: z.array(z.string()).optional(),
-
-        instructorName: z.string().max(100).optional(),
-        instructorImage: z.string().url().optional().or(z.literal('')),
-        instructorBio: z.string().max(1000).optional(),
 
         price: z.number().min(0).optional(),
         discountPrice: z.number().min(0).optional().nullable(),

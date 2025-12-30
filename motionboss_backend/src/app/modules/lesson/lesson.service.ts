@@ -5,6 +5,7 @@
 // ===================================================================
 
 import { Lesson } from './lesson.model';
+import { Module } from '../module/module.model';
 import { Course } from '../course/course.model';
 import { ILesson, ILessonFilters, IModuleGroup } from './lesson.interface';
 import AppError from '../../utils/AppError';
@@ -22,6 +23,11 @@ const createLesson = async (payload: Partial<ILesson>): Promise<ILesson> => {
 
     // Create lesson
     const lesson = await Lesson.create(payload);
+
+    // Add lesson ID to Course.lessons array
+    await Course.findByIdAndUpdate(payload.course, {
+        $push: { lessons: lesson._id },
+    });
 
     // Update course stats
     await updateCourseStats(payload.course!.toString());
@@ -58,6 +64,50 @@ const bulkCreateLessons = async (
 };
 
 /**
+ * Get all lessons across all courses (for admin)
+ */
+const getAllLessons = async (
+    filters: ILessonFilters,
+    paginationOptions: { page?: number; limit?: number }
+) => {
+    const { searchTerm, course, isFree, isPublished } = filters;
+    const { page = 1, limit = 10 } = paginationOptions;
+    const skip = (page - 1) * limit;
+
+    const query: any = {};
+
+    if (searchTerm) {
+        query.$or = [
+            { title: { $regex: searchTerm, $options: 'i' } },
+        ];
+    }
+
+    if (course) query.course = course;
+    if (isFree !== undefined) query.isFree = isFree;
+    if (isPublished !== undefined) query.isPublished = isPublished;
+
+    const lessons = await Lesson.find(query)
+        .populate('course', 'title thumbnail')
+        .populate('module', 'title order')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+    const total = await Lesson.countDocuments(query);
+
+    return {
+        data: lessons,
+        meta: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+        },
+    };
+};
+
+/**
  * Get all lessons for a course (flat list)
  */
 const getLessonsByCourse = async (
@@ -84,43 +134,38 @@ const getGroupedLessons = async (
     courseId: string,
     includeUnpublished: boolean = false
 ): Promise<IModuleGroup[]> => {
-    const query: any = { course: courseId };
-
+    // 1. Get all modules for the course
+    const moduleQuery: any = { course: courseId };
     if (!includeUnpublished) {
-        query.isPublished = true;
+        moduleQuery.isPublished = true;
     }
+    const modules = await Module.find(moduleQuery).sort({ order: 1 }).lean();
 
-    const lessons = await Lesson.find(query)
-        .sort({ moduleOrder: 1, order: 1 })
-        .lean();
+    // 2. Get all lessons for the course
+    const lessonQuery: any = { course: courseId };
+    if (!includeUnpublished) {
+        lessonQuery.isPublished = true;
+    }
+    const lessons = await Lesson.find(lessonQuery).sort({ order: 1 }).lean();
 
-    // Group lessons by module
-    const moduleMap = new Map<string, IModuleGroup>();
+    // 3. Group lessons by module
+    const groupedModules: IModuleGroup[] = (modules as any).map((mod: any) => {
+        const moduleLessons = (lessons as any).filter(
+            (lesson: any) => lesson.module.toString() === mod._id.toString()
+        );
 
-    lessons.forEach((lesson) => {
-        const key = `${lesson.moduleOrder}-${lesson.moduleTitle}`;
-
-        if (!moduleMap.has(key)) {
-            moduleMap.set(key, {
-                moduleTitle: lesson.moduleTitle,
-                moduleTitleBn: lesson.moduleTitleBn,
-                moduleOrder: lesson.moduleOrder,
-                moduleDescription: lesson.moduleDescription,
-                lessons: [],
-                totalDuration: 0,
-                totalLessons: 0,
-            });
-        }
-
-        const module = moduleMap.get(key)!;
-        module.lessons.push(lesson);
-        module.totalDuration += lesson.videoDuration;
-        module.totalLessons += 1;
+        return {
+            moduleTitle: mod.title,
+            moduleTitleBn: mod.titleBn || '',
+            moduleOrder: mod.order,
+            moduleDescription: mod.description,
+            lessons: moduleLessons,
+            totalDuration: moduleLessons.reduce((sum: number, l: any) => sum + l.videoDuration, 0),
+            totalLessons: moduleLessons.length,
+        };
     });
 
-    return Array.from(moduleMap.values()).sort(
-        (a, b) => a.moduleOrder - b.moduleOrder
-    );
+    return groupedModules;
 };
 
 /**
@@ -136,7 +181,9 @@ const getLessonById = async (
         query.isPublished = true;
     }
 
-    const lesson = await Lesson.findOne(query);
+    const lesson = await Lesson.findOne(query)
+        .populate('course', 'title')
+        .populate('module', 'title order titleBn description');
 
     if (!lesson) {
         throw new AppError(404, 'Lesson not found');
@@ -154,7 +201,8 @@ const getFreeLessons = async (courseId: string): Promise<ILesson[]> => {
         isFree: true,
         isPublished: true,
     })
-        .sort({ moduleOrder: 1, order: 1 })
+        .populate('module')
+        .sort({ 'module.order': 1, order: 1 })
         .lean();
 
     return lessons;
@@ -200,6 +248,11 @@ const deleteLesson = async (lessonId: string): Promise<ILesson | null> => {
 
     const deletedLesson = await Lesson.findByIdAndDelete(lessonId);
 
+    // Remove lesson ID from Course.lessons array
+    await Course.findByIdAndUpdate(courseId, {
+        $pull: { lessons: lessonId },
+    });
+
     // Update course stats
     await updateCourseStats(courseId);
 
@@ -210,12 +263,12 @@ const deleteLesson = async (lessonId: string): Promise<ILesson | null> => {
  * Reorder lessons
  */
 const reorderLessons = async (
-    lessonsOrder: { lessonId: string; moduleOrder: number; order: number }[]
+    lessonsOrder: { lessonId: string; moduleId: string; order: number }[]
 ): Promise<void> => {
     const bulkOps = lessonsOrder.map((item) => ({
         updateOne: {
             filter: { _id: new Types.ObjectId(item.lessonId) },
-            update: { $set: { moduleOrder: item.moduleOrder, order: item.order } },
+            update: { $set: { module: new Types.ObjectId(item.moduleId), order: item.order } },
         },
     }));
 
@@ -250,7 +303,7 @@ const updateCourseStats = async (courseId: string): Promise<void> => {
                 _id: null,
                 totalDuration: { $sum: '$videoDuration' },
                 totalLessons: { $sum: 1 },
-                totalModules: { $addToSet: '$moduleTitle' },
+                totalModules: { $addToSet: '$module' },
             },
         },
     ]);
@@ -278,7 +331,8 @@ const getAdjacentLessons = async (
     currentLessonId: string
 ): Promise<{ prev: ILesson | null; next: ILesson | null }> => {
     const lessons = await Lesson.find({ course: courseId, isPublished: true })
-        .sort({ moduleOrder: 1, order: 1 })
+        .populate('module')
+        .sort({ 'module.order': 1, order: 1 })
         .lean();
 
     const currentIndex = lessons.findIndex(
@@ -294,6 +348,7 @@ const getAdjacentLessons = async (
 export const LessonService = {
     createLesson,
     bulkCreateLessons,
+    getAllLessons,
     getLessonsByCourse,
     getGroupedLessons,
     getLessonById,

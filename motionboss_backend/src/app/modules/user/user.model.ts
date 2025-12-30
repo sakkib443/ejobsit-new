@@ -43,9 +43,8 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     },
     phone: {
       type: String,
-      required: [true, 'Phone number is required'],
       trim: true,
-      match: [/^(\+880|880|0)?1[3-9]\d{8}$/, 'Please provide a valid Bangladeshi phone number'],
+      default: '',
     },
     avatar: {
       type: String,

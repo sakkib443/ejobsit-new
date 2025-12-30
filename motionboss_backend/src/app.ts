@@ -30,6 +30,7 @@ import { AnalyticsRoutes } from './app/modules/analytics/analytics.module';
 import { uploadRoutes } from './app/modules/upload/upload.routes';
 import { CourseRoutes } from './app/modules/course/course.routes';
 import { LessonRoutes } from './app/modules/lesson/lesson.routes';
+import { ModuleRoutes } from './app/modules/module/module.routes';
 import { EnrollmentRoutes } from './app/modules/enrollment/enrollment.routes';
 
 // ==================== App Initialization ====================
@@ -96,6 +97,9 @@ app.use('/api/software', SoftwareRoutes);
 
 // Course routes (LMS - public + admin)
 app.use('/api/courses', CourseRoutes);
+
+// Module routes (LMS - public + admin)
+app.use('/api/modules', ModuleRoutes);
 
 // Lesson routes (LMS - public + admin)
 app.use('/api/lessons', LessonRoutes);

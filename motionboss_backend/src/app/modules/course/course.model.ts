@@ -22,7 +22,6 @@ const courseSchema = new Schema<ICourse, CourseModel>(
         },
         titleBn: {
             type: String,
-            required: [true, 'Bengali title is required'],
             trim: true,
             maxlength: [200, 'Bengali title cannot exceed 200 characters'],
         },
@@ -39,7 +38,6 @@ const courseSchema = new Schema<ICourse, CourseModel>(
         },
         descriptionBn: {
             type: String,
-            required: [true, 'Bengali description is required'],
         },
         shortDescription: {
             type: String,
@@ -75,20 +73,6 @@ const courseSchema = new Schema<ICourse, CourseModel>(
             default: [],
         },
 
-        // ==================== Instructor ====================
-        instructorName: {
-            type: String,
-            default: '',
-        },
-        instructorImage: {
-            type: String,
-            default: '',
-        },
-        instructorBio: {
-            type: String,
-            maxlength: [1000, 'Instructor bio cannot exceed 1000 characters'],
-            default: '',
-        },
 
         // ==================== Pricing ====================
         price: {
@@ -155,6 +139,17 @@ const courseSchema = new Schema<ICourse, CourseModel>(
             default: 0,
             min: [0, 'Modules count cannot be negative'],
         },
+
+        // ==================== Module & Lesson References ====================
+        modules: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Module',
+        }],
+        lessons: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Lesson',
+        }],
+
 
         // ==================== Content Info ====================
         features: {

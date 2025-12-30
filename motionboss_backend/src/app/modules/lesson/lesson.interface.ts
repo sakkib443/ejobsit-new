@@ -34,14 +34,11 @@ export interface ILesson {
     course: Types.ObjectId;           // Parent course
 
     // ==================== Module/Section Info ====================
-    moduleTitle: string;              // Module/Section name (English)
-    moduleTitleBn: string;            // Module/Section name (Bengali)
-    moduleOrder: number;              // Order of this module in course
-    moduleDescription?: string;       // Optional module description
+    module: Types.ObjectId;           // Parent module
 
     // ==================== Lesson Basic Info ====================
     title: string;                    // Lesson title (English)
-    titleBn: string;                  // Lesson title (Bengali)
+    titleBn?: string;                 // Lesson title (Bengali)
     description?: string;             // Lesson description
     descriptionBn?: string;           // Bengali description
 
@@ -73,7 +70,8 @@ export interface ILesson {
  */
 export interface ILessonFilters {
     course?: string;
-    moduleTitle?: string;
+    module?: string;
+    searchTerm?: string;
     isFree?: boolean;
     isPublished?: boolean;
 }

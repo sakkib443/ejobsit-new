@@ -1,19 +1,21 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import {
-  FiSearch, FiUsers, FiUserCheck, FiShield, FiTrash2,
-  FiEdit3, FiMail, FiPhone, FiCalendar, FiLoader, FiMoreVertical
+  FiSearch, FiUsers, FiUserCheck, FiTrash2, FiPlus, FiMail, FiCalendar, FiLoader, FiCheck, FiX
 } from 'react-icons/fi';
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [editRole, setEditRole] = useState(null);
+  const [editingUser, setEditingUser] = useState(null);
+  const [editData, setEditData] = useState({});
+
+  const BASE_URL = 'http://localhost:5000/api';
 
   const fetchUsers = async () => {
-    const BASE_URL = 'http://localhost:5000/api';
     const token = localStorage.getItem('token');
     try {
       setLoading(true);
@@ -21,9 +23,11 @@ const UserManagement = () => {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
-      setUsers(data.data?.data || data.data || []);
+      if (data.success && data.data) {
+        setUsers(Array.isArray(data.data) ? data.data : []);
+      }
     } catch (err) {
-      console.error(err);
+      console.error('Fetch error:', err);
     } finally {
       setLoading(false);
     }
@@ -31,23 +35,47 @@ const UserManagement = () => {
 
   useEffect(() => { fetchUsers(); }, []);
 
-  const handleRoleUpdate = async (id, newRole) => {
-    const BASE_URL = 'http://localhost:5000/api';
+  const handleEdit = (user) => {
+    setEditingUser(user._id);
+    setEditData({ role: user.role, status: user.status });
+  };
+
+  const handleSave = async (userId) => {
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`${BASE_URL}/users/admin/${id}`, {
+      const res = await fetch(`${BASE_URL}/users/admin/${userId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ role: newRole }),
+        body: JSON.stringify(editData),
       });
       if (res.ok) {
-        setEditRole(null);
+        setEditingUser(null);
+        fetchUsers();
+      } else {
+        alert('Failed to update user');
+      }
+    } catch (err) {
+      alert('Error updating user');
+    }
+  };
+
+  const handleDelete = async (userId) => {
+    if (!confirm('Are you sure you want to delete this user?')) return;
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${BASE_URL}/users/admin/${userId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
         fetchUsers();
       }
-    } catch (err) { alert("Failed to update role"); }
+    } catch (err) {
+      alert('Error deleting user');
+    }
   };
 
   const filtered = users.filter(u =>
@@ -55,129 +83,192 @@ const UserManagement = () => {
     `${u.firstName} ${u.lastName}`.toLowerCase().includes(search.toLowerCase())
   );
 
-  const getRoleColor = (role) => {
-    switch (role) {
-      case 'admin': return 'bg-rose-100 text-rose-600 border-rose-200';
-      case 'student': return 'bg-emerald-100 text-emerald-600 border-emerald-200';
-      case 'mentor': return 'bg-indigo-100 text-indigo-600 border-indigo-200';
-      default: return 'bg-slate-100 text-slate-500 border-slate-200';
-    }
+  const getRoleBadge = (role) => {
+    const styles = {
+      admin: 'bg-gradient-to-r from-rose-500 to-pink-500 text-white',
+      student: 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white',
+    };
+    return styles[role] || 'bg-slate-200 text-slate-600';
+  };
+
+  const getStatusBadge = (status) => {
+    const styles = {
+      active: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
+      blocked: 'bg-red-100 text-red-700 border border-red-200',
+      pending: 'bg-amber-100 text-amber-700 border border-amber-200',
+    };
+    return styles[status] || 'bg-slate-100 text-slate-600';
   };
 
   return (
-    <div className="p-6 md:p-10 space-y-8 bg-slate-50 min-h-screen">
+    <div className="p-6 md:p-8 space-y-6 bg-slate-50 min-h-screen">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-800 outfit tracking-tight">Access Control</h1>
-          <p className="text-slate-500 text-sm font-medium italic">Monitor user activity and manage system permissions</p>
+          <h1 className="text-2xl font-bold text-slate-800">User Management</h1>
+          <p className="text-slate-500 text-sm">Manage all platform users</p>
         </div>
-        <div className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl border border-slate-200 shadow-sm">
-          <FiUserCheck className="text-emerald-500" size={20} />
-          <div className="text-left">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Total Registry</p>
-            <p className="text-lg font-black text-slate-800 leading-none mt-1">{users.length}</p>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-xl border border-slate-200">
+            <FiUsers className="text-indigo-500" />
+            <span className="text-sm font-bold text-slate-700">{users.length} Users</span>
           </div>
+          <Link href="/dashboard/admin/user/create">
+            <button className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-sm rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-xl transition-all">
+              <FiPlus size={16} />
+              Add User
+            </button>
+          </Link>
         </div>
       </div>
 
-      {/* Control Bar */}
-      <div className="bg-white p-5 rounded-[2.5rem] border border-slate-200 shadow-sm">
+      {/* Search */}
+      <div className="bg-white rounded-2xl border border-slate-200 p-4">
         <div className="relative">
-          <FiSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" />
+          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
-            placeholder="Search by name, email or alias..."
+            placeholder="Search users by name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-14 pr-4 py-4 rounded-[1.5rem] bg-slate-50 border border-transparent focus:bg-white focus:border-slate-300 outline-none text-sm font-bold transition-all placeholder:text-slate-300"
+            className="w-full pl-12 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 outline-none text-sm transition-all"
           />
         </div>
       </div>
 
-      {/* Grid View */}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-40 gap-4">
-          <FiLoader className="animate-spin text-slate-800" size={40} />
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Querying Database...</p>
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="text-center py-40 bg-white rounded-[3rem] border border-dashed border-slate-300">
-          <FiUsers className="mx-auto text-4xl text-slate-200 mb-4" />
-          <p className="text-xs font-black text-slate-400 uppercase tracking-widest">No matching identities found</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filtered.map(user => (
-            <div key={user._id} className="group bg-white rounded-[2.5rem] border border-slate-100 hover:border-slate-300 shadow-sm hover:shadow-2xl transition-all duration-500 relative overflow-hidden flex flex-col">
-              {/* Background Glow */}
-              <div className={`absolute -top-10 -left-10 w-32 h-32 rounded-full opacity-5 blur-3xl ${user.role === 'admin' ? 'bg-rose-500' : 'bg-slate-500'}`}></div>
+      {/* Table */}
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <FiLoader className="animate-spin text-indigo-500" size={32} />
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 text-slate-400">
+            <FiUsers size={48} className="mx-auto mb-4 opacity-50" />
+            <p className="font-medium">No users found</p>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200">
+                <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">User</th>
+                <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Email</th>
+                <th className="text-center px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Role</th>
+                <th className="text-center px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Joined</th>
+                <th className="text-center px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filtered.map((user) => (
+                <tr key={user._id} className="hover:bg-slate-50/50 transition-colors">
+                  {/* User Info */}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
+                        {user.firstName?.[0]}{user.lastName?.[0]}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-800">{user.firstName} {user.lastName}</p>
+                        {user.phone && <p className="text-xs text-slate-400">{user.phone}</p>}
+                      </div>
+                    </div>
+                  </td>
 
-              <div className="p-8 pb-4 relative z-10 flex-1">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="w-16 h-16 rounded-[1.5rem] bg-slate-900 flex items-center justify-center text-white text-xl font-black border-4 border-white shadow-xl">
-                    {user.firstName?.[0]}{user.lastName?.[0]}
-                  </div>
-                  <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${getRoleColor(user.role)}`}>
-                    {user.role}
-                  </div>
-                </div>
+                  {/* Email */}
+                  <td className="px-6 py-4">
+                    <span className="text-sm text-slate-600">{user.email}</span>
+                  </td>
 
-                <h3 className="text-lg font-black text-slate-800 line-clamp-1">{user.firstName} {user.lastName}</h3>
-                <div className="space-y-3 mt-4 pt-4 border-t border-slate-50">
-                  <div className="flex items-center gap-3 text-slate-500 hover:text-slate-800 transition-colors cursor-pointer">
-                    <FiMail className="shrink-0" size={14} />
-                    <span className="text-[11px] font-bold truncate">{user.email}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-slate-500 hover:text-slate-800 transition-colors cursor-pointer">
-                    <FiPhone className="shrink-0" size={14} />
-                    <span className="text-[11px] font-bold">{user.phone || 'No phone'}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-slate-500">
-                    <FiCalendar className="shrink-0" size={14} />
-                    <span className="text-[11px] font-bold opacity-60">Joined: {new Date(user.createdAt).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Footer */}
-              <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-50 flex items-center justify-between">
-                <span className={`text-[9px] font-black uppercase tracking-widest ${user.status === 'active' ? 'text-emerald-500' : 'text-slate-400'}`}>
-                  ● {user.status || 'Active'}
-                </span>
-
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => setEditRole(editRole === user._id ? null : user._id)}
-                    className="p-3 bg-white text-slate-400 hover:text-slate-800 rounded-xl border border-slate-100 shadow-sm transition-all"
-                  >
-                    <FiShield size={14} title="Manage Role" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Role Toggle Expandable */}
-              {editRole === user._id && (
-                <div className="absolute inset-0 bg-slate-900/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-8 text-center animate-in fade-in slide-in-from-bottom-5 duration-300">
-                  <FiShield className="text-rose-500 mb-4" size={40} />
-                  <h4 className="text-white font-black text-sm uppercase tracking-widest mb-6">Modify Access Level</h4>
-                  <div className="grid grid-cols-1 w-full gap-2">
-                    {['admin', 'student', 'mentor'].map(role => (
-                      <button
-                        key={role}
-                        onClick={() => handleRoleUpdate(user._id, role)}
-                        className={`w-full py-3 rounded-xl text-[10px] font-black uppercase tracking-tighter transition-all ${user.role === role ? 'bg-white text-slate-900' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                  {/* Role */}
+                  <td className="px-6 py-4 text-center">
+                    {editingUser === user._id ? (
+                      <select
+                        value={editData.role}
+                        onChange={(e) => setEditData({ ...editData, role: e.target.value })}
+                        className="px-3 py-1.5 rounded-lg border border-slate-300 text-sm focus:border-indigo-500 outline-none"
                       >
-                        {role}
-                      </button>
-                    ))}
-                  </div>
-                  <button onClick={() => setEditRole(null)} className="mt-8 text-slate-500 text-[9px] font-black uppercase tracking-widest underline decoration-slate-700">Cancel Override</button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+                        <option value="student">Student</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    ) : (
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${getRoleBadge(user.role)}`}>
+                        {user.role?.toUpperCase()}
+                      </span>
+                    )}
+                  </td>
+
+                  {/* Status */}
+                  <td className="px-6 py-4 text-center">
+                    {editingUser === user._id ? (
+                      <select
+                        value={editData.status}
+                        onChange={(e) => setEditData({ ...editData, status: e.target.value })}
+                        className="px-3 py-1.5 rounded-lg border border-slate-300 text-sm focus:border-indigo-500 outline-none"
+                      >
+                        <option value="active">Active</option>
+                        <option value="pending">Pending</option>
+                        <option value="blocked">Blocked</option>
+                      </select>
+                    ) : (
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${getStatusBadge(user.status)}`}>
+                        {user.status?.toUpperCase()}
+                      </span>
+                    )}
+                  </td>
+
+                  {/* Joined */}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2 text-sm text-slate-500">
+                      <FiCalendar size={14} />
+                      {user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}
+                    </div>
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center justify-center gap-2">
+                      {editingUser === user._id ? (
+                        <>
+                          <button
+                            onClick={() => handleSave(user._id)}
+                            className="p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+                            title="Save"
+                          >
+                            <FiCheck size={16} />
+                          </button>
+                          <button
+                            onClick={() => setEditingUser(null)}
+                            className="p-2 bg-slate-400 text-white rounded-lg hover:bg-slate-500 transition-colors"
+                            title="Cancel"
+                          >
+                            <FiX size={16} />
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => handleEdit(user)}
+                            className="px-3 py-1.5 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-lg hover:bg-indigo-100 transition-colors"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(user._id)}
+                            className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Delete"
+                          >
+                            <FiTrash2 size={16} />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 };

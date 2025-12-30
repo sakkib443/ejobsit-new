@@ -52,6 +52,14 @@ router.get(
 
 // ==================== Admin Only Routes ====================
 
+// Get all lessons (admin only)
+router.get(
+    '/',
+    authMiddleware,
+    authorizeRoles('admin'),
+    LessonController.getAllLessons
+);
+
 // Create new lesson
 router.post(
     '/',

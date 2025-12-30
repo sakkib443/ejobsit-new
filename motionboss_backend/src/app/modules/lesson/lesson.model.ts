@@ -45,24 +45,11 @@ const lessonSchema = new Schema<ILesson, LessonModel>(
         },
 
         // ==================== Module/Section Info ====================
-        moduleTitle: {
-            type: String,
-            required: [true, 'Module title is required'],
-            trim: true,
-        },
-        moduleTitleBn: {
-            type: String,
-            required: [true, 'Bengali module title is required'],
-            trim: true,
-        },
-        moduleOrder: {
-            type: Number,
-            required: true,
-            default: 1,
-        },
-        moduleDescription: {
-            type: String,
-            maxlength: 500,
+        module: {
+            type: Schema.Types.ObjectId,
+            ref: 'Module',
+            required: [true, 'Module reference is required'],
+            index: true,
         },
 
         // ==================== Lesson Basic Info ====================
@@ -74,7 +61,6 @@ const lessonSchema = new Schema<ILesson, LessonModel>(
         },
         titleBn: {
             type: String,
-            required: [true, 'Bengali title is required'],
             trim: true,
             maxlength: [200, 'Bengali title cannot exceed 200 characters'],
         },
@@ -153,7 +139,7 @@ const lessonSchema = new Schema<ILesson, LessonModel>(
 );
 
 // ==================== Indexes ====================
-lessonSchema.index({ course: 1, moduleOrder: 1, order: 1 });
+lessonSchema.index({ module: 1, order: 1 });
 lessonSchema.index({ course: 1, isPublished: 1 });
 lessonSchema.index({ title: 'text', titleBn: 'text' });
 
@@ -166,49 +152,12 @@ lessonSchema.statics.getLessonsByCourse = async function (
     courseId: string
 ): Promise<ILesson[]> {
     return await this.find({ course: courseId, isPublished: true })
-        .sort({ moduleOrder: 1, order: 1 })
+        .populate('module')
+        .sort({ 'module.order': 1, order: 1 })
         .lean();
 };
 
-/**
- * Get lessons grouped by module
- */
-lessonSchema.statics.getGroupedLessons = async function (
-    courseId: string
-): Promise<IModuleGroup[]> {
-    const lessons = await this.find({ course: courseId, isPublished: true })
-        .sort({ moduleOrder: 1, order: 1 })
-        .lean();
-
-    // Group lessons by module
-    const moduleMap = new Map<string, IModuleGroup>();
-
-    lessons.forEach((lesson: ILesson) => {
-        const key = `${lesson.moduleOrder}-${lesson.moduleTitle}`;
-
-        if (!moduleMap.has(key)) {
-            moduleMap.set(key, {
-                moduleTitle: lesson.moduleTitle,
-                moduleTitleBn: lesson.moduleTitleBn,
-                moduleOrder: lesson.moduleOrder,
-                moduleDescription: lesson.moduleDescription,
-                lessons: [],
-                totalDuration: 0,
-                totalLessons: 0,
-            });
-        }
-
-        const module = moduleMap.get(key)!;
-        module.lessons.push(lesson);
-        module.totalDuration += lesson.videoDuration;
-        module.totalLessons += 1;
-    });
-
-    // Convert map to sorted array
-    return Array.from(moduleMap.values()).sort(
-        (a, b) => a.moduleOrder - b.moduleOrder
-    );
-};
+// getGroupedLessons is moved to service layer or handled via population
 
 // ==================== Export Model ====================
 export const Lesson = model<ILesson, LessonModel>('Lesson', lessonSchema);

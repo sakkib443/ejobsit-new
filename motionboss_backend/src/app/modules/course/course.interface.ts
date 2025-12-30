@@ -35,10 +35,10 @@ export interface ICourse {
 
     // ==================== Basic Info ====================
     title: string;                    // Course title (English)
-    titleBn: string;                  // Course title (Bengali)
+    titleBn?: string;                 // Course title (Bengali) - Optional
     slug: string;                     // URL friendly slug
     description: string;              // Full description (English)
-    descriptionBn: string;            // Full description (Bengali)
+    descriptionBn?: string;           // Full description (Bengali) - Optional
     shortDescription?: string;        // Short summary
     shortDescriptionBn?: string;      // Short summary (Bengali)
 
@@ -51,10 +51,6 @@ export interface ICourse {
     category: Types.ObjectId;         // Reference to Category
     tags: string[];                   // Search tags
 
-    // ==================== Instructor ====================
-    instructorName?: string;          // Instructor display name
-    instructorImage?: string;         // Instructor photo
-    instructorBio?: string;           // Short instructor bio
 
     // ==================== Pricing ====================
     price: number;                    // Regular price
@@ -71,6 +67,10 @@ export interface ICourse {
     totalDuration: number;            // Total duration in minutes
     totalLessons: number;             // Number of lessons
     totalModules: number;             // Number of modules/sections
+
+    // ==================== Module & Lesson References ====================
+    modules: Types.ObjectId[];        // Array of Module references
+    lessons: Types.ObjectId[];        // Array of Lesson references
 
     // ==================== Content Info ====================
     features: string[];               // What's included

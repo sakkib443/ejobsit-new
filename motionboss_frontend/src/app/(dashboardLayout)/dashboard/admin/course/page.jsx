@@ -9,11 +9,12 @@ import {
   FiPlus,
   FiSearch,
   FiBook,
-  FiUser,
   FiStar,
   FiFilter,
   FiGrid,
   FiList,
+  FiUsers,
+  FiLayers,
 } from 'react-icons/fi';
 
 export default function CoursesPage() {
@@ -153,16 +154,11 @@ export default function CoursesPage() {
               </div>
 
               <div className="p-5">
-                <h3 className="text-sm font-bold text-slate-800 line-clamp-2 mb-3 min-h-[40px] leading-relaxed italic">{course.title}</h3>
+                <h3 className="text-sm font-bold text-slate-800 line-clamp-2 mb-3 min-h-[40px] leading-relaxed">{course.title}</h3>
 
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200">
-                    {course.instructorImage ? <img src={course.instructorImage} className="w-full h-full object-cover" /> : <FiUser className="text-slate-400" />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-medium text-slate-800 truncate">{course.instructorName || 'MotionBoss Team'}</p>
-                    <p className="text-[10px] text-slate-400 uppercase tracking-tighter">{course.level}</p>
-                  </div>
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="px-2 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded-lg uppercase">{course.level}</span>
+                  <span className="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-lg uppercase">{course.language}</span>
                 </div>
 
                 <div className="flex items-center justify-between text-[11px] text-slate-500 pt-4 border-t border-slate-50">
@@ -176,6 +172,13 @@ export default function CoursesPage() {
               </div>
 
               <div className="flex border-t border-slate-100 bg-slate-50/50">
+                <Link
+                  href={`/dashboard/admin/course/modules/${course._id}`}
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 text-indigo-600 hover:text-indigo-900 hover:bg-white text-xs font-bold transition-all"
+                >
+                  <FiLayers size={13} /> Modules
+                </Link>
+                <div className="w-px bg-slate-100 h-10 self-center"></div>
                 <Link
                   href={`/dashboard/admin/course/edit/${course._id}`}
                   className="flex-1 flex items-center justify-center gap-2 py-3.5 text-slate-600 hover:text-slate-900 hover:bg-white text-xs font-bold transition-all"
@@ -213,6 +216,7 @@ export default function CoursesPage() {
                 <p className="text-[11px] text-slate-400">{course.totalEnrollments || 0} enrolled</p>
               </div>
               <div className="flex gap-2">
+                <Link href={`/dashboard/admin/course/modules/${course._id}`} className="p-2.5 bg-indigo-50 text-indigo-500 hover:text-indigo-800 hover:bg-white border border-indigo-100 rounded-xl shadow-sm transition-all" title="Manage Modules"><FiLayers size={15} /></Link>
                 <Link href={`/dashboard/admin/course/edit/${course._id}`} className="p-2.5 bg-slate-50 text-slate-500 hover:text-slate-800 hover:bg-white border border-slate-100 rounded-xl shadow-sm transition-all"><FiEdit2 size={15} /></Link>
                 <button onClick={() => handleDelete(course._id)} className="p-2.5 bg-rose-50 text-rose-400 hover:text-rose-600 hover:bg-white border border-rose-100 rounded-xl shadow-sm transition-all"><FiTrash2 size={15} /></button>
               </div>

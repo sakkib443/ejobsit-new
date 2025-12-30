@@ -38,13 +38,9 @@ export const registerValidation = z.object({
       .min(1, 'Last name is required')
       .max(50, 'Last name cannot exceed 50 characters'),
 
-    phone: z
-      .string({
-        required_error: 'Phone number is required',
-      })
-      .regex(/^(\+880|880|0)?1[3-9]\d{8}$/, 'Please provide a valid Bangladeshi phone number'),
+    phone: z.string().optional(),
 
-    role: z.literal('student').optional().default('student'),
+    role: z.enum(['student', 'admin']).optional().default('student'),
   }),
 });
 
