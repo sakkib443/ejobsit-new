@@ -15,6 +15,7 @@ import PaymentMethod from "@/components/sheard/PaymentMethod";
 import ReduxProviderWrapper from "@/components/ReduxProvaiderWrapper";
 import { LanguageProvider } from "@/context/LanguageContext";
 import MouseCursorEffect from "@/components/ui/MouseCursorEffect";
+import { Toaster } from "react-hot-toast";
 
 // Google Fonts
 const poppins = Poppins({
@@ -69,6 +70,7 @@ export default function RootLayout({ children }) {
       <body className="antialiased">
         <ReduxProviderWrapper>
           <LanguageProvider>
+            <Toaster position="top-center" reverseOrder={false} />
             <MouseCursorEffect />
             {children}
           </LanguageProvider>

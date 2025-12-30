@@ -19,6 +19,7 @@ export interface IDownload {
     order: Types.ObjectId;
     product: Types.ObjectId;
     productType: 'website' | 'software';
+    productModel: 'Website' | 'Software';
     productTitle: string;
     downloadCount: number;
     maxDownloads: number;
@@ -34,8 +35,9 @@ const downloadSchema = new Schema<IDownload>(
     {
         user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         order: { type: Schema.Types.ObjectId, ref: 'Order', required: true },
-        product: { type: Schema.Types.ObjectId, required: true },
+        product: { type: Schema.Types.ObjectId, required: true, refPath: 'productModel' },
         productType: { type: String, enum: ['website', 'software'], required: true },
+        productModel: { type: String, enum: ['Website', 'Software'], required: true },
         productTitle: { type: String, required: true },
         downloadCount: { type: Number, default: 0 },
         maxDownloads: { type: Number, default: 10 },
@@ -65,11 +67,15 @@ const DownloadService = {
         const expiryDate = new Date();
         expiryDate.setFullYear(expiryDate.getFullYear() + 1);
 
+        // Map productType to Mongoose model name
+        const productModel = productType === 'website' ? 'Website' : 'Software';
+
         const download = await Download.create({
             user: userId,
             order: orderId,
             product: productId,
             productType,
+            productModel,
             productTitle,
             expiryDate,
             isActive: true,

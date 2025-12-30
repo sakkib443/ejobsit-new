@@ -2,6 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchMyDownloads } from '@/redux/downloadSlice';
+import { fetchMyEnrollments, fetchMyStats } from '@/redux/enrollmentSlice';
 import {
     FiBook, FiAward, FiClock, FiTrendingUp, FiArrowRight,
     FiUser, FiMail, FiPhone, FiCalendar, FiLoader,
@@ -12,10 +15,13 @@ import { useTheme } from '@/providers/ThemeProvider';
 
 export default function UserDashboard() {
     const { isDark } = useTheme();
+    const dispatch = useDispatch();
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [isSyncing, setIsSyncing] = useState(false);
     const [hasMounted, setHasMounted] = useState(false);
+
+    const { enrollments, stats: enrollmentStats, loading: enrollLoading } = useSelector((state) => state.enrollment);
+    const { downloads, loading: downloadLoading } = useSelector((state) => state.download);
 
     useEffect(() => {
         setHasMounted(true);
@@ -25,22 +31,28 @@ export default function UserDashboard() {
                 setUser(JSON.parse(storedUser));
             } catch (e) { }
         }
-        setLoading(false);
-    }, []);
+
+        dispatch(fetchMyEnrollments());
+        dispatch(fetchMyStats());
+        dispatch(fetchMyDownloads());
+    }, [dispatch]);
 
     const handleSync = () => {
         setIsSyncing(true);
+        dispatch(fetchMyEnrollments());
+        dispatch(fetchMyStats());
+        dispatch(fetchMyDownloads());
         setTimeout(() => setIsSyncing(false), 1000);
     };
 
     const stats = [
-        { title: 'Enrolled Courses', value: '04', icon: FiBook, gradient: 'from-blue-500 to-indigo-600', trend: '+1 this month' },
-        { title: 'Digital Assets', value: '06', icon: FiDownload, gradient: 'from-pink-500 to-rose-600', trend: 'Softwares & Web' },
+        { title: 'Enrolled Courses', value: enrollments.length.toString().padStart(2, '0'), icon: FiBook, gradient: 'from-blue-500 to-indigo-600', trend: '+1 this month' },
+        { title: 'Digital Assets', value: downloads.length.toString().padStart(2, '0'), icon: FiDownload, gradient: 'from-pink-500 to-rose-600', trend: 'Softwares & Web' },
         { title: 'Reward Points', value: '1,250', icon: FiStar, gradient: 'from-amber-500 to-orange-600', trend: 'Top 10%' },
-        { title: 'Certificates', value: '00', icon: FiAward, gradient: 'from-purple-500 to-pink-600', trend: 'Earn your first' },
+        { title: 'Certificates', value: (enrollmentStats?.completedCourses || 0).toString().padStart(2, '0'), icon: FiAward, gradient: 'from-purple-500 to-pink-600', trend: 'Earn your first' },
     ];
 
-    if (loading) {
+    if (enrollLoading || downloadLoading) {
         return (
             <div className="min-h-[60vh] flex items-center justify-center">
                 <FiLoader className={`text-4xl animate-spin ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`} />
@@ -99,15 +111,15 @@ export default function UserDashboard() {
                             Welcome Back, {user?.firstName || 'Learner'}! 🚀
                         </h2>
                         <p className="text-indigo-50 text-base max-w-lg">
-                            You have completed <span className="font-bold text-white underline">0%</span> of your current learning goals. Pickup where you left off and sharpen your skills.
+                            You have completed <span className="font-bold text-white underline">{enrollmentStats?.averageProgress || 0}%</span> of your current learning goals. Pickup where you left off and sharpen your skills.
                         </p>
                         <div className="flex flex-wrap gap-3 justify-center md:justify-start pt-2">
-                            <button className="px-6 py-3 bg-white text-indigo-700 rounded-xl font-bold text-sm shadow-xl hover:bg-indigo-50 transition-all active:scale-95">
+                            <Link href="/dashboard/user/courses" className="px-6 py-3 bg-white text-indigo-700 rounded-xl font-bold text-sm shadow-xl hover:bg-indigo-50 transition-all active:scale-95">
                                 My Classes
-                            </button>
-                            <button className="px-6 py-3 bg-indigo-500/20 backdrop-blur-md border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
+                            </Link>
+                            <Link href="/dashboard/user/schedule" className="px-6 py-3 bg-indigo-500/20 backdrop-blur-md border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
                                 View Schedule
-                            </button>
+                            </Link>
                         </div>
                     </div>
                     <div className="relative hidden lg:block">
@@ -161,26 +173,51 @@ export default function UserDashboard() {
                         </Link>
                     </div>
 
-                    {/* Placeholder for no active courses */}
-                    <div className={`rounded-3xl border-2 border-dashed p-12 text-center transition-colors ${isDark ? 'border-slate-700 hover:border-indigo-500/50' : 'border-slate-100 hover:border-indigo-500/30'
-                        }`}>
-                        <div className={`w-20 h-20 mx-auto rounded-3xl flex items-center justify-center mb-4 ${isDark ? 'bg-slate-800' : 'bg-slate-50'
+                    {enrollments.length === 0 ? (
+                        <div className={`rounded-3xl border-2 border-dashed p-12 text-center transition-colors ${isDark ? 'border-slate-700 hover:border-indigo-500/50' : 'border-slate-100 hover:border-indigo-500/30'
                             }`}>
-                            <FiBook className={`text-3xl ${isDark ? 'text-slate-600' : 'text-slate-300'}`} />
+                            <div className={`w-20 h-20 mx-auto rounded-3xl flex items-center justify-center mb-4 ${isDark ? 'bg-slate-800' : 'bg-slate-50'
+                                }`}>
+                                <FiBook className={`text-3xl ${isDark ? 'text-slate-600' : 'text-slate-300'}`} />
+                            </div>
+                            <h3 className={`text-lg font-bold mb-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                                Your learning shelf is empty
+                            </h3>
+                            <p className={`text-sm mb-6 ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+                                Expand your skill set. Browse our marketplace to find the perfect professional course for you.
+                            </p>
+                            <Link
+                                href="/courses"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-500 text-white rounded-xl font-bold text-sm shadow-xl shadow-indigo-500/20 hover:bg-indigo-600 transition-all"
+                            >
+                                Explore Marketplace
+                            </Link>
                         </div>
-                        <h3 className={`text-lg font-bold mb-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                            Your learning shelf is empty
-                        </h3>
-                        <p className={`text-sm mb-6 ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
-                            Expand your skill set. Browse our marketplace to find the perfect professional course for you.
-                        </p>
-                        <Link
-                            href="/courses"
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-500 text-white rounded-xl font-bold text-sm shadow-xl shadow-indigo-500/20 hover:bg-indigo-600 transition-all"
-                        >
-                            Explore Marketplace
-                        </Link>
-                    </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {enrollments.slice(0, 3).map((enroll) => (
+                                <div key={enroll._id} className={`p-4 rounded-2xl border transition-all ${isDark ? 'bg-slate-800/80 border-white/5 hover:bg-slate-800' : 'bg-white border-slate-100 hover:bg-slate-50 shadow-sm'}`}>
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0">
+                                            <img src={enroll.course?.thumbnail || '/placeholder-course.jpg'} alt={enroll.course?.title} className="w-full h-full object-cover" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className={`font-bold text-sm truncate ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>{enroll.course?.title}</h4>
+                                            <div className="mt-2 flex items-center gap-4">
+                                                <div className="flex-1 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-indigo-500" style={{ width: `${enroll.progress || 0}%` }}></div>
+                                                </div>
+                                                <span className="text-[10px] font-black text-indigo-500 whitespace-nowrap">{enroll.progress || 0}% Done</span>
+                                            </div>
+                                        </div>
+                                        <Link href={`/dashboard/user/courses/${enroll.course?._id}`} className={`p-3 rounded-xl ${isDark ? 'bg-slate-700 text-slate-300' : 'bg-indigo-50 text-indigo-600'} hover:scale-105 transition-all`}>
+                                            <FiPlay size={16} />
+                                        </Link>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Right Column: Profile & Schedule */}

@@ -85,6 +85,7 @@ export const createOrderValidation = z.object({
             })
         ).min(1, 'At least one item is required'),
         paymentMethod: z.string().optional(),
+        paymentStatus: z.enum(['pending', 'completed', 'failed', 'refunded']).optional(),
     }),
 });
 
@@ -103,6 +104,8 @@ const OrderService = {
         paymentMethod: string = 'stripe',
         paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded' = 'pending'
     ): Promise<IOrder> {
+        console.log(`Processing order for user: ${userId}, items count: ${items.length}`);
+
         const orderItems = items.map((item) => ({
             product: new Types.ObjectId(item.productId),
             productType: item.productType,

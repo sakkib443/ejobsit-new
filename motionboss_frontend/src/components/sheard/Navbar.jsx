@@ -5,8 +5,9 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { BiCategory, BiMenu, BiX } from "react-icons/bi";
-import { LuBookOpenCheck, LuChevronDown, LuLogOut, LuLayoutDashboard } from "react-icons/lu";
+import { LuBookOpenCheck, LuChevronDown, LuLogOut, LuLayoutDashboard, LuShoppingCart } from "react-icons/lu";
 import { HiOutlineSparkles, HiOutlineUserCircle } from "react-icons/hi2";
+import { useSelector } from "react-redux";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -16,6 +17,7 @@ const Navbar = () => {
   const [user, setUser] = useState(null);
   const pathname = usePathname();
   const router = useRouter();
+  const { items = [] } = useSelector((state) => state.cart || {});
   const { t, language } = useLanguage();
 
   useEffect(() => {
@@ -58,8 +60,8 @@ const Navbar = () => {
   const menu = [
     { href: "/", label: t("navbar.home") },
     { href: "/courses", label: t("navbar.courses") },
-    { href: "/success-story", label: t("navbar.successHistory") },
-    { href: "/mentors", label: t("navbar.mentors") },
+    { href: "/software", label: t("navbar.software") },
+    { href: "/website", label: t("navbar.website") },
     { href: "/about", label: t("navbar.about") },
     { href: "/contact", label: t("navbar.contact") },
     { href: "/certification", label: t("navbar.certification") },
@@ -261,6 +263,16 @@ const Navbar = () => {
               <div className="hidden lg:block">
                 <LanguageSwitcher />
               </div>
+
+              {/* Shopping Cart - Desktop */}
+              <Link href="/cart" className="hidden lg:flex relative p-2 text-gray-600 hover:text-[#41bfb8] transition-colors group">
+                <LuShoppingCart className="text-2xl group-hover:scale-110 transition-transform" />
+                {items.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#41bfb8] text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm ring-1 ring-teal-100">
+                    {items.length}
+                  </span>
+                )}
+              </Link>
 
               {/* Get Course Button - Desktop */}
               <Link href="/courses" className="hidden lg:block">

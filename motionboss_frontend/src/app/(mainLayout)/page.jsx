@@ -12,6 +12,7 @@ import PopularCourse from "@/components/Home/PopularCourse";
 import SeminarAndEvent from "@/components/Home/SeminarAndEvent";
 import SuccesHistory from "@/components/Home/SuccesHistory";
 import WhatWeProvide from "@/components/Home/WhatWeProvide";
+import DigitalProducts from "@/components/Home/DigitalProducts";
 import { fetchCoursesData } from "@/redux/CourseSlice";
 import PaymentMethod from "@/components/sheard/PaymentMethod";
 
@@ -67,6 +68,7 @@ const HomePage = () => {
       >
         <PopularCourse />
       </div>
+      <DigitalProducts />
       <SeminarAndEvent />
       <WhatWeProvide />
       <Concerns />
