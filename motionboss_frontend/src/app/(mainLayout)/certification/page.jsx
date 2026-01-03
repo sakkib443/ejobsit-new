@@ -313,7 +313,7 @@ const CertificationPage = () => {
               </p>
             </div>
             <a
-              href="https://wa.me/8801321231802"
+              href="https://wa.me/8801730481212"
               target="_blank"
               rel="noopener noreferrer"
               className={`inline-flex items-center gap-2 px-6 py-3 bg-white text-[#41bfb8] font-medium rounded-md hover:shadow-lg transition-all shrink-0 ${bengaliClass}`}

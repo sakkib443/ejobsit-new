@@ -19,7 +19,7 @@ const AboutFounder = () => {
     const headingFont = "font-outfit";
 
     return (
-        <section ref={sectionRef} className="py-10 lg:py-16 bg-gray-50 dark:bg-[#050505] overflow-hidden transition-colors duration-700">
+        <section ref={sectionRef} className="bg-gray-50 dark:bg-[#050505] overflow-hidden transition-colors duration-700">
             <div className="container mx-auto px-4 lg:px-16">
                 <motion.div
                     style={{ scale }}

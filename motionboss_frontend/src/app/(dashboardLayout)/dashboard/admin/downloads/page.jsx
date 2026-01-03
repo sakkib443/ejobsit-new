@@ -12,7 +12,7 @@ export default function DownloadsPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
 
-    const BASE_URL = 'http://localhost:5000/api';
+    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
 
     const fetchDownloads = async () => {
         try {

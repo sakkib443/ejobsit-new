@@ -19,6 +19,10 @@ export const LanguageProvider = ({ children }) => {
     const savedLanguage = localStorage.getItem("language");
     if (savedLanguage && (savedLanguage === "en" || savedLanguage === "bn")) {
       setLanguageState(savedLanguage);
+      // Apply Bengali font on initial load if Bengali was saved
+      if (savedLanguage === "bn") {
+        document.body.classList.add("font-bengali");
+      }
     }
     setIsLoaded(true);
   }, []);
@@ -29,6 +33,12 @@ export const LanguageProvider = ({ children }) => {
     localStorage.setItem("language", lang);
     // Update document language attribute
     document.documentElement.lang = lang === "bn" ? "bn" : "en";
+    // Apply Bengali font globally when Bengali is selected
+    if (lang === "bn") {
+      document.body.classList.add("font-bengali");
+    } else {
+      document.body.classList.remove("font-bengali");
+    }
   }, []);
 
   // Translation function with nested key support (e.g., "navbar.home")
@@ -36,7 +46,7 @@ export const LanguageProvider = ({ children }) => {
     (key, fallback = "") => {
       const keys = key.split(".");
       let result = translations[language];
-      
+
       for (const k of keys) {
         if (result && typeof result === "object" && k in result) {
           result = result[k];
@@ -53,7 +63,7 @@ export const LanguageProvider = ({ children }) => {
           return typeof enResult === "string" ? enResult : fallback || key;
         }
       }
-      
+
       return typeof result === "string" ? result : fallback || key;
     },
     [language]

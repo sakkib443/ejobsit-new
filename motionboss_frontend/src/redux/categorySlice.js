@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { API_BASE_URL } from "@/config/api";
 
 // Async fetch from backend API
 export const fetchCategories = createAsyncThunk(
   "categories/fetchCategories",
   async (params = {}) => {
     const { type } = params;
-    const API_BASE_URL = "http://localhost:5000/api";
     let url = `${API_BASE_URL}/categories`;
 
     if (type) {

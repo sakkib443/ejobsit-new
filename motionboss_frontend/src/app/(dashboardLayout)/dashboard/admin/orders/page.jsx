@@ -21,7 +21,7 @@ export default function OrdersPage() {
     const [editStatus, setEditStatus] = useState('');
     const [saving, setSaving] = useState(false);
 
-    const BASE_URL = 'http://localhost:5000/api';
+    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
 
     const fetchOrders = async () => {
         try {

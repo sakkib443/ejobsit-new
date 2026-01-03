@@ -38,7 +38,7 @@ const CourseCard = ({ course }) => {
   return (
     <div className="group relative w-full h-full flex flex-col">
       {/* Card Container */}
-      <div className={`relative h-full bg-white rounded-3xl border border-slate-100 overflow-hidden transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] hover:-translate-y-2 flex flex-col ${isDark ? 'bg-slate-800 border-white/5' : ''}`}>
+      <div className={`relative h-full bg-white dark:bg-[#0d0d0d] rounded-[2rem] border border-gray-200 dark:border-white/10 overflow-hidden transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] hover:-translate-y-2 flex flex-col group/card`}>
 
         {/* Image Container */}
         <div className="relative h-52 w-full overflow-hidden shrink-0">
@@ -96,13 +96,13 @@ const CourseCard = ({ course }) => {
 
           {/* Features Grid */}
           <div className="grid grid-cols-2 gap-3 mb-6">
-            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-xl border border-slate-100">
+            <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-400/20 dark:border-white/5">
               <LuClock className="text-[#41bfb8] text-sm" />
-              <span className="text-[10px] font-bold text-slate-600 uppercase tracking-tight">{duration}</span>
+              <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tight">{duration}</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-xl border border-slate-100">
+            <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-400/20 dark:border-white/5">
               <LuUsers className="text-[#41bfb8] text-sm" />
-              <span className="text-[10px] font-bold text-slate-600 uppercase tracking-tight">{students}</span>
+              <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tight">{students}</span>
             </div>
           </div>
 
@@ -113,7 +113,7 @@ const CourseCard = ({ course }) => {
           <div className="mt-auto flex items-center justify-between gap-4">
             <div className="flex flex-col">
               {discountPrice && (
-                <span className="text-[10px] text-slate-400 line-through font-bold">৳{price}</span>
+                <span className="text-[10px] text-gray-400 line-through font-bold">৳{price}</span>
               )}
               <span className="text-xl font-black text-[#41bfb8] outfit">
                 ৳{(discountPrice || price).toLocaleString()}
@@ -122,7 +122,7 @@ const CourseCard = ({ course }) => {
 
             <Link
               href={`/courses/${courseId}`}
-              className="inline-flex items-center gap-2 px-5 py-3 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#41bfb8] hover:shadow-xl hover:shadow-[#41bfb8]/20 transition-all active:scale-95 group/btn"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#41bfb8] dark:hover:bg-[#41bfb8] dark:hover:text-white hover:shadow-xl hover:shadow-[#41bfb8]/20 transition-all active:scale-95 group/btn"
             >
               Details <FaArrowRight className="text-[8px] group-hover/btn:translate-x-1 transition-transform" />
             </Link>

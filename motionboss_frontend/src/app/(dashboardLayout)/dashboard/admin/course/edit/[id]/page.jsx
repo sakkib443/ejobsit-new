@@ -77,7 +77,7 @@ export default function EditCoursePage() {
   const tagsFields = useFieldArray({ control, name: 'tags' });
 
   const fetchData = useCallback(async () => {
-    const BASE_URL = 'http://localhost:5000/api';
+    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
     const token = localStorage.getItem('token');
     try {
       setFetching(true);
@@ -119,7 +119,7 @@ export default function EditCoursePage() {
 
   const onSubmit = async (values) => {
     setLoading(true);
-    const BASE_URL = 'http://localhost:5000/api';
+    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
     const token = localStorage.getItem('token');
 
     try {
@@ -144,8 +144,8 @@ export default function EditCoursePage() {
   };
 
   const inputClass = `w-full px-4 py-3 rounded-xl border outline-none text-sm transition-all ${isDark
-      ? 'bg-slate-950 border-slate-800 text-slate-200 focus:border-emerald-500 placeholder:text-slate-600'
-      : 'bg-white border-slate-200 text-slate-700 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 placeholder:text-slate-400'
+    ? 'bg-slate-950 border-slate-800 text-slate-200 focus:border-emerald-500 placeholder:text-slate-600'
+    : 'bg-white border-slate-200 text-slate-700 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 placeholder:text-slate-400'
     }`;
   const labelClass = `block text-sm font-medium mb-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`;
   const cardClass = `p-6 rounded-2xl border ${isDark ? 'bg-black/40 border-slate-800 shadow-none' : 'bg-white border-slate-200/60 shadow-sm'} space-y-5`;

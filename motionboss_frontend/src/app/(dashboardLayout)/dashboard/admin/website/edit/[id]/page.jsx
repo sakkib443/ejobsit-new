@@ -60,7 +60,7 @@ export default function EditWebsitePage() {
     const techFields = useFieldArray({ control, name: 'technologies' });
 
     const fetchData = useCallback(async () => {
-        const BASE_URL = 'http://localhost:5000/api';
+        const BASE_URL = 'https://motionboss-backend.vercel.app/api';
         const token = localStorage.getItem('token');
         try {
             setFetching(true);
@@ -104,7 +104,7 @@ export default function EditWebsitePage() {
 
     const onSubmit = async (values) => {
         setLoading(true);
-        const BASE_URL = 'http://localhost:5000/api';
+        const BASE_URL = 'https://motionboss-backend.vercel.app/api';
         const token = localStorage.getItem('token');
 
         // Clean up empty arrays

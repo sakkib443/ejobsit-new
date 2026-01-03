@@ -26,7 +26,7 @@ const Login = () => {
 
     try {
       // Use local API in development, fallback to Vercel if needed
-      const BASE_URL = "http://localhost:5000/api";
+      const BASE_URL = "https://motionboss-backend.vercel.app/api";
       const res = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -49,10 +49,26 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Cookie parser (for refresh token)
 app.use(cookieParser());
 
-// CORS configuration
+// CORS configuration - supports multiple origins for production
+const allowedOrigins = [
+  config.frontend_url,
+  'http://localhost:3000',
+  'https://motionboss.vercel.app',
+  'https://motion-boss.vercel.app',
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: config.frontend_url,
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Allow all origins in production for API
+      }
+    },
     credentials: true, // Allow cookies
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

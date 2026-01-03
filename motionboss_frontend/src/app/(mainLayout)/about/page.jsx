@@ -40,7 +40,7 @@ const MouseLight = () => {
 };
 
 // Generic Transition Wrapper defined OUTSIDE to prevent remounting on every parent render
-const ScrollSection = ({ children }) => {
+const ScrollSection = ({ children, className = "" }) => {
   const ref = useRef(null);
   const { scrollYProgress: rawSectionProgress } = useScroll({
     target: ref,
@@ -55,8 +55,8 @@ const ScrollSection = ({ children }) => {
   });
 
   // Wider ranges to prevent content from "disappearing" or "turning white" too quickly
-  const scale = useTransform(sectionProgress, [0, 0.45, 0.55, 1], [0.93, 1, 1, 0.93]);
-  const opacity = useTransform(sectionProgress, [0, 0.35, 0.65, 1], [0, 1, 1, 0]);
+  const scale = useTransform(sectionProgress, [0, 0.45, 0.55, 1], [0.95, 1, 1, 0.95]);
+  const opacity = useTransform(sectionProgress, [0, 0.35, 0.65, 1], [0.3, 1, 1, 0.3]);
 
   return (
     <motion.div
@@ -66,7 +66,7 @@ const ScrollSection = ({ children }) => {
         opacity,
         willChange: "transform, opacity"
       }}
-      className="w-full origin-center py-10 lg:py-16"
+      className={`w-full origin-center ${className}`}
     >
       {children}
     </motion.div>
@@ -134,13 +134,29 @@ const AboutPage = () => {
 
         {/* Following Sections with Stabilized Transitions */}
         <section className="relative z-10 bg-white dark:bg-[#020202] shadow-[0_-80px_100px_rgba(0,0,0,0.1)] dark:shadow-[0_-80px_100px_rgba(0,0,0,0.6)] rounded-t-[50px] lg:rounded-t-[100px]">
-          <div className="flex flex-col gap-0 items-center">
-            <ScrollSection><AboutFounder /></ScrollSection>
+          {/* First Section - Extra top padding for rounded area */}
+          <ScrollSection className="pt-16 lg:pt-24 pb-12 lg:pb-16">
+            <AboutFounder />
+          </ScrollSection>
+
+          {/* Features - Larger section with sticky sidebar */}
+          <ScrollSection className="py-12 lg:py-16">
             <AboutFeatures />
-            <ScrollSection><AboutStats /></ScrollSection>
-            <ScrollSection><AboutGlobal /></ScrollSection>
-            <ScrollSection><AboutCTA /></ScrollSection>
-          </div>
+          </ScrollSection>
+
+          {/* Middle Sections - Consistent spacing */}
+          <ScrollSection className="py-12 lg:py-16">
+            <AboutStats />
+          </ScrollSection>
+
+          <ScrollSection className="py-12 lg:py-16">
+            <AboutGlobal />
+          </ScrollSection>
+
+          {/* Last Section - Extra bottom padding before footer */}
+          <ScrollSection className="pt-12 lg:pt-16 pb-20 lg:pb-28">
+            <AboutCTA />
+          </ScrollSection>
         </section>
       </main>
     </div>

@@ -40,7 +40,7 @@ const CheckoutPage = () => {
             setPageLoading(true);
             const fetchCourse = async () => {
                 try {
-                    const res = await fetch(`http://localhost:5000/api/courses/${courseId}`);
+                    const res = await fetch(`https://motionboss-backend.vercel.app/api/courses/${courseId}`);
                     const result = await res.json();
                     if (res.ok && result.data) {
                         const course = result.data;
@@ -100,7 +100,7 @@ const CheckoutPage = () => {
         setLoading(true);
 
         const token = localStorage.getItem('token');
-        const BASE_URL = 'http://localhost:5000/api';
+        const BASE_URL = 'https://motionboss-backend.vercel.app/api';
 
         try {
             // Step 1: Create Order

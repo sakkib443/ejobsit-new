@@ -11,7 +11,7 @@ const CourseCard = ({ course }) => {
   return (
     <div className="relative bg-transparent cursor-pointer transition-transform duration-700 ease-in-out hover:scale-[1.03] hover:shadow-xl group perspective rounded-xl">
       <div className="rounded-md border border-gray-200 bg-white p-2 text-gray-800 overflow-hidden transition-all duration-700 ease-in-out">
-        
+
         {/* Thumbnail */}
         <Link href={`/${id}`}>
           <div className="relative h-52 w-full overflow-hidden rounded-xl">
@@ -61,20 +61,20 @@ const CourseCard = ({ course }) => {
         </div>
 
         {/* Actions */}
- 
-         <div className="flex justify-between gap-2 items-center mt-2 mb-2">
+
+        <div className="flex justify-between gap-2 items-center mt-2 mb-2">
           <Link
             href={`/${id}`}
             className="flex gap-2 text-xl items-center border bg-[#41bfb8] border-[#41bfb8] px-4 ml-2 py-2 rounded-md"
           >
             <LuBookOpenCheck className="text-md font-semibold text-white" />
             <p className="work tracking-tight text-[15px] text-white">
-                Details
+              Details
             </p>
           </Link>
 
           <Link
-            href={`https://wa.me/8801321231802?text=${encodeURIComponent(
+            href={`https://wa.me/8801730481212?text=${encodeURIComponent(
               `আমি "${title}" কোর্সটি করতে চাই।`
             )}`}
             target="_blank"
@@ -88,7 +88,7 @@ const CourseCard = ({ course }) => {
             </div>
           </Link>
         </div>
-      
+
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ export default function CreateUserPage() {
         role: 'student',
     });
 
-    const BASE_URL = 'http://localhost:5000/api';
+    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
 
     const handleChange = (e) => {
         const { name, value } = e.target;

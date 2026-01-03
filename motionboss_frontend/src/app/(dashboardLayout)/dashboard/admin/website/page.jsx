@@ -14,7 +14,7 @@ export default function WebsiteAdminPage() {
     const [statusFilter, setStatusFilter] = useState('all');
 
     const fetchWebsites = async () => {
-        const BASE_URL = 'http://localhost:5000/api';
+        const BASE_URL = 'https://motionboss-backend.vercel.app/api';
         const token = localStorage.getItem('token');
         try {
             setLoading(true);
@@ -34,7 +34,7 @@ export default function WebsiteAdminPage() {
 
     const handleDelete = async (id) => {
         if (!confirm("Remove this marketplace product?")) return;
-        const BASE_URL = 'http://localhost:5000/api';
+        const BASE_URL = 'https://motionboss-backend.vercel.app/api';
         const token = localStorage.getItem('token');
         try {
             const res = await fetch(`${BASE_URL}/websites/admin/${id}`, {

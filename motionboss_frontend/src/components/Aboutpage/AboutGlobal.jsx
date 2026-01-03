@@ -46,7 +46,7 @@ const AboutGlobal = () => {
     ];
 
     return (
-        <section ref={sectionRef} className="py-24 lg:py-48 bg-gray-50 dark:bg-[#050505] relative overflow-hidden transition-colors duration-700">
+        <section ref={sectionRef} className="bg-gray-50 dark:bg-[#050505] relative overflow-hidden transition-colors duration-700">
             {/* Background Decorative Tech Elements */}
             <div className="absolute inset-0 pointer-events-none opacity-20 dark:opacity-40">
                 <motion.div

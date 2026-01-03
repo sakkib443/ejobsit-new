@@ -250,9 +250,9 @@ const Navbar = () => {
       </AnimatePresence>
 
       <nav
-        className={`sticky top-0 z-50 transition-all duration-500 ${isSticky
-          ? "bg-white/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] py-2"
-          : "bg-white py-4"
+        className={`sticky top-0 z-50 transition-all duration-300 ${isSticky
+          ? "bg-white/90 dark:bg-[#020202] backdrop-blur-xl dark:backdrop-blur-0 shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] py-2 border-b border-gray-200/50 dark:border-white/5"
+          : "bg-white dark:bg-[#020202] py-4"
           }`}
       >
         <div className="container mx-auto px-4 lg:px-6">
@@ -270,14 +270,14 @@ const Navbar = () => {
 
               {/* Category Dropdown - Desktop */}
               <div className="hidden lg:block relative group">
-                <button className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-gray-50 border border-gray-100 text-gray-700 hover:bg-white hover:border-teal-200 hover:shadow-lg hover:shadow-teal-500/5 transition-all duration-300">
+                <button className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-gray-100 dark:bg-[#0d0d0d] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-100 hover:bg-white dark:hover:bg-[#151515] transition-all duration-300">
                   <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
                     <BiCategory size={18} />
                   </div>
-                  <span className={`text-[14px] font-medium tracking-tight ${bengaliClass}`}>
+                  <span className={`text-[14px] font-bold tracking-tight ${language === 'bn' ? 'hind-siliguri' : ''}`}>
                     {t("navbar.category")}
                   </span>
-                  <LuChevronDown className="text-gray-400 group-hover:rotate-180 transition-transform duration-300" />
+                  <LuChevronDown className="text-gray-400 dark:text-gray-500 group-hover:rotate-180 transition-transform duration-300" />
                 </button>
 
                 {/* Premium Dropdown */}
@@ -301,15 +301,15 @@ const Navbar = () => {
             </div>
 
             {/* Center: Navigation Links - Desktop */}
-            <div className="hidden xl:flex items-center bg-gray-50/50 p-1.5 rounded-full border border-gray-100">
+            <div className="hidden xl:flex items-center bg-gray-100 dark:bg-[#0d0d0d] p-1.5 rounded-full border border-gray-200 dark:border-white/10">
               {menu.map(({ href, label }) => (
                 <Link
                   key={href}
                   href={href}
-                  className={`px-5 py-2 rounded-full text-[14px] transition-all duration-300 ${pathname === href
-                    ? "bg-white text-teal-600 shadow-sm font-medium"
-                    : "text-gray-600 hover:text-teal-600"
-                    } ${bengaliClass}`}
+                  className={`px-5 py-2 rounded-full text-[14px] font-outfit transition-all duration-300 ${pathname === href
+                    ? "bg-white dark:bg-white/20 text-teal-600 dark:text-white shadow-sm font-bold"
+                    : "text-gray-600 dark:text-gray-300 hover:text-teal-600 dark:hover:text-white font-semibold"
+                    } ${language === 'bn' ? 'hind-siliguri' : ''}`}
                 >
                   {label}
                 </Link>

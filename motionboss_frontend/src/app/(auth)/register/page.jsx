@@ -52,7 +52,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const BASE_URL = "http://localhost:5000/api";
+      const BASE_URL = "https://motionboss-backend.vercel.app/api";
       const res = await fetch(`${BASE_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

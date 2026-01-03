@@ -15,7 +15,7 @@ const ReportsPage = () => {
     const [downloadingId, setDownloadingId] = useState(null);
     const [stats, setStats] = useState(null);
 
-    const BASE_URL = 'http://localhost:5000/api';
+    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
 
     useEffect(() => {
         const fetchStats = async () => {

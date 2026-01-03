@@ -14,7 +14,7 @@ const AboutCTA = () => {
     const headingFont = "font-outfit";
 
     return (
-        <section ref={sectionRef} className="py-20 lg:py-32 bg-white dark:bg-[#020202] relative transition-colors duration-700 border-t border-gray-100 dark:border-white/5 overflow-hidden">
+        <section ref={sectionRef} className="bg-white dark:bg-[#020202] relative transition-colors duration-700 border-t border-gray-100 dark:border-white/5 overflow-hidden">
             {/* Dynamic Background Effects */}
             <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] bg-teal-500/5 rounded-full blur-[120px] animate-pulse pointer-events-none" />
             <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
@@ -77,9 +77,9 @@ const AboutCTA = () => {
                                 },
                                 {
                                     icon: LuPhone,
-                                    text: '+880 1700 000000',
+                                    text: '+880 1730-481212',
                                     label: 'HELPLINE',
-                                    action: 'tel:+8801700000000'
+                                    action: 'tel:+8801730481212'
                                 },
                                 {
                                     icon: LuMapPin,

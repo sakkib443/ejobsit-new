@@ -40,7 +40,7 @@ export default function SettingsPage() {
     const [updatingPassword, setUpdatingPassword] = useState(false);
     const [passwordError, setPasswordError] = useState('');
     const [passwordSuccess, setPasswordSuccess] = useState('');
-    const BASE_URL = 'http://localhost:5000/api';
+    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
 
     const handleChange = (key, value) => {
         setSettings(prev => ({ ...prev, [key]: value }));

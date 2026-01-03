@@ -58,7 +58,7 @@ export default function CreateWebsitePage() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const BASE_URL = 'http://localhost:5000/api';
+            const BASE_URL = 'https://motionboss-backend.vercel.app/api';
             try {
                 const catRes = await fetch(`${BASE_URL}/categories?type=website`);
                 const catData = await catRes.json();
@@ -70,7 +70,7 @@ export default function CreateWebsitePage() {
 
     const onSubmit = async (values) => {
         setLoading(true);
-        const BASE_URL = 'http://localhost:5000/api';
+        const BASE_URL = 'https://motionboss-backend.vercel.app/api';
         const token = localStorage.getItem('token');
 
         // Clean up empty arrays

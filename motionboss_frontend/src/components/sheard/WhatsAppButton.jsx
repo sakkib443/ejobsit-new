@@ -8,7 +8,7 @@ const WhatsAppButton = () => {
 
     return (
         <a
-            href="https://wa.me/8801321231802?text=Hello%20BD%20Calling%20Academy!%20I%20want%20to%20know%20more%20about%20your%20courses."
+            href="https://wa.me/8801730481212?text=Hello%20BD%20Calling%20Academy!%20I%20want%20to%20know%20more%20about%20your%20courses."
             target="_blank"
             rel="noopener noreferrer"
             onMouseEnter={() => setIsHovered(true)}

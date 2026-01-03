@@ -170,7 +170,7 @@ const EventsPage = () => {
 
                   {/* Register Button */}
                   <a
-                    href={`https://wa.me/8801321231802?text=${encodeURIComponent(
+                    href={`https://wa.me/8801730481212?text=${encodeURIComponent(
                       `আমি "${event.title}" সেমিনারটিতে যোগ দিতে চাই।`
                     )}`}
                     target="_blank"

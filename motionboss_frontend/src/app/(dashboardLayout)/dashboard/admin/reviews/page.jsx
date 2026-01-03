@@ -13,7 +13,7 @@ export default function ReviewsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [deleteModal, setDeleteModal] = useState({ show: false, id: null });
 
-    const BASE_URL = 'http://localhost:5000/api';
+    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
 
     const fetchReviews = async () => {
         try {

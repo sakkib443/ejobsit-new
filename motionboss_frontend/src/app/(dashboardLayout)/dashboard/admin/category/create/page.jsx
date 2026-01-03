@@ -23,7 +23,7 @@ const CreateCategory = () => {
   // Fetch parent categories
   useEffect(() => {
     const fetchParents = async () => {
-      const BASE_URL = 'http://localhost:5000/api';
+      const BASE_URL = 'https://motionboss-backend.vercel.app/api';
       const token = localStorage.getItem('token');
       try {
         const res = await fetch(`${BASE_URL}/categories/admin/parents`, {
@@ -49,7 +49,7 @@ const CreateCategory = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const BASE_URL = 'http://localhost:5000/api';
+    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
     const token = localStorage.getItem('token');
 
     // Prepare payload

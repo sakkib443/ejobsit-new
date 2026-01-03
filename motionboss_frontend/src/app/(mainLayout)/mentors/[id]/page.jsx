@@ -145,7 +145,7 @@ const SingleMentor = () => {
 
                   {/* WhatsApp Button */}
                   <a
-                    href={`https://wa.me/88${mentor.phone || '01321231802'}?text=${encodeURIComponent(
+                    href={`https://wa.me/88${mentor.phone || '01730481212'}?text=${encodeURIComponent(
                       `Hello ${mentor.name}, I want to learn from you.`
                     )}`}
                     target="_blank"

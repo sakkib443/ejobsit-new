@@ -15,7 +15,7 @@ export default function LessonsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [deleteModal, setDeleteModal] = useState({ show: false, id: null, title: '' });
 
-    const BASE_URL = 'http://localhost:5000/api';
+    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
 
     const fetchLessons = async () => {
         try {

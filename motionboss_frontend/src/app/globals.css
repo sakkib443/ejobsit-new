@@ -92,6 +92,23 @@ div {
 }
 
 /* =====================================================
+   GLOBAL BENGALI FONT - Applied when language is Bengali
+   This class is added to body element via LanguageContext
+   ===================================================== */
+body.font-bengali,
+body.font-bengali * {
+  font-family: var(--font-bengali), var(--font-body) !important;
+}
+
+/* Keep Outfit for icons and special elements in Bengali mode */
+body.font-bengali .icon-font,
+body.font-bengali [class*="lucide-"],
+body.font-bengali [class*="fa-"],
+body.font-bengali .font-icon {
+  font-family: inherit;
+}
+
+/* =====================================================
    FONT UTILITY CLASSES
    ===================================================== */
 
@@ -495,8 +512,8 @@ div {
 }
 
 .dark .bg-white {
-  background: var(--color-gray-900) !important;
-  border-color: var(--color-gray-700) !important;
+  background: var(--color-gray-900);
+  border-color: var(--color-gray-700);
 }
 
 .dark input,
@@ -536,7 +553,7 @@ div {
 
 .dark .bg-gray-50,
 .dark .bg-gray-100 {
-  background: var(--color-gray-800) !important;
+  background: var(--color-gray-800);
 }
 
 .dark .border-gray-200,

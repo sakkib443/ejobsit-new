@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { LuGraduationCap, LuCode, LuGlobe, LuWrench, LuArrowRight } from 'react-icons/lu';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://motionboss-backend.vercel.app/api';
 
 const HomeCategory = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -79,7 +79,7 @@ const HomeCategory = () => {
             subtitle: language === 'bn' ? 'প্রিমিয়াম টেমপ্লেট' : 'Premium Templates',
             itemLabel: language === 'bn' ? 'টেমপ্লেট' : 'Templates',
             color: 'teal',
-            href: '/websites'
+            href: '/website'
         },
         {
             id: 'tools',
@@ -112,7 +112,7 @@ const HomeCategory = () => {
     };
 
     return (
-        <section className='relative bg-gradient-to-b from-gray-50 via-white to-gray-50 py-20 lg:py-28 overflow-hidden'>
+        <section className='relative py-24 overflow-hidden'>
 
             {/* CSS for Animations */}
             <style jsx>{`
@@ -173,24 +173,29 @@ const HomeCategory = () => {
             </div>
 
             <div className='container mx-auto px-4 lg:px-16 relative z-10'>
-                {/* Section Header with Description */}
+                {/* Premium Section Header */}
                 <div className={`text-center mb-14 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 bg-white border border-gray-200 rounded-full shadow-sm">
-                        <span className="w-2 h-2 bg-[#41bfb8] rounded-full animate-pulse"></span>
-                        <span className={`text-sm font-medium text-gray-600 ${bengaliClass}`}>
+                    {/* Premium Badge */}
+                    <div className="inline-flex items-center gap-3 mb-5 px-5 py-2.5 rounded-full bg-white dark:bg-black/50 border border-teal-500/30 dark:border-teal-500/20 shadow-sm backdrop-blur-md transition-all">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-teal-500/20 to-cyan-500/20 flex items-center justify-center">
+                            <span className="w-2.5 h-2.5 bg-teal-500 rounded-full animate-pulse"></span>
+                        </div>
+                        <span className={`text-xs font-black text-teal-600 dark:text-teal-400 uppercase tracking-[0.2em] ${bengaliClass}`}>
                             {language === 'bn' ? 'আমাদের প্রোডাক্ট' : 'Our Products'}
                         </span>
                     </div>
 
-                    <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 ${bengaliClass}`}>
-                        {language === 'bn' ? 'ক্যাটাগরি অনুযায়ী খুঁজুন' : 'Browse by Category'}
+                    {/* Premium Title */}
+                    <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-5 tracking-tight ${bengaliClass}`}>
+                        {language === 'bn'
+                            ? <>ক্যাটাগরি <span className="text-primary">অনুযায়ী</span> খুঁজুন</>
+                            : <>Browse by <span className="text-primary">Category</span></>}
                     </h2>
 
-                    <p className={`text-gray-500 text-base lg:text-lg max-w-2xl mx-auto leading-relaxed ${bengaliClass}`}>
+                    <p className={`text-gray-500 dark:text-gray-400 text-base lg:text-lg max-w-2xl mx-auto leading-relaxed ${bengaliClass}`}>
                         {language === 'bn'
                             ? 'আমাদের বিভিন্ন ক্যাটাগরি থেকে আপনার প্রয়োজনীয় প্রোডাক্ট খুঁজে নিন। কোর্স, সফটওয়্যার, ওয়েবসাইট টেমপ্লেট এবং প্রোডাক্টিভিটি টুলস - সবই এক জায়গায়।'
-                            : 'Explore our diverse categories to find exactly what you need. Courses, software, website templates, and productivity tools - all in one place.'
-                        }
+                            : 'Explore our diverse categories to find exactly what you need. Courses, software, website templates, and productivity tools - all in one place.'}
                     </p>
                 </div>
 
@@ -205,7 +210,7 @@ const HomeCategory = () => {
                             <Link
                                 key={cat.id}
                                 href={cat.href}
-                                className={`group relative bg-white rounded-2xl p-6 border border-gray-100 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:${colors.shadow} overflow-hidden ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
+                                className={`group relative bg-white dark:bg-[#0d0d0d] rounded-[2rem] p-8 border border-gray-200 dark:border-white/10 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] overflow-hidden ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
                                 style={{ transitionDelay: `${index * 100}ms` }}
                             >
                                 {/* Card Background Pattern */}
@@ -217,7 +222,7 @@ const HomeCategory = () => {
                                 <div className={`absolute -top-10 -right-10 w-24 h-24 rounded-full bg-gradient-to-br ${colors.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-500`}></div>
 
                                 {/* Card Inner Design Lines */}
-                                <div className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <div className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                                 {/* Content */}
                                 <div className="relative z-10">
@@ -231,17 +236,17 @@ const HomeCategory = () => {
                                     </div>
 
                                     {/* Title */}
-                                    <h3 className={`text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-800 transition-colors ${bengaliClass}`}>
+                                    <h3 className={`text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-gray-800 dark:group-hover:text-white transition-colors ${bengaliClass}`}>
                                         {cat.title}
                                     </h3>
 
                                     {/* Subtitle */}
-                                    <p className={`text-sm text-gray-500 mb-4 ${bengaliClass}`}>
+                                    <p className={`text-sm text-gray-500 dark:text-gray-400 mb-4 ${bengaliClass}`}>
                                         {cat.subtitle}
                                     </p>
 
                                     {/* Bottom Row */}
-                                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                                    <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-white/10">
                                         {/* Dynamic Items Count */}
                                         <span className={`text-sm font-semibold ${colors.text} ${bengaliClass}`}>
                                             {count}+ {cat.itemLabel}

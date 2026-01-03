@@ -114,7 +114,7 @@ const AboutFeatures = () => {
     }
 
     return (
-        <section ref={sectionRef} className="py-24 lg:py-48 bg-white dark:bg-[#020202] relative transition-colors duration-700">
+        <section ref={sectionRef} className="bg-white dark:bg-[#020202] relative transition-colors duration-700">
             <div className="container mx-auto px-4 lg:px-16 relative z-10">
                 <div className="grid lg:grid-cols-12 gap-16 lg:gap-24 items-start">
                     {/* Sticky Sidebar */}

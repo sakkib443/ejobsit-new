@@ -41,7 +41,7 @@ const ProductCard = ({ product, type }) => {
     return (
         <div className="group relative w-full">
             {/* Card Container */}
-            <div className="relative bg-white rounded-md border border-gray-100 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-gray-200/60 hover:-translate-y-2 hover:border-transparent">
+            <div className={`relative bg-white dark:bg-[#0d0d0d] rounded-[2rem] border border-gray-200 dark:border-white/10 overflow-hidden transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] hover:-translate-y-2 flex flex-col group/card`}>
 
                 {/* Image Container */}
                 <div className="relative h-48 w-full overflow-hidden">
@@ -58,7 +58,7 @@ const ProductCard = ({ product, type }) => {
 
                     {/* Type Badge */}
                     <div className="absolute top-3 left-3">
-                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-[#F79952] text-white text-xs font-medium rounded-md shadow-lg capitalize">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#F79952] text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-[#F79952]/20">
                             {type}
                         </span>
                     </div>
@@ -93,14 +93,14 @@ const ProductCard = ({ product, type }) => {
                     </Link>
 
                     {/* Meta Info */}
-                    <div className="flex items-center gap-4 text-xs text-gray-500 work">
-                        <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-4 text-[10px] text-gray-500 font-bold uppercase tracking-tight">
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-400/20 dark:border-white/5">
                             <LuClock className="text-[#41bfb8]" />
                             <span>{product.version || 'v1.0.0'}</span>
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-400/20 dark:border-white/5">
                             <LuUsers className="text-[#41bfb8]" />
-                            <span>{product.salesCount || 10}+ Licenses</span>
+                            <span>{product.salesCount || 10}+</span>
                         </div>
                     </div>
 
@@ -132,20 +132,20 @@ const ProductCard = ({ product, type }) => {
                     <div className="flex gap-2 pt-2">
                         <Link
                             href={detailUrl}
-                            className="flex-1 flex items-center justify-center gap-2 bg-[#41bfb8] hover:bg-[#38a89d] text-white px-4 py-2.5 rounded-md font-medium text-sm work transition-all duration-300"
+                            className="flex-1 flex items-center justify-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-4 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#41bfb8] dark:hover:bg-[#41bfb8] dark:hover:text-white transition-all duration-300"
                         >
-                            <LuEye className="text-lg" />
+                            <LuEye className="text-sm" />
                             <span>Details</span>
                         </Link>
                         <button
                             onClick={handleAddToCart}
                             disabled={isAdded}
-                            className={`flex flex-1 items-center justify-center gap-2 border px-4 py-2.5 rounded-md font-medium text-sm work transition-all duration-300 ${isAdded
+                            className={`flex flex-1 items-center justify-center gap-2 border px-4 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all duration-300 ${isAdded
                                 ? 'bg-emerald-500 text-white border-emerald-500'
-                                : 'border-gray-200 text-gray-700 hover:bg-gray-50'
+                                : 'border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'
                                 }`}
                         >
-                            {isAdded ? <LuCheck className="text-lg" /> : <LuShoppingCart className="text-lg" />}
+                            {isAdded ? <LuCheck className="text-sm" /> : <LuShoppingCart className="text-sm" />}
                             <span>{isAdded ? 'Added' : 'Cart'}</span>
                         </button>
                     </div>

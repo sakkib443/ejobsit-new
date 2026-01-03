@@ -18,211 +18,204 @@ const WhatWeProvide = () => {
 
   const features = [
     {
-      icon: LuTarget,
-      titleKey: "jobPlacement",
-      descKey: "jobPlacementDesc",
-      emoji: "🎯",
-      color: "#41bfb8",
-      bgColor: "#f0fdfc"
-    },
-    {
       icon: LuRocket,
       titleKey: "lifetimeSupport",
       descKey: "lifetimeSupportDesc",
       emoji: "🚀",
-      color: "#F79952",
-      bgColor: "#fffbeb"
+      color: "orange",
+    },
+    {
+      icon: LuTarget,
+      titleKey: "jobPlacement",
+      descKey: "jobPlacementDesc",
+      emoji: "🎯",
+      color: "teal",
     },
     {
       icon: LuAward,
       titleKey: "getCertification",
       descKey: "getCertificationDesc",
       emoji: "🏅",
-      color: "#8B5CF6",
-      bgColor: "#f5f3ff"
+      color: "orange",
     }
   ];
 
+  const getColorClasses = (color) => {
+    if (color === 'teal') {
+      return {
+        gradient: 'from-[#41bfb8] to-[#2dd4bf]',
+        light: 'bg-[#41bfb8]/10',
+        text: 'text-[#41bfb8]',
+        border: 'border-[#41bfb8]/20',
+      };
+    }
+    return {
+      gradient: 'from-[#F79952] to-[#fb923c]',
+      light: 'bg-[#F79952]/10',
+      text: 'text-[#F79952]',
+      border: 'border-[#F79952]/20',
+    };
+  };
+
   return (
-    <section className="relative py-16 lg:py-20 bg-gradient-to-b from-white via-slate-50/30 to-white overflow-hidden">
-      {/* Animated Gradient Orbs */}
-      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-gradient-to-br from-[#41bfb8]/10 to-transparent rounded-full blur-3xl animate-blob"></div>
-      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-gradient-to-tl from-[#F79952]/10 to-transparent rounded-full blur-3xl animate-blob animation-delay-2000"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-purple-100/10 via-transparent to-[#41bfb8]/5 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
+    <section className="relative py-24 overflow-hidden">
 
-      {/* Floating Geometric Shapes */}
-      <div className="absolute top-20 right-[12%] w-16 h-16 border-2 border-[#41bfb8]/15 rounded-xl rotate-12 animate-float"></div>
-      <div className="absolute bottom-24 left-[10%] w-12 h-12 border-2 border-[#F79952]/15 rounded-lg -rotate-12 animate-float animation-delay-1000"></div>
-      <div className="absolute top-1/3 left-[5%] w-8 h-8 bg-[#41bfb8]/10 rounded-lg rotate-45 animate-float animation-delay-2000"></div>
-      <div className="absolute bottom-1/3 right-[8%] w-10 h-10 border border-purple-200/20 rounded-full animate-float animation-delay-3000"></div>
+      {/* CSS for Animations */}
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        @keyframes float-reverse {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(20px) rotate(-5deg); }
+        }
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-float-reverse { animation: float-reverse 7s ease-in-out infinite; }
+        .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+      `}</style>
 
-      {/* Sparkle Effects */}
-      <svg className="absolute top-[15%] left-[20%] w-5 h-5 text-[#41bfb8]/30 animate-sparkle" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
-      </svg>
-      <svg className="absolute bottom-[20%] right-[25%] w-4 h-4 text-[#F79952]/30 animate-sparkle animation-delay-2000" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
-      </svg>
-      <svg className="absolute top-[40%] right-[10%] w-3 h-3 text-[#41bfb8]/25 animate-sparkle animation-delay-4000" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
-      </svg>
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Floating Circles */}
+        <div className="absolute top-20 left-[10%] w-72 h-72 bg-gradient-to-br from-[#41bfb8]/10 to-transparent rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-20 right-[10%] w-80 h-80 bg-gradient-to-br from-[#F79952]/10 to-transparent rounded-full blur-3xl animate-float-reverse"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-[#41bfb8]/5 to-[#F79952]/5 rounded-full blur-3xl animate-pulse-slow"></div>
 
-      {/* Subtle Grid Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(65,191,184,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(65,191,184,0.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+        {/* Geometric Shapes */}
+        <div className="absolute top-32 right-[15%] w-16 h-16 border-2 border-[#41bfb8]/20 rounded-xl animate-float" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/4 left-[8%] w-12 h-12 border-2 border-[#F79952]/20 rounded-full animate-float-reverse" style={{ animationDelay: '0.5s' }}></div>
+        <div className="absolute bottom-1/4 right-[8%] w-20 h-20 border-2 border-[#41bfb8]/15 rounded-2xl animate-spin-slow"></div>
+        <div className="absolute bottom-32 left-[20%] w-8 h-8 bg-[#F79952]/10 rounded-lg animate-float" style={{ animationDelay: '2s' }}></div>
 
-      {/* Floating Dots */}
-      <div className="absolute top-[25%] right-[30%] w-2 h-2 bg-[#41bfb8] rounded-full animate-ping opacity-30"></div>
-      <div className="absolute bottom-[30%] left-[25%] w-1.5 h-1.5 bg-[#F79952] rounded-full animate-ping animation-delay-1000 opacity-30"></div>
-      <div className="absolute top-[60%] left-[15%] w-2 h-2 bg-[#41bfb8]/50 rounded-full animate-ping animation-delay-3000 opacity-25"></div>
+        {/* Dots Pattern */}
+        <div className="absolute top-40 left-[5%] flex flex-col gap-2 opacity-30">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex gap-2">
+              {[...Array(3)].map((_, j) => (
+                <div key={j} className="w-1.5 h-1.5 bg-[#41bfb8] rounded-full"></div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="absolute bottom-40 right-[5%] flex flex-col gap-2 opacity-30">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex gap-2">
+              {[...Array(3)].map((_, j) => (
+                <div key={j} className="w-1.5 h-1.5 bg-[#F79952] rounded-full"></div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="container mx-auto px-4 lg:px-16 relative z-10">
-        {/* Section Header */}
-        <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-          <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-gradient-to-r from-[#41bfb8]/10 to-[#F79952]/10 border border-[#41bfb8]/20 rounded-full">
-            <HiOutlineSparkles className="text-[#41bfb8] text-lg" />
-            <span className={`text-sm font-medium text-gray-700 work ${bengaliClass}`}>{t("whatWeProvide.badge")}</span>
+        {/* Premium Section Header - Same as HomeCategory */}
+        <div className={`text-center mb-14 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+          {/* Premium Badge */}
+          <div className="inline-flex items-center gap-3 mb-5 px-5 py-2.5 rounded-full bg-white dark:bg-black/50 border border-teal-500/30 dark:border-teal-500/20 shadow-sm backdrop-blur-md transition-all">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-teal-500/20 to-cyan-500/20 flex items-center justify-center">
+              <HiOutlineSparkles className="text-[#41bfb8]" size={14} />
+            </div>
+            <span className={`text-xs font-black text-gray-700 dark:text-gray-300 uppercase tracking-[0.2em] ${bengaliClass}`}>
+              {t("whatWeProvide.badge")}
+            </span>
           </div>
-          <h2 className={`text-2xl sm:text-3xl lg:text-4xl font-bold outfit text-gray-800 ${bengaliClass}`}>
-            {t("whatWeProvide.title1")}<span className="text-[#41bfb8]">{t("whatWeProvide.title2")}</span>
+
+          {/* Premium Title */}
+          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-5 tracking-tight ${bengaliClass}`}>
+            {t("whatWeProvide.title1")}<span className="text-primary">{t("whatWeProvide.title2")}</span>
           </h2>
-          <p className={`mt-3 text-gray-500 work text-sm sm:text-base max-w-2xl mx-auto ${bengaliClass}`}>
+
+          <p className={`text-gray-500 dark:text-gray-400 text-base lg:text-lg max-w-2xl mx-auto leading-relaxed ${bengaliClass}`}>
             {t("whatWeProvide.subtitle")}
           </p>
         </div>
 
-        {/* Features Grid */}
+        {/* Features Grid - Same card style as HomeCategory */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[features[1], features[0], features[2]].map((feature, index) => {
-            const isCenterCard = index === 1; // Job Placement Support is now at index 1
+          {features.map((feature, index) => {
+            const colors = getColorClasses(feature.color);
             return (
               <div
                 key={index}
-                className={`group relative bg-white border border-gray-200 rounded-md p-6 lg:p-8 transition-all duration-500 hover:shadow-2xl hover:shadow-gray-200/50 hover:-translate-y-2 hover:border-transparent ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
+                className={`group relative bg-white dark:bg-[#0d0d0d] rounded-[2rem] p-8 border border-gray-200 dark:border-white/10 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] overflow-hidden ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
-                {/* Top Accent Line */}
-                <div
-                  className={`absolute top-0 left-0 h-1 rounded-t-md transition-all duration-500 ${isCenterCard ? 'w-full' : 'w-0 group-hover:w-full'}`}
-                  style={{ backgroundColor: feature.color }}
-                ></div>
+                {/* Card Background Pattern */}
+                <div className="absolute top-0 right-0 w-32 h-32 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <div className={`absolute top-4 right-4 w-24 h-24 rounded-full bg-gradient-to-br ${colors.gradient} opacity-10 blur-xl`}></div>
+                </div>
 
-                {/* Background Gradient on Hover (Permanent for center card) */}
-                <div
-                  className={`absolute inset-0 transition-opacity duration-500 rounded-md ${isCenterCard ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-                  style={{ background: `linear-gradient(135deg, ${feature.bgColor}, transparent)` }}
-                ></div>
+                {/* Decorative Corner */}
+                <div className={`absolute -top-10 -right-10 w-24 h-24 rounded-full bg-gradient-to-br ${colors.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-500`}></div>
 
+                {/* Card Inner Design Lines */}
+                <div className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                {/* Content */}
                 <div className="relative z-10">
-                  {/* Icon */}
-                  <div
-                    className={`w-14 h-14 rounded-md flex items-center justify-center mb-4 transition-transform duration-300 ${isCenterCard ? 'scale-110' : 'group-hover:scale-110'} relative overflow-hidden`}
-                    style={{ backgroundColor: feature.bgColor }}
-                  >
-                    <feature.icon className="text-2xl relative z-10" style={{ color: feature.color }} />
-
-                    {/* Moving Particles Animation */}
-                    <div
-                      className="absolute w-2 h-2 rounded-full opacity-40 animate-place-move"
-                      style={{
-                        backgroundColor: feature.color,
-                        top: '20%',
-                        left: '-20%',
-                        animationDuration: '3s',
-                        animationDelay: '0s'
-                      }}
-                    ></div>
-                    <div
-                      className="absolute w-1.5 h-1.5 rounded-full opacity-30 animate-place-move"
-                      style={{
-                        backgroundColor: feature.color,
-                        bottom: '30%',
-                        left: '-20%',
-                        animationDuration: '4s',
-                        animationDelay: '1.5s'
-                      }}
-                    ></div>
-                    <div
-                      className="absolute w-1 h-1 rounded-full opacity-20 animate-place-move"
-                      style={{
-                        backgroundColor: feature.color,
-                        top: '60%',
-                        left: '-20%',
-                        animationDuration: '5s',
-                        animationDelay: '0.5s'
-                      }}
-                    ></div>
+                  {/* Icon with Ring */}
+                  <div className="relative mb-5">
+                    <div className={`w-16 h-16 ${colors.light} rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110`}>
+                      <feature.icon size={28} className={`${colors.text} transition-transform duration-500 group-hover:scale-110`} />
+                    </div>
+                    {/* Decorative ring on hover */}
+                    <div className={`absolute inset-0 w-16 h-16 rounded-2xl border-2 ${colors.border} scale-100 opacity-0 group-hover:scale-125 group-hover:opacity-100 transition-all duration-500`}></div>
                   </div>
 
-                  {/* Title */}
-                  <h3 className={`outfit-semibold text-xl font-bold text-gray-800 mb-3 flex items-center gap-2 ${bengaliClass}`}>
+                  {/* Title with Emoji */}
+                  <h3 className={`text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-gray-800 dark:group-hover:text-white transition-colors flex items-center gap-2 ${bengaliClass}`}>
                     {t(`whatWeProvide.features.${feature.titleKey}`)}
-                    <span
-                      className="animate-float"
-                      style={{
-                        animationDelay: `${index * 500}ms`, // Staggered animation
-                        display: 'inline-block'
-                      }}
-                    >
-                      {feature.emoji}
-                    </span>
+                    <span className="text-xl">{feature.emoji}</span>
                   </h3>
 
                   {/* Description */}
-                  <p className={`work text-gray-600 text-sm leading-relaxed mb-4 ${bengaliClass}`}>
+                  <p className={`text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed ${bengaliClass}`}>
                     {t(`whatWeProvide.features.${feature.descKey}`)}
                   </p>
 
                   {/* Learn More Link */}
-                  <div className={`flex items-center text-sm font-medium transition-colors duration-300 ${isCenterCard ? 'gap-2' : 'gap-1 group-hover:gap-2'} ${bengaliClass}`} style={{ color: feature.color }}>
-                    <span className="work">{t("whatWeProvide.learnMore")}</span>
-                    <LuArrowRight className={`transition-transform duration-300 ${isCenterCard ? 'translate-x-1' : 'group-hover:translate-x-1'}`} />
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-white/10">
+                    <span className={`text-sm font-semibold ${colors.text} uppercase tracking-widest text-xs ${bengaliClass}`}>
+                      {t("whatWeProvide.learnMore")}
+                    </span>
+                    <div className={`w-8 h-8 rounded-lg ${colors.light} flex items-center justify-center transition-all duration-300 group-hover:bg-gradient-to-r group-hover:${colors.gradient}`}>
+                      <LuArrowRight size={16} className={`${colors.text} transition-all duration-300 group-hover:text-white group-hover:translate-x-0.5`} />
+                    </div>
                   </div>
                 </div>
 
-                {/* Corner Decoration */}
-                <div
-                  className={`absolute bottom-0 right-0 w-20 h-20 transition-opacity duration-300 ${isCenterCard ? 'opacity-10' : 'opacity-5 group-hover:opacity-10'}`}
-                  style={{
-                    background: `radial-gradient(circle at bottom right, ${feature.color}, transparent)`,
-                    borderRadius: '0 0 0.375rem 0'
-                  }}
-                ></div>
-
-                <style jsx>{`
-                  @keyframes place-move {
-                    0% {
-                      transform: translate(0, 0);
-                      opacity: 0;
-                    }
-                    10% {
-                      opacity: 0.4;
-                    }
-                    90% {
-                      opacity: 0.4;
-                    }
-                    100% {
-                      transform: translate(300%, 0); /* Moves moves across the container rightward */
-                      opacity: 0;
-                      left: 100%;
-                    }
-                  }
-                  .animate-place-move {
-                    animation: place-move linear infinite;
-                  }
-                `}</style>
+                {/* Bottom Accent Line */}
+                <div className={`absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r ${colors.gradient} group-hover:w-full transition-all duration-500 rounded-b-2xl`}></div>
               </div>
             );
           })}
         </div>
 
-        {/* Bottom CTA */}
-        <div className={`text-center mt-12 transition-all duration-700 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        {/* Bottom CTA - Same design as HomeCategory  */}
+        <div className={`flex flex-col sm:flex-row items-center justify-center gap-6 mt-14 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
           <Link
             href="/about"
-            className={`inline-flex items-center gap-2 px-6 py-3 border-2 border-[#41bfb8] text-[#41bfb8] rounded-md font-semibold work hover:bg-[#41bfb8] hover:text-white transition-all duration-300 group ${bengaliClass}`}
+            className={`group relative bg-white dark:bg-[#0d0d0d] rounded-2xl px-8 py-4 border border-gray-200 dark:border-white/10 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] flex items-center gap-4 ${bengaliClass}`}
           >
-            <span>{t("whatWeProvide.learnMoreAboutUs")}</span>
-            <LuArrowRight className="transform group-hover:translate-x-1 transition-transform" />
+            <span className="font-bold text-gray-900 dark:text-white">
+              {t("whatWeProvide.learnMoreAboutUs")}
+            </span>
+            <div className="w-10 h-10 rounded-xl bg-[#41bfb8]/10 flex items-center justify-center transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-[#41bfb8] group-hover:to-[#2dd4bf]">
+              <LuArrowRight size={18} className="text-[#41bfb8] transition-all duration-300 group-hover:text-white group-hover:translate-x-0.5" />
+            </div>
+            {/* Bottom Accent Line */}
+            <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#41bfb8] to-[#2dd4bf] group-hover:w-full transition-all duration-500 rounded-b-2xl"></div>
           </Link>
         </div>
       </div>

@@ -96,7 +96,7 @@ export default function AnalyticsPage() {
         software: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     });
 
-    const BASE_URL = 'http://localhost:5000/api';
+    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
 
     const fetchAnalytics = async () => {
         try {

@@ -13,7 +13,7 @@ const UserManagement = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [editData, setEditData] = useState({});
 
-  const BASE_URL = 'http://localhost:5000/api';
+  const BASE_URL = 'https://motionboss-backend.vercel.app/api';
 
   const fetchUsers = async () => {
     const token = localStorage.getItem('token');

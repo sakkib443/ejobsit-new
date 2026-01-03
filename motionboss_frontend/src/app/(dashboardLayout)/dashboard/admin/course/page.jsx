@@ -28,7 +28,7 @@ export default function CoursesPage() {
   const [viewMode, setViewMode] = useState('grid');
 
   const loadCourses = async () => {
-    const BASE_URL = 'http://localhost:5000/api';
+    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
     const token = localStorage.getItem('token');
     setLoading(true);
     try {
@@ -50,7 +50,7 @@ export default function CoursesPage() {
 
   const handleDelete = async (id) => {
     if (!confirm('Are you sure you want to delete this course?')) return;
-    const BASE_URL = 'http://localhost:5000/api';
+    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
     const token = localStorage.getItem('token');
     try {
       const res = await fetch(`${BASE_URL}/courses/${id}`, {

@@ -597,7 +597,7 @@ const LanguageProgramPage = () => {
 
                             {/* WhatsApp Button */}
                             <a
-                                href="https://wa.me/8801321231802?text=Hello! I want to know about IELTS exam dates and registration."
+                                href="https://wa.me/8801730481212?text=Hello! I want to know about IELTS exam dates and registration."
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className={`w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:shadow-[#25D366]/30 transition-all duration-300 ${fontClass}`}
@@ -684,7 +684,7 @@ const LanguageProgramPage = () => {
                             <span>{language === "bn" ? "যোগাযোগ করুন" : "Contact Us"}</span>
                         </Link>
                         <a
-                            href="https://wa.me/8801321231802"
+                            href="https://wa.me/8801730481212"
                             target="_blank"
                             rel="noopener noreferrer"
                             className={`inline-flex items-center gap-2 px-8 py-4 bg-white/20 text-white border-2 border-white/40 rounded-xl font-semibold hover:bg-white hover:text-[#41bfb8] transition-all duration-300 ${fontClass}`}

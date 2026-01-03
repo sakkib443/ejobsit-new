@@ -175,13 +175,13 @@ const Footer = () => {
             </h4>
             <ul className="space-y-4">
               <li>
-                <a href="tel:+8801321231802" className="group flex items-start gap-3">
+                <a href="tel:+8801730481212" className="group flex items-start gap-3">
                   <div className="w-9 h-9 rounded-md bg-[#41bfb8]/10 flex items-center justify-center shrink-0 group-hover:bg-[#41bfb8]/20 transition-colors">
                     <IoCallOutline className="text-[#41bfb8]" />
                   </div>
                   <div>
                     <p className={`text-xs text-gray-400 work ${bengaliClass}`}>{t("footer.phone")}</p>
-                    <p className="text-gray-700 text-sm work group-hover:text-[#41bfb8] transition-colors">+880 1321-231802</p>
+                    <p className="text-gray-700 text-sm work group-hover:text-[#41bfb8] transition-colors">+880 1730-481212</p>
                   </div>
                 </a>
               </li>
