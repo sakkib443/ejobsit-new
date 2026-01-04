@@ -88,6 +88,8 @@ export interface ICourse {
     averageRating: number;            // Average review rating
     totalReviews: number;             // Number of reviews
     totalViews: number;               // Page views
+    likeCount: number;                // Total likes
+    likedBy: Types.ObjectId[];        // Users who liked
 
     // ==================== SEO ====================
     metaTitle?: string;

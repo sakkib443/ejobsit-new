@@ -90,7 +90,7 @@ const ReportsPage = () => {
             doc.rect(0, 0, 210, 40, 'F');
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(24);
-            doc.text('MOTION BOSS PLATFORM REPORT', 15, 20);
+            doc.text('EJOBS IT PLATFORM REPORT', 15, 20);
             doc.setFontSize(10);
             doc.text(`Generated on: ${timestamp}`, 15, 30);
             doc.text(`Report Type: ${type.toUpperCase()}`, 170, 30, { align: 'right' });
@@ -187,7 +187,7 @@ const ReportsPage = () => {
                 });
             }
 
-            doc.save(`MotionBoss_${type}_Report_${new Date().getTime()}.pdf`);
+            doc.save(`EjobsIT_${type}_Report_${new Date().getTime()}.pdf`);
         } catch (error) {
             console.error('PDF Generation Error:', error);
             alert('Failed to generate PDF. Please check console for details.');
@@ -280,8 +280,8 @@ const ReportsPage = () => {
                                 onClick={() => handleDownload(report.id)}
                                 disabled={downloadingId !== null}
                                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95 ${downloadingId === report.id
-                                        ? (isDark ? 'bg-slate-800 text-slate-500' : 'bg-slate-100 text-slate-400')
-                                        : (isDark ? 'bg-white text-slate-950 hover:bg-slate-100' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-lg')
+                                    ? (isDark ? 'bg-slate-800 text-slate-500' : 'bg-slate-100 text-slate-400')
+                                    : (isDark ? 'bg-white text-slate-950 hover:bg-slate-100' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-lg')
                                     }`}
                             >
                                 {downloadingId === report.id ? (

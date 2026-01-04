@@ -36,7 +36,18 @@ export default function MouseCursorEffect() {
         };
     };
 
+    const [isMobile, setIsMobile] = useState(false);
+
     useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    useEffect(() => {
+        if (isMobile) return;
+
         const handleMouseMove = (e) => {
             // 10% chance to spawn trail
             if (Math.random() > 0.9) {
@@ -64,11 +75,13 @@ export default function MouseCursorEffect() {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("click", handleClick);
         };
-    }, []);
+    }, [isMobile]);
 
     const removeParticle = (id) => {
         setParticles((prev) => prev.filter((p) => p.id !== id));
     };
+
+    if (isMobile) return null;
 
     return (
         <div className="pointer-events-none fixed inset-0 overflow-hidden z-[99999]">

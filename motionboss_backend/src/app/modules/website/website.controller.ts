@@ -1,5 +1,5 @@
 // ===================================================================
-// ExtraWeb Backend - Website Controller
+// ejobsit Backend - Website Controller
 // HTTP Request handling for Website Products
 // ===================================================================
 
@@ -73,7 +73,7 @@ const WebsiteController = {
         await WebsiteService.incrementViewCount(req.params.id);
 
         // Check if user has liked
-        const userId = req.user?._id?.toString();
+        const userId = req.user?.userId || (req.user as any)?._id?.toString();
         const isLiked = userId && website.likedBy?.some(id => id.toString() === userId);
 
         sendResponse(res, {
@@ -88,11 +88,15 @@ const WebsiteController = {
     getWebsiteBySlug: catchAsync(async (req: Request, res: Response) => {
         const website = await WebsiteService.getWebsiteBySlug(req.params.slug);
 
+        // Check if user has liked
+        const userId = req.user?.userId || (req.user as any)?._id?.toString();
+        const isLiked = userId && website.likedBy?.some(id => id.toString() === userId);
+
         sendResponse(res, {
             statusCode: 200,
             success: true,
             message: 'Website fetched successfully',
-            data: website,
+            data: { ...JSON.parse(JSON.stringify(website)), isLiked: !!isLiked },
         });
     }),
 
@@ -229,8 +233,11 @@ const WebsiteController = {
 
     // ==================== TOGGLE LIKE ====================
     toggleLike: catchAsync(async (req: Request, res: Response) => {
-        const userId = req.user!._id.toString();
-        const result = await WebsiteService.toggleLike(req.params.id, userId);
+        const userId = req.user?.userId || (req.user as any)?._id || (req.user as any)?.id;
+        if (!userId) {
+            throw new AppError(401, 'User ID not found in token');
+        }
+        const result = await WebsiteService.toggleLike(req.params.id, userId.toString());
 
         sendResponse(res, {
             statusCode: 200,

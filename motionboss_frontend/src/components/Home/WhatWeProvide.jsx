@@ -5,16 +5,36 @@ import { LuTarget, LuRocket, LuAward, LuArrowRight } from "react-icons/lu";
 import { HiOutlineSparkles } from "react-icons/hi2";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
+import { motion } from 'framer-motion';
+
+// Professional Animation variants
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 40, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.46, 0.45, 0.94]
+    }
+  }
+};
 
 const WhatWeProvide = () => {
-  const [isVisible, setIsVisible] = useState(false);
   const { t, language } = useLanguage();
   const bengaliClass = language === "bn" ? "hind-siliguri" : "";
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   const features = [
     {
@@ -120,90 +140,181 @@ const WhatWeProvide = () => {
 
       <div className="container mx-auto px-4 lg:px-16 relative z-10">
         {/* Premium Section Header - Same as HomeCategory */}
-        <div className={`text-center mb-14 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        <motion.div
+          className="text-center mb-14"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+        >
           {/* Premium Badge */}
-          <div className="inline-flex items-center gap-3 mb-5 px-5 py-2.5 rounded-full bg-white dark:bg-black/50 border border-teal-500/30 dark:border-teal-500/20 shadow-sm backdrop-blur-md transition-all">
+          <motion.div
+            className="inline-flex items-center gap-3 mb-5 px-5 py-2.5 rounded-full bg-white dark:bg-black/50 border border-teal-500/30 dark:border-teal-500/20 shadow-sm backdrop-blur-md"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
             <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-teal-500/20 to-cyan-500/20 flex items-center justify-center">
               <HiOutlineSparkles className="text-[#41bfb8]" size={14} />
             </div>
             <span className={`text-xs font-black text-gray-700 dark:text-gray-300 uppercase tracking-[0.2em] ${bengaliClass}`}>
               {t("whatWeProvide.badge")}
             </span>
-          </div>
+          </motion.div>
 
           {/* Premium Title */}
-          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-5 tracking-tight ${bengaliClass}`}>
+          <motion.h2
+            className={`text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-5 tracking-tight ${bengaliClass}`}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
             {t("whatWeProvide.title1")}<span className="text-primary">{t("whatWeProvide.title2")}</span>
-          </h2>
+          </motion.h2>
 
-          <p className={`text-gray-500 dark:text-gray-400 text-base lg:text-lg max-w-2xl mx-auto leading-relaxed ${bengaliClass}`}>
+          <motion.p
+            className={`text-gray-500 dark:text-gray-400 text-base lg:text-lg max-w-2xl mx-auto leading-relaxed ${bengaliClass}`}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
             {t("whatWeProvide.subtitle")}
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Features Grid - Same card style as HomeCategory */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+        >
           {features.map((feature, index) => {
             const colors = getColorClasses(feature.color);
             return (
-              <div
+              <motion.div
                 key={index}
-                className={`group relative bg-white dark:bg-[#0d0d0d] rounded-[2rem] p-8 border border-gray-200 dark:border-white/10 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] overflow-hidden ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
-                style={{ transitionDelay: `${index * 100}ms` }}
+                variants={cardVariants}
+                whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.3 } }}
+                className="group relative bg-white dark:bg-[#0d0d0d] rounded-[2rem] p-8 border border-gray-200 dark:border-white/10 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] overflow-hidden"
               >
                 {/* Card Background Pattern */}
-                <div className="absolute top-0 right-0 w-32 h-32 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <motion.div
+                  className="absolute top-0 right-0 w-32 h-32 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
                   <div className={`absolute top-4 right-4 w-24 h-24 rounded-full bg-gradient-to-br ${colors.gradient} opacity-10 blur-xl`}></div>
-                </div>
+                </motion.div>
 
                 {/* Decorative Corner */}
                 <div className={`absolute -top-10 -right-10 w-24 h-24 rounded-full bg-gradient-to-br ${colors.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-500`}></div>
 
                 {/* Card Inner Design Lines */}
-                <div className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <motion.div
+                  className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent"
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  whileInView={{ scaleX: 1, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                ></motion.div>
 
                 {/* Content */}
                 <div className="relative z-10">
-                  {/* Icon with Ring */}
-                  <div className="relative mb-5">
-                    <div className={`w-16 h-16 ${colors.light} rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110`}>
-                      <feature.icon size={28} className={`${colors.text} transition-transform duration-500 group-hover:scale-110`} />
+                  {/* Icon with Ring - Animated */}
+                  <motion.div
+                    className="relative mb-5"
+                    initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      duration: 0.5,
+                      delay: index * 0.08,
+                      ease: [0.25, 0.46, 0.45, 0.94]
+                    }}
+                  >
+                    <div className={`w-16 h-16 ${colors.light} rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg`}>
+                      <motion.div
+                        whileHover={{ scale: 1.15 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                      >
+                        <feature.icon size={28} className={`${colors.text} transition-all duration-300`} />
+                      </motion.div>
                     </div>
                     {/* Decorative ring on hover */}
                     <div className={`absolute inset-0 w-16 h-16 rounded-2xl border-2 ${colors.border} scale-100 opacity-0 group-hover:scale-125 group-hover:opacity-100 transition-all duration-500`}></div>
-                  </div>
+                  </motion.div>
 
-                  {/* Title with Emoji */}
-                  <h3 className={`text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-gray-800 dark:group-hover:text-white transition-colors flex items-center gap-2 ${bengaliClass}`}>
+                  {/* Title with Emoji - Animated */}
+                  <motion.h3
+                    className={`text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-gray-800 dark:group-hover:text-white transition-colors flex items-center gap-2 ${bengaliClass}`}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.1 + 0.2 }}
+                  >
                     {t(`whatWeProvide.features.${feature.titleKey}`)}
                     <span className="text-xl">{feature.emoji}</span>
-                  </h3>
+                  </motion.h3>
 
-                  {/* Description */}
-                  <p className={`text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed ${bengaliClass}`}>
+                  {/* Description - Animated */}
+                  <motion.p
+                    className={`text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed ${bengaliClass}`}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.1 + 0.3 }}
+                  >
                     {t(`whatWeProvide.features.${feature.descKey}`)}
-                  </p>
+                  </motion.p>
 
-                  {/* Learn More Link */}
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-white/10">
+                  {/* Learn More Link - Animated */}
+                  <motion.div
+                    className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-white/10"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.1 + 0.4 }}
+                  >
                     <span className={`text-sm font-semibold ${colors.text} uppercase tracking-widest text-xs ${bengaliClass}`}>
                       {t("whatWeProvide.learnMore")}
                     </span>
-                    <div className={`w-8 h-8 rounded-lg ${colors.light} flex items-center justify-center transition-all duration-300 group-hover:bg-gradient-to-r group-hover:${colors.gradient}`}>
-                      <LuArrowRight size={16} className={`${colors.text} transition-all duration-300 group-hover:text-white group-hover:translate-x-0.5`} />
-                    </div>
-                  </div>
+                    <motion.div
+                      className={`w-8 h-8 rounded-lg ${colors.light} flex items-center justify-center transition-all duration-300 group-hover:bg-gradient-to-r group-hover:${colors.gradient}`}
+                      whileHover={{ scale: 1.1, x: 3 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <LuArrowRight size={16} className={`${colors.text} transition-all duration-300 group-hover:text-white`} />
+                    </motion.div>
+                  </motion.div>
                 </div>
 
                 {/* Bottom Accent Line */}
-                <div className={`absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r ${colors.gradient} group-hover:w-full transition-all duration-500 rounded-b-2xl`}></div>
-              </div>
+                <motion.div
+                  className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r ${colors.gradient} rounded-b-2xl`}
+                  initial={{ width: 0 }}
+                  whileHover={{ width: "100%" }}
+                  transition={{ duration: 0.5 }}
+                ></motion.div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Bottom CTA - Same design as HomeCategory  */}
-        <div className={`flex flex-col sm:flex-row items-center justify-center gap-6 mt-14 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        <motion.div
+          className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-14"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
           <Link
             href="/about"
             className={`group relative bg-white dark:bg-[#0d0d0d] rounded-2xl px-8 py-4 border border-gray-200 dark:border-white/10 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] flex items-center gap-4 ${bengaliClass}`}
@@ -217,9 +328,9 @@ const WhatWeProvide = () => {
             {/* Bottom Accent Line */}
             <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#41bfb8] to-[#2dd4bf] group-hover:w-full transition-all duration-500 rounded-b-2xl"></div>
           </Link>
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </section >
   );
 };
 

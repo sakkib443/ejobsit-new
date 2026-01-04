@@ -81,8 +81,8 @@ const SuccessHistoryPage = () => {
             {/* Description */}
             <p className={`text-gray-600 work text-sm sm:text-base leading-relaxed mb-8 ${bengaliClass}`}>
               {language === "bn"
-                ? "বিডি কলিং একাডেমিতে আমাদের শিক্ষার্থীরা শুধু দক্ষতা অর্জন করে না — তারা সুযোগ অর্জন করে। রিয়েল ক্লায়েন্ট প্রজেক্ট-ভিত্তিক প্রশিক্ষণের মাধ্যমে তারা বাস্তব চ্যালেঞ্জের জন্য সম্পূর্ণ প্রস্তুত হয়ে স্নাতক হয়।"
-                : "At Bdcalling Academy, our students gain more than just skills — they gain opportunities. Through real client project-based training, they graduate fully prepared for real-world challenges."}
+                ? "ejobs it-এ আমাদের শিক্ষার্থীরা শুধু দক্ষতা অর্জন করে না — তারা সুযোগ অর্জন করে। রিয়েল ক্লায়েন্ট প্রজেক্ট-ভিত্তিক প্রশিক্ষণের মাধ্যমে তারা বাস্তব চ্যালেঞ্জের জন্য সম্পূর্ণ প্রস্তুত হয়ে স্নাতক হয়।"
+                : "At ejobs it, our students gain more than just skills — they gain opportunities. Through real client project-based training, they graduate fully prepared for real-world challenges."}
             </p>
 
             {/* Stats */}
@@ -127,8 +127,8 @@ const SuccessHistoryPage = () => {
               key={filter.key}
               onClick={() => setActiveFilter(filter.key)}
               className={`relative px-6 py-3 rounded-xl font-medium work transition-all duration-300 ${bengaliClass} ${activeFilter === filter.key
-                  ? "bg-gradient-to-r from-[#41bfb8] to-[#38a89d] text-white shadow-lg shadow-[#41bfb8]/30"
-                  : "bg-white text-gray-600 border border-gray-200 hover:border-[#41bfb8]/50 hover:text-[#41bfb8]"
+                ? "bg-gradient-to-r from-[#41bfb8] to-[#38a89d] text-white shadow-lg shadow-[#41bfb8]/30"
+                : "bg-white text-gray-600 border border-gray-200 hover:border-[#41bfb8]/50 hover:text-[#41bfb8]"
                 }`}
             >
               {filter.label}

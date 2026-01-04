@@ -26,7 +26,8 @@ import {
     FiCode,
     FiGlobe,
     FiShoppingBag,
-    FiSettings
+    FiSettings,
+    FiHeart
 } from 'react-icons/fi';
 import { useTheme } from '@/providers/ThemeProvider';
 import { fetchMyStats } from '@/redux/enrollmentSlice';
@@ -127,6 +128,18 @@ const UserSidebar = () => {
             icon: FiShoppingBag,
             gradient: 'from-[#f79952] to-[#fb923c]',
             count: orders?.length
+        },
+        {
+            title: 'My Favorites',
+            href: '/dashboard/user/favorites',
+            icon: FiHeart,
+            gradient: 'from-rose-500 to-pink-500'
+        },
+        {
+            title: 'My Reviews',
+            href: '/dashboard/user/reviews',
+            icon: FiStar,
+            gradient: 'from-yellow-400 to-amber-500'
         },
         {
             title: 'Profile Settings',

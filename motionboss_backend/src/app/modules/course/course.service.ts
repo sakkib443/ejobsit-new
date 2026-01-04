@@ -4,6 +4,7 @@
 // কোর্স মডিউলের বিজনেস লজিক
 // ===================================================================
 
+import { Types } from 'mongoose';
 import { Course } from './course.model';
 import { ICourse, ICourseFilters } from './course.interface';
 import AppError from '../../utils/AppError';
@@ -168,9 +169,10 @@ const getAllCourses = async (
  * Get single course by ID
  * ID দিয়ে একটি কোর্স পাওয়া
  */
-const getCourseById = async (id: string): Promise<ICourse | null> => {
+const getCourseById = async (id: string): Promise<ICourse | any | null> => {
     const course = await Course.findById(id)
-        .populate('category', 'name nameEn icon');
+        .populate('category', 'name nameEn icon')
+        .lean();
 
     if (!course) {
         throw new AppError(404, 'Course not found');
@@ -179,16 +181,24 @@ const getCourseById = async (id: string): Promise<ICourse | null> => {
     // Increment view count
     await Course.findByIdAndUpdate(id, { $inc: { totalViews: 1 } });
 
-    return course;
+    // Populate curriculum (grouped lessons)
+    const { LessonService } = await import('../lesson/lesson.service');
+    const curriculum = await LessonService.getGroupedLessons(id);
+
+    return {
+        ...course,
+        curriculum,
+    };
 };
 
 /**
  * Get course by slug
  * Slug দিয়ে কোর্স পাওয়া (public access এর জন্য)
  */
-const getCourseBySlug = async (slug: string): Promise<ICourse | null> => {
+const getCourseBySlug = async (slug: string): Promise<ICourse | any | null> => {
     const course = await Course.findOne({ slug, status: 'published' })
-        .populate('category', 'name nameEn icon');
+        .populate('category', 'name nameEn icon')
+        .lean();
 
     if (!course) {
         throw new AppError(404, 'Course not found');
@@ -197,7 +207,14 @@ const getCourseBySlug = async (slug: string): Promise<ICourse | null> => {
     // Increment view count
     await Course.findByIdAndUpdate(course._id, { $inc: { totalViews: 1 } });
 
-    return course;
+    // Populate curriculum (grouped lessons)
+    const { LessonService } = await import('../lesson/lesson.service');
+    const curriculum = await LessonService.getGroupedLessons(course._id.toString());
+
+    return {
+        ...course,
+        curriculum,
+    };
 };
 
 /**
@@ -322,6 +339,20 @@ const updateCourseStats = async (
 };
 
 /**
+ * Re-calculate and sync stats for all courses
+ * সব কোর্সের স্ট্যাটাস সিনক্রোনাইজ করা (লেসন সংখ্যা, মডিউল সংখ্যা)
+ */
+const syncAllCourseStats = async (): Promise<void> => {
+    const courses = await Course.find();
+    const { LessonService } = await import('../lesson/lesson.service');
+
+    for (const course of courses) {
+        // This will trigger the updateCourseStats in LessonService
+        await (LessonService as any).updateCourseStats(course._id.toString());
+    }
+};
+
+/**
  * Get full course content (modules + lessons) for an enrolled student
  */
 const getCourseContentForStudent = async (courseId: string) => {
@@ -355,6 +386,57 @@ const getCourseContentForStudent = async (courseId: string) => {
     };
 };
 
+/**
+ * Toggle like for a course
+ */
+const toggleLike = async (id: string, userId: string): Promise<{ isLiked: boolean; likeCount: number }> => {
+    const course = await Course.findById(id);
+
+    if (!course) {
+        throw new AppError(404, 'Course not found');
+    }
+
+    const userObjectId = new Types.ObjectId(userId);
+    const likedBy = course.likedBy || [];
+    const isAlreadyLiked = likedBy.some(likedUserId => likedUserId.equals(userObjectId));
+
+    if (isAlreadyLiked) {
+        // Unlike
+        await Course.findByIdAndUpdate(id, {
+            $pull: { likedBy: userObjectId },
+            $inc: { likeCount: -1 }
+        });
+
+        // Remove from wishlist
+        try {
+            const WishlistService = (await import('../wishlist/wishlist.module')).default;
+            await WishlistService.removeFromWishlist(userId, id);
+        } catch (error) {
+            console.error('Wishlist sync error (unlike):', error);
+        }
+
+        const updated = await Course.findById(id).select('likeCount');
+        return { isLiked: false, likeCount: Math.max(0, updated?.likeCount || 0) };
+    } else {
+        // Like
+        await Course.findByIdAndUpdate(id, {
+            $addToSet: { likedBy: userObjectId },
+            $inc: { likeCount: 1 }
+        });
+
+        // Add to wishlist
+        try {
+            const WishlistService = (await import('../wishlist/wishlist.module')).default;
+            await WishlistService.addToWishlist(userId, id, 'course');
+        } catch (error) {
+            console.error('Wishlist sync error (like):', error);
+        }
+
+        const updated = await Course.findById(id).select('likeCount');
+        return { isLiked: true, likeCount: updated?.likeCount || 0 };
+    }
+};
+
 export const CourseService = {
     createCourse,
     getAllCourses,
@@ -367,4 +449,6 @@ export const CourseService = {
     getCoursesByCategory,
     updateCourseStats,
     getCourseContentForStudent,
+    syncAllCourseStats,
+    toggleLike,
 };

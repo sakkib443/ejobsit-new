@@ -1,7 +1,7 @@
 {
-  "name": "extrainweb-backend",
+  "name": "ejobsit-backend",
   "version": "1.0.0",
-  "description": "ExtraWeb Marketplace Backend - ThemeForest style website/software marketplace API",
+  "description": "ejobsit Marketplace Backend - ThemeForest style website/software marketplace API",
   "main": "index.js",
   "scripts": {
     "start:prod": "node ./dist/server.js",
@@ -20,7 +20,7 @@
     "software",
     "api"
   ],
-  "author": "ExtraWeb Team",
+  "author": "ejobsit Team",
   "license": "ISC",
   "dependencies": {
     "@types/multer": "^2.0.0",

@@ -5,19 +5,53 @@ import PopularCourseCard from './PopularCourseCard';
 import { LuGraduationCap, LuUsers, LuTrendingUp, LuPlay, LuArrowRight } from 'react-icons/lu';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
+import { motion } from 'framer-motion';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://motionboss-backend.vercel.app/api';
 
+// Professional Animation variants like Hero section
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 40, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.46, 0.45, 0.94]
+    }
+  }
+};
+
+const iconVariants = {
+  hidden: { opacity: 0, scale: 0, rotate: -180 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    rotate: 0,
+    transition: {
+      duration: 0.5,
+      type: "spring",
+      stiffness: 200
+    }
+  }
+};
+
 const PopularCourse = () => {
-  const [isVisible, setIsVisible] = useState(false);
   const [stats, setStats] = useState(null);
   const { language } = useLanguage();
   const bengaliClass = language === "bn" ? "hind-siliguri" : "";
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -136,75 +170,144 @@ const PopularCourse = () => {
 
       <div className="container mx-auto px-4 lg:px-16 relative z-10">
         {/* Premium Section Header - Same as HomeCategory */}
-        <div className={`text-center mb-14 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        <motion.div
+          className="text-center mb-14"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+        >
           {/* Premium Badge */}
-          <div className="inline-flex items-center gap-3 mb-5 px-5 py-2.5 rounded-full bg-white dark:bg-black/50 border border-teal-500/30 dark:border-teal-500/20 shadow-sm backdrop-blur-md transition-all">
+          <motion.div
+            className="inline-flex items-center gap-3 mb-5 px-5 py-2.5 rounded-full bg-white dark:bg-black/50 border border-teal-500/30 dark:border-teal-500/20 shadow-sm backdrop-blur-md"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
             <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-teal-500/20 to-cyan-500/20 flex items-center justify-center">
               <LuPlay className="text-[#41bfb8]" size={14} />
             </div>
             <span className={`text-xs font-black text-teal-600 dark:text-teal-400 uppercase tracking-[0.2em] ${bengaliClass}`}>
               {language === 'bn' ? 'জনপ্রিয় কোর্স' : 'Popular Courses'}
             </span>
-          </div>
+          </motion.div>
 
           {/* Premium Title */}
-          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-5 tracking-tight ${bengaliClass}`}>
+          <motion.h2
+            className={`text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-5 tracking-tight ${bengaliClass}`}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
             {language === 'bn'
               ? <>আমাদের <span className="text-primary">সেরা কোর্স</span> সমূহ</>
               : <>Explore Our <span className="text-primary">Top Courses</span></>}
-          </h2>
+          </motion.h2>
 
-          <p className={`text-gray-500 dark:text-gray-400 text-base lg:text-lg max-w-2xl mx-auto leading-relaxed ${bengaliClass}`}>
+          <motion.p
+            className={`text-gray-500 dark:text-gray-400 text-base lg:text-lg max-w-2xl mx-auto leading-relaxed ${bengaliClass}`}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
             {language === 'bn'
               ? 'বিশেষজ্ঞ মেন্টরদের দ্বারা তৈরি প্রিমিয়াম কোর্স যা আপনাকে সাফল্যের পথে নিয়ে যাবে।'
               : 'Premium courses crafted by industry experts to help you succeed in your career.'}
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Stats Cards */}
-        <div className={`flex flex-wrap justify-center gap-6 lg:gap-10 mb-14 transition-all duration-700 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        <motion.div
+          className="flex flex-wrap justify-center gap-6 lg:gap-10 mb-14"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+        >
           {statsData.map((stat, index) => {
             const Icon = stat.icon;
             const colors = getColorClasses(stat.color);
             return (
-              <div
+              <motion.div
                 key={index}
-                className="group relative bg-white dark:bg-[#0d0d0d] rounded-[2rem] px-8 py-6 border border-gray-200 dark:border-white/10 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)]"
-                style={{ transitionDelay: `${index * 100}ms` }}
+                variants={cardVariants}
+                whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.3 } }}
+                className="group relative bg-white dark:bg-[#0d0d0d] rounded-[2rem] px-8 py-6 border border-gray-200 dark:border-white/10 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)]"
               >
                 {/* Decorative Corner */}
                 <div className={`absolute -top-10 -right-10 w-24 h-24 rounded-full bg-gradient-to-br ${colors.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-500`}></div>
 
                 <div className="relative z-10 flex items-center gap-5">
-                  {/* Icon */}
-                  <div className={`w-14 h-14 ${colors.light} rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110`}>
+                  {/* Icon - Animated */}
+                  <motion.div
+                    className={`w-14 h-14 ${colors.light} rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg`}
+                    initial={{ opacity: 0, y: 15, scale: 0.8 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    whileHover={{ scale: 1.1 }}
+                  >
                     <Icon size={26} className={colors.text} />
-                  </div>
+                  </motion.div>
                   <div>
-                    <div className="flex items-baseline gap-1">
+                    {/* Value - Animated */}
+                    <motion.div
+                      className="flex items-baseline gap-1"
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: index * 0.1 + 0.2 }}
+                    >
                       <span className="text-3xl font-black text-gray-900 dark:text-white">
                         {stat.value}
                       </span>
                       <span className={`text-xl font-black ${colors.text}`}>{stat.suffix}</span>
-                    </div>
-                    <div className={`text-xs font-bold uppercase tracking-widest text-gray-400 mt-1 ${bengaliClass}`}>
+                    </motion.div>
+                    <motion.div
+                      className={`text-xs font-bold uppercase tracking-widest text-gray-400 mt-1 ${bengaliClass}`}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: index * 0.1 + 0.3 }}
+                    >
                       {stat.label}
-                    </div>
+                    </motion.div>
                   </div>
                 </div>
 
                 {/* Bottom Accent Line */}
-                <div className={`absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r ${colors.gradient} group-hover:w-full transition-all duration-500 rounded-b-2xl`}></div>
-              </div>
+                <motion.div
+                  className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r ${colors.gradient} rounded-b-2xl`}
+                  initial={{ width: 0 }}
+                  whileHover={{ width: "100%" }}
+                  transition={{ duration: 0.5 }}
+                ></motion.div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Courses Slider */}
-        <PopularCourseCard />
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <PopularCourseCard />
+        </motion.div>
 
         {/* Bottom CTA - Same design as HomeCategory cards */}
-        <div className={`flex flex-col sm:flex-row items-center justify-center gap-6 mt-16 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        <motion.div
+          className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
           <Link
             href="/courses"
             className={`group relative bg-white dark:bg-[#0d0d0d] rounded-2xl px-8 py-4 border border-gray-200 dark:border-white/10 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] flex items-center gap-4 ${bengaliClass}`}
@@ -233,9 +336,9 @@ const PopularCourse = () => {
                 : 'Thousands of learners joined'}
             </p>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </section >
   );
 };
 

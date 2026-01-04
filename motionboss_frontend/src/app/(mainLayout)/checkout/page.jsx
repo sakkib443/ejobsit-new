@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearCart } from '@/redux/cartSlice';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -9,7 +9,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
-const CheckoutPage = () => {
+const CheckoutContent = () => {
     const { items: cartItems, totalAmount: cartTotal } = useSelector((state) => state.cart || { items: [], totalAmount: 0 });
     const searchParams = useSearchParams();
     const courseId = searchParams.get('courseId');
@@ -214,12 +214,12 @@ const CheckoutPage = () => {
                     <LuBadgeCheck className="text-emerald-500 text-5xl" />
                 </motion.div>
                 <h1 className="text-4xl font-black text-slate-900 mb-4 outfit">Payment Successful!</h1>
-                <p className="text-slate-500 text-lg font-medium text-center max-w-md mb-8 work">
+                <p className="text-slate-500 text-lg font-normal text-center max-w-md mb-8 work">
                     Thank you for your purchase. You can now access your content in your dashboard.
                 </p>
                 <button
                     onClick={() => router.push('/dashboard/user/courses')}
-                    className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#41bfb8] transition-all flex items-center gap-3"
+                    className="px-8 py-4 bg-slate-900 text-white rounded-md font-black text-sm uppercase tracking-widest hover:bg-[#41bfb8] transition-all flex items-center gap-3"
                 >
                     Go to My Courses <LuArrowRight />
                 </button>
@@ -235,7 +235,7 @@ const CheckoutPage = () => {
                 </div>
                 <h2 className="text-2xl font-black text-slate-800 mb-4 outfit uppercase tracking-tight">Your cart is empty</h2>
                 <p className="text-slate-500 mb-8 max-w-sm">Looks like you haven't added any products to your cart yet.</p>
-                <button onClick={() => router.push('/courses')} className="px-8 py-4 bg-[#41bfb8] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:shadow-xl transition-all">
+                <button onClick={() => router.push('/courses')} className="px-8 py-4 bg-[#41bfb8] text-white rounded-md font-black text-sm uppercase tracking-widest hover:shadow-xl transition-all">
                     Browse Courses
                 </button>
             </div>
@@ -250,19 +250,19 @@ const CheckoutPage = () => {
                     {/* Left: Billing Form */}
                     <div className="flex-1 space-y-8">
                         <div className="flex items-center gap-4">
-                            <button onClick={() => router.back()} className="w-12 h-12 flex items-center justify-center bg-white rounded-2xl shadow-sm text-slate-400 hover:text-[#41bfb8] hover:shadow-md transition-all">
+                            <button onClick={() => router.back()} className="w-12 h-12 flex items-center justify-center bg-white rounded-md shadow-sm border border-slate-100/50 text-slate-400 hover:text-[#41bfb8] hover:shadow-md transition-all">
                                 <LuChevronLeft size={24} />
                             </button>
                             <div>
                                 <h1 className="text-3xl font-black text-slate-900 outfit uppercase tracking-tight">Secure Checkout</h1>
-                                <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Complete your enrollment</p>
+                                <p className="text-slate-400 text-sm font-medium uppercase tracking-widest">Complete your enrollment</p>
                             </div>
                         </div>
 
                         {/* Billing Info */}
-                        <div className="bg-white p-8 lg:p-10 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-8">
+                        <div className="bg-white p-8 lg:p-10 rounded-md border border-slate-100/50 shadow-sm space-y-8">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-[#41bfb8]/10 rounded-2xl flex items-center justify-center text-[#41bfb8]">
+                                <div className="w-12 h-12 bg-[#41bfb8]/10 rounded-md flex items-center justify-center text-[#41bfb8] border border-[#41bfb8]/20">
                                     <LuCreditCard size={24} />
                                 </div>
                                 <h2 className="text-xl font-bold text-slate-800 outfit">Personal Details</h2>
@@ -270,64 +270,64 @@ const CheckoutPage = () => {
 
                             <form onSubmit={handlePlaceOrder} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="md:col-span-2">
-                                    <label className="text-[10px] font-black text-slate-400 mb-2 block uppercase tracking-widest">Full Name</label>
+                                    <label className="text-[10px] font-bold text-slate-400 mb-2 block uppercase tracking-widest">Full Name</label>
                                     <input
                                         type="text" required name="fullName" value={formData.fullName} onChange={handleInputChange}
                                         placeholder="Enter your full name"
-                                        className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:border-[#41bfb8] focus:bg-white focus:ring-4 focus:ring-[#41bfb8]/10 outline-none transition-all font-bold text-slate-700"
+                                        className="w-full px-6 py-4 bg-slate-50 border border-slate-100/50 rounded-md focus:border-[#41bfb8] focus:bg-white focus:ring-4 focus:ring-[#41bfb8]/10 outline-none transition-all font-bold text-slate-700"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black text-slate-400 mb-2 block uppercase tracking-widest">Email Address</label>
+                                    <label className="text-[10px] font-bold text-slate-400 mb-2 block uppercase tracking-widest">Email Address</label>
                                     <input
                                         type="email" required name="email" value={formData.email} onChange={handleInputChange}
                                         placeholder="your@email.com"
-                                        className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:border-[#41bfb8] focus:bg-white focus:ring-4 focus:ring-[#41bfb8]/10 outline-none transition-all font-bold text-slate-700"
+                                        className="w-full px-6 py-4 bg-slate-50 border border-slate-100/50 rounded-md focus:border-[#41bfb8] focus:bg-white focus:ring-4 focus:ring-[#41bfb8]/10 outline-none transition-all font-bold text-slate-700"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black text-slate-400 mb-2 block uppercase tracking-widest">Phone Number</label>
+                                    <label className="text-[10px] font-bold text-slate-400 mb-2 block uppercase tracking-widest">Phone Number</label>
                                     <input
                                         type="text" required name="phone" value={formData.phone} onChange={handleInputChange}
                                         placeholder="+880 1XXX-XXXXXX"
-                                        className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:border-[#41bfb8] focus:bg-white focus:ring-4 focus:ring-[#41bfb8]/10 outline-none transition-all font-bold text-slate-700"
+                                        className="w-full px-6 py-4 bg-slate-50 border border-slate-100/50 rounded-md focus:border-[#41bfb8] focus:bg-white focus:ring-4 focus:ring-[#41bfb8]/10 outline-none transition-all font-bold text-slate-700"
                                     />
                                 </div>
 
                                 <div className="md:col-span-2 pt-4 space-y-6">
-                                    <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Payment Method</h3>
+                                    <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Payment Method</h3>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <button
                                             type="button"
                                             onClick={() => setPaymentMethod('bkash')}
-                                            className={`p-6 rounded-3xl border-2 flex items-center gap-4 transition-all ${paymentMethod === 'bkash'
+                                            className={`p-6 rounded-md border flex items-center gap-4 transition-all ${paymentMethod === 'bkash'
                                                 ? 'border-pink-500 bg-pink-50 shadow-lg shadow-pink-100'
-                                                : 'border-slate-100 hover:border-slate-200 bg-white'
+                                                : 'border-slate-100/50 hover:border-slate-200 bg-white'
                                                 }`}
                                         >
-                                            <div className="w-12 h-12 bg-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-pink-200">
+                                            <div className="w-12 h-12 bg-pink-500 rounded-md flex items-center justify-center shadow-lg shadow-pink-200">
                                                 <LuSmartphone className="text-white" size={24} />
                                             </div>
                                             <div className="text-left">
-                                                <p className="font-black text-slate-800 uppercase tracking-tight">bKash</p>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Instant Pay</p>
+                                                <p className="font-bold text-slate-800 uppercase tracking-tight">bKash</p>
+                                                <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest">Instant Pay</p>
                                             </div>
                                         </button>
 
                                         <button
                                             type="button"
                                             onClick={() => setPaymentMethod('direct')}
-                                            className={`p-6 rounded-3xl border-2 flex items-center gap-4 transition-all ${paymentMethod === 'direct'
+                                            className={`p-6 rounded-md border flex items-center gap-4 transition-all ${paymentMethod === 'direct'
                                                 ? 'border-slate-900 bg-slate-900 shadow-lg shadow-slate-200'
-                                                : 'border-slate-100 hover:border-slate-200 bg-white'
+                                                : 'border-slate-100/50 hover:border-slate-200 bg-white'
                                                 }`}
                                         >
-                                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg ${paymentMethod === 'direct' ? 'bg-white text-slate-900' : 'bg-slate-900 text-white'}`}>
+                                            <div className={`w-12 h-12 rounded-md flex items-center justify-center shadow-lg ${paymentMethod === 'direct' ? 'bg-white text-slate-900' : 'bg-slate-900 text-white'}`}>
                                                 <LuPackage size={24} />
                                             </div>
                                             <div className="text-left">
-                                                <p className={`font-black uppercase tracking-tight ${paymentMethod === 'direct' ? 'text-white' : 'text-slate-800'}`}>Demo</p>
-                                                <p className={`text-[10px] font-bold uppercase tracking-widest ${paymentMethod === 'direct' ? 'text-slate-400' : 'text-slate-400'}`}>No Real Bill</p>
+                                                <p className={`font-bold uppercase tracking-tight ${paymentMethod === 'direct' ? 'text-white' : 'text-slate-800'}`}>Demo</p>
+                                                <p className={`text-[10px] font-medium uppercase tracking-widest ${paymentMethod === 'direct' ? 'text-slate-400' : 'text-slate-400'}`}>No Real Bill</p>
                                             </div>
                                         </button>
                                     </div>
@@ -337,7 +337,7 @@ const CheckoutPage = () => {
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full py-5 bg-[#41bfb8] hover:bg-[#38a89d] disabled:bg-slate-300 text-white rounded-3xl font-black text-lg shadow-xl shadow-[#41bfb8]/20 transition-all active:scale-[0.98] flex items-center justify-center gap-4 group"
+                                        className="w-full py-5 bg-[#41bfb8] hover:bg-[#38a89d] disabled:bg-slate-300 text-white rounded-md font-black text-lg shadow-xl shadow-[#41bfb8]/20 transition-all active:scale-[0.98] flex items-center justify-center gap-4 group"
                                     >
                                         {loading ? (
                                             <>
@@ -358,13 +358,13 @@ const CheckoutPage = () => {
 
                     {/* Right: Order Summary */}
                     <div className="w-full lg:w-[450px]">
-                        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-8 lg:sticky lg:top-8">
+                        <div className="bg-white p-8 rounded-md border border-slate-100/50 shadow-sm space-y-8 lg:sticky lg:top-8">
                             <h3 className="text-xl font-bold text-slate-800 outfit border-b border-slate-50 pb-6">Payment Review</h3>
 
                             <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                                 {checkoutItems.map((item) => (
                                     <div key={item.id} className="flex gap-4 items-center">
-                                        <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-100 border border-slate-50 shrink-0">
+                                        <div className="w-20 h-20 rounded-md overflow-hidden bg-slate-100 border border-slate-50/50 shrink-0">
                                             <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                                         </div>
                                         <div className="flex-1 min-w-0">
@@ -379,7 +379,7 @@ const CheckoutPage = () => {
                             <div className="pt-6 space-y-4 border-t border-slate-50">
                                 <div className="flex justify-between items-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
                                     <span>Subtotal</span>
-                                    <span className="text-slate-900 text-sm">৳{totalValue.toLocaleString()}</span>
+                                    <span className="text-slate-900 text-sm font-medium">৳{totalValue.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
                                     <span>Instant Access Fee</span>
@@ -391,9 +391,9 @@ const CheckoutPage = () => {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
+                            <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-md border border-slate-100/50">
                                 <LuShieldCheck className="text-[#41bfb8] text-2xl shrink-0" />
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-loose leading-relaxed">
+                                <p className="text-[10px] font-normal text-slate-500 uppercase tracking-loose leading-relaxed">
                                     Encrypted Transaction. Your payment data is handled securely via SSL protocol.
                                 </p>
                             </div>
@@ -403,6 +403,21 @@ const CheckoutPage = () => {
                 </div>
             </div>
         </div>
+    );
+};
+
+const CheckoutPage = () => {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="flex flex-col items-center gap-4">
+                    <LuLoader className="animate-spin text-[#41bfb8]" size={40} />
+                    <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Loading Checkout...</p>
+                </div>
+            </div>
+        }>
+            <CheckoutContent />
+        </Suspense>
     );
 };
 

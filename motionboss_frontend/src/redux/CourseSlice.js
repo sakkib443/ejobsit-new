@@ -14,6 +14,46 @@ export const fetchCoursesData = createAsyncThunk(
   }
 );
 
+// Fetch single course by ID
+export const fetchSingleCourse = createAsyncThunk(
+  "courses/fetchSingleCourse",
+  async (id) => {
+    const token = localStorage.getItem("token");
+    const headers = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const response = await fetch(`${API_BASE_URL}/courses/${id}`, {
+      cache: "no-store",
+      headers,
+    });
+    if (!response.ok) throw new Error("Failed to fetch course detail");
+    const result = await response.json();
+    return result.data;
+  }
+);
+
+export const toggleCourseLike = createAsyncThunk(
+  "courses/toggleCourseLike",
+  async (id) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Please login to like");
+
+    const response = await fetch(`${API_BASE_URL}/courses/${id}/toggle-like`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to toggle like");
+    }
+    return result.data;
+  }
+);
+
 // Fetch course content for student (enrolled only)
 export const fetchCourseContent = createAsyncThunk(
   "courses/fetchCourseContent",
@@ -54,6 +94,19 @@ const courseSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+      // fetchSingleCourse
+      .addCase(fetchSingleCourse.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchSingleCourse.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentCourse = action.payload;
+      })
+      .addCase(fetchSingleCourse.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
       // fetchCourseContent
       .addCase(fetchCourseContent.pending, (state) => { state.contentLoading = true; })
       .addCase(fetchCourseContent.fulfilled, (state, action) => {
@@ -63,6 +116,15 @@ const courseSlice = createSlice({
       .addCase(fetchCourseContent.rejected, (state, action) => {
         state.contentLoading = false;
         state.error = action.error.message;
+      })
+      .addCase(toggleCourseLike.fulfilled, (state, action) => {
+        if (state.currentCourse) {
+          state.currentCourse.isLiked = action.payload.isLiked;
+          state.currentCourse.likeCount = action.payload.likeCount;
+        }
+      })
+      .addCase(toggleCourseLike.rejected, (state, action) => {
+        console.error("Toggle like failed:", action.error.message);
       });
   },
 });

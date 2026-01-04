@@ -1,244 +1,238 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import {
-    FiStar, FiSearch, FiRefreshCw, FiTrash2,
-    FiChevronLeft, FiChevronRight, FiUser, FiMessageCircle
-} from 'react-icons/fi';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllReviews, updateReviewStatus, deleteReview } from "@/redux/reviewSlice";
+import { FiCheck, FiX, FiTrash2, FiSearch, FiFilter, FiStar } from "react-icons/fi";
+import { useTheme } from "@/providers/ThemeProvider";
 
-export default function ReviewsPage() {
-    const [reviews, setReviews] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [deleteModal, setDeleteModal] = useState({ show: false, id: null });
+const AdminReviewsPage = () => {
+    const dispatch = useDispatch();
+    const { isDark } = useTheme();
+    const { adminReviews: reviews, loading, adminTotalReviews: total } = useSelector((state) => state.reviews);
 
-    const BASE_URL = 'https://motionboss-backend.vercel.app/api';
-
-    const fetchReviews = async () => {
-        try {
-            setLoading(true);
-            const token = localStorage.getItem('token');
-            const res = await fetch(`${BASE_URL}/reviews`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
-            setReviews(data.data || []);
-        } catch (err) {
-            console.error('Error fetching reviews:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const [filterStatus, setFilterStatus] = useState("");
+    const [page, setPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        fetchReviews();
-    }, []);
+        dispatch(fetchAllReviews({ page, limit: 10, status: filterStatus }));
+    }, [dispatch, page, filterStatus]);
 
-    const handleDelete = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            await fetch(`${BASE_URL}/reviews/${deleteModal.id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            setDeleteModal({ show: false, id: null });
-            fetchReviews();
-        } catch (err) {
-            console.error('Delete error:', err);
+    const handleStatusUpdate = (id, status) => {
+        if (confirm(`Are you sure you want to ${status} this review?`)) {
+            dispatch(updateReviewStatus({ reviewId: id, status }));
         }
     };
 
-    const filteredReviews = reviews.filter(review =>
-        review.user?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        review.comment?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const itemsPerPage = 10;
-    const totalPages = Math.ceil(filteredReviews.length / itemsPerPage);
-    const paginatedReviews = filteredReviews.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-
-    const renderStars = (rating) => {
-        return [...Array(5)].map((_, i) => (
-            <FiStar
-                key={i}
-                size={14}
-                className={i < rating ? 'text-amber-400 fill-amber-400' : 'text-slate-300'}
-            />
-        ));
+    const handleDelete = (id) => {
+        if (confirm("Are you sure you want to delete this review? This action cannot be undone.")) {
+            dispatch(deleteReview(id));
+        }
     };
 
-    // Stats
-    const avgRating = reviews.length > 0
-        ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length).toFixed(1)
-        : 0;
-    const fiveStarCount = reviews.filter(r => r.rating === 5).length;
+    const StatusBadge = ({ status }) => {
+        const styles = {
+            approved: "bg-emerald-100 text-emerald-700 border-emerald-200",
+            rejected: "bg-rose-100 text-rose-700 border-rose-200",
+            pending: "bg-amber-100 text-amber-700 border-amber-200",
+        };
+        return (
+            <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border uppercase tracking-wide ${styles[status]}`}>
+                {status}
+            </span>
+        );
+    };
+
+    const filteredReviews = reviews.filter(r =>
+        r.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        r.comment?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        r.user?.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className={`p-6 min-h-screen ${isDark ? 'text-white' : 'text-slate-800'}`}>
+            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800">Reviews</h1>
-                    <p className="text-slate-500 text-sm mt-1">Manage customer reviews and ratings</p>
+                    <h1 className="text-2xl font-bold font-outfit">Reviews Management</h1>
+                    <p className={`text-sm mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                        Manage and moderate customer reviews ({total} total)
+                    </p>
                 </div>
-            </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-white rounded-2xl border border-slate-200 p-5">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white">
-                            <FiStar size={24} />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold text-slate-800">{avgRating}</p>
-                            <p className="text-sm text-slate-500">Average Rating</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-white rounded-2xl border border-slate-200 p-5">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white">
-                            <FiMessageCircle size={24} />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold text-slate-800">{reviews.length}</p>
-                            <p className="text-sm text-slate-500">Total Reviews</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-white rounded-2xl border border-slate-200 p-5">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white">
-                            <FiStar size={24} />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold text-slate-800">{fiveStarCount}</p>
-                            <p className="text-sm text-slate-500">5-Star Reviews</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Search */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-4">
-                <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="relative flex-1">
-                        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                {/* Actions */}
+                <div className="flex gap-3">
+                    <div className="relative">
+                        <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                         <input
                             type="text"
                             placeholder="Search reviews..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
+                            className={`pl-10 pr-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isDark ? 'bg-slate-800 border-slate-700 placeholder-slate-500' : 'bg-white border-slate-200'
+                                }`}
                         />
                     </div>
-                    <button
-                        onClick={fetchReviews}
-                        className="flex items-center gap-2 px-4 py-3 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-600 transition-colors"
-                    >
-                        <FiRefreshCw size={16} />
-                        Refresh
-                    </button>
+                    <div className="relative">
+                        <FiFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <select
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            className={`pl-10 pr-8 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+                                }`}
+                        >
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            {/* Reviews Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {loading ? (
-                    <div className="col-span-2 py-12 text-center">
-                        <FiRefreshCw className="animate-spin mx-auto mb-2 text-indigo-500" size={24} />
-                        <p className="text-slate-500">Loading reviews...</p>
-                    </div>
-                ) : paginatedReviews.length === 0 ? (
-                    <div className="col-span-2 py-12 text-center text-slate-500">
-                        No reviews found
-                    </div>
-                ) : (
-                    paginatedReviews.map((review) => (
-                        <div key={review._id} className="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-lg transition-shadow">
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold">
-                                        {review.user?.firstName?.charAt(0) || 'U'}
-                                    </div>
-                                    <div>
-                                        <p className="font-semibold text-slate-800">{review.user?.firstName} {review.user?.lastName}</p>
-                                        <div className="flex items-center gap-1 mt-0.5">
-                                            {renderStars(review.rating)}
-                                        </div>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => setDeleteModal({ show: true, id: review._id })}
-                                    className="p-2 rounded-lg hover:bg-red-100 text-red-500 transition-colors"
-                                >
-                                    <FiTrash2 size={16} />
-                                </button>
-                            </div>
-                            <p className="text-slate-600 text-sm leading-relaxed mb-3">{review.comment}</p>
-                            <div className="pt-3 border-t border-slate-100">
-                                <p className="text-xs text-slate-400">
-                                    Product: <span className="text-slate-600">{review.product?.title || review.website?.title || 'N/A'}</span>
-                                </p>
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
+            {/* Table */}
+            <div className={`rounded-xl border overflow-hidden ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className={`text-xs uppercase tracking-wider font-semibold ${isDark ? 'bg-slate-800/50 text-slate-400' : 'bg-slate-50 text-slate-500'}`}>
+                                <th className="p-4">Product</th>
+                                <th className="p-4">User</th>
+                                <th className="p-4">Review</th>
+                                <th className="p-4">Rating</th>
+                                <th className="p-4">Status</th>
+                                <th className="p-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                            {loading ? (
+                                <tr>
+                                    <td colSpan="6" className="p-12 text-center text-slate-400">
+                                        Loading reviews...
+                                    </td>
+                                </tr>
+                            ) : filteredReviews.length === 0 ? (
+                                <tr>
+                                    <td colSpan="6" className="p-12 text-center text-slate-400">
+                                        No reviews found matching your criteria.
+                                    </td>
+                                </tr>
+                            ) : (
+                                filteredReviews.map((review) => (
+                                    <tr key={review._id} className={`group hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors`}>
+                                        <td className="p-4 align-top">
+                                            <div className="flex flex-col">
+                                                <span className="uppercase text-[10px] text-teal-500 font-bold tracking-wider mb-0.5">{review.productType}</span>
+                                                <span className="font-semibold text-sm line-clamp-2 max-w-[180px] text-slate-700 dark:text-slate-200" title={review.productDetails?.title}>
+                                                    {review.productDetails?.title || <span className="text-slate-400 italic">Unknown Product</span>}
+                                                </span>
+                                                <span className="text-[10px] font-mono text-slate-400 mt-1 truncate w-24">ID: {review.product}</span>
+                                            </div>
+                                        </td>
+                                        <td className="p-4 align-top">
+                                            <div className="flex items-center gap-3">
+                                                {review.user?.avatar ? (
+                                                    <img src={review.user.avatar} alt="User" className="w-8 h-8 rounded-full object-cover" />
+                                                ) : (
+                                                    <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs">
+                                                        {review.user?.firstName?.[0]}
+                                                    </div>
+                                                )}
+                                                <div>
+                                                    <p className="text-sm font-medium">{review.user?.firstName} {review.user?.lastName}</p>
+                                                    <p className="text-xs text-slate-400">{review.user?.email}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="p-4 align-top max-w-sm">
+                                            <p className="font-bold text-sm mb-1">{review.title}</p>
+                                            <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2">{review.comment}</p>
+                                            <div className="mt-2 text-xs text-slate-400">
+                                                {new Date(review.createdAt).toLocaleDateString()}
+                                                {review.isVerifiedPurchase && (
+                                                    <span className="ml-2 text-emerald-600 font-medium">Verified Purchase</span>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="p-4 align-top">
+                                            <div className="flex items-center text-amber-400 gap-0.5">
+                                                <span className="font-bold text-slate-700 dark:text-slate-200 mr-1">{review.rating}</span>
+                                                <FiStar className="fill-current" size={14} />
+                                            </div>
+                                        </td>
+                                        <td className="p-4 align-top">
+                                            <StatusBadge status={review.status} />
+                                        </td>
+                                        <td className="p-4 align-top text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                {review.status === 'pending' && (
+                                                    <>
+                                                        <button
+                                                            onClick={() => handleStatusUpdate(review._id, 'approved')}
+                                                            className="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-colors"
+                                                            title="Approve"
+                                                        >
+                                                            <FiCheck size={16} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleStatusUpdate(review._id, 'rejected')}
+                                                            className="p-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 transition-colors"
+                                                            title="Reject"
+                                                        >
+                                                            <FiX size={16} />
+                                                        </button>
+                                                    </>
+                                                )}
+                                                {review.status === 'rejected' && (
+                                                    <button
+                                                        onClick={() => handleStatusUpdate(review._id, 'approved')}
+                                                        className="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-colors"
+                                                        title="Approve"
+                                                    >
+                                                        <FiCheck size={16} />
+                                                    </button>
+                                                )}
+                                                <button
+                                                    onClick={() => handleDelete(review._id)}
+                                                    className="p-2 bg-slate-50 text-slate-500 rounded-lg hover:bg-rose-50 hover:text-rose-600 transition-colors"
+                                                    title="Delete"
+                                                >
+                                                    <FiTrash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2">
-                    <button
-                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                        disabled={currentPage === 1}
-                        className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50"
-                    >
-                        <FiChevronLeft size={16} />
-                    </button>
-                    <span className="px-4 py-2 text-sm text-slate-600">
-                        Page {currentPage} of {totalPages}
+                {/* Pagination */}
+                <div className={`p-4 border-t flex items-center justify-between ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
+                    <span className="text-sm text-slate-500">
+                        Page {page} of {Math.ceil(total / 10) || 1}
                     </span>
-                    <button
-                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                        disabled={currentPage === totalPages}
-                        className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50"
-                    >
-                        <FiChevronRight size={16} />
-                    </button>
-                </div>
-            )}
-
-            {/* Delete Modal */}
-            {deleteModal.show && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-                    <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
-                        <h3 className="text-lg font-bold text-slate-800 mb-2">Delete Review</h3>
-                        <p className="text-slate-600 mb-6">
-                            Are you sure you want to delete this review? This action cannot be undone.
-                        </p>
-                        <div className="flex items-center gap-3 justify-end">
-                            <button
-                                onClick={() => setDeleteModal({ show: false, id: null })}
-                                className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleDelete}
-                                className="px-5 py-2.5 rounded-xl bg-red-600 text-white hover:bg-red-700"
-                            >
-                                Delete
-                            </button>
-                        </div>
+                    <div className="flex gap-2">
+                        <button
+                            disabled={page === 1}
+                            onClick={() => setPage(p => p - 1)}
+                            className="px-3 py-1 text-sm border rounded-lg disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:hover:bg-transparent transition-colors"
+                        >
+                            Previous
+                        </button>
+                        <button
+                            disabled={page * 10 >= total}
+                            onClick={() => setPage(p => p + 1)}
+                            className="px-3 py-1 text-sm border rounded-lg disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:hover:bg-transparent transition-colors"
+                        >
+                            Next
+                        </button>
                     </div>
                 </div>
-            )}
+            </div>
         </div>
     );
-}
+};
+
+export default AdminReviewsPage;

@@ -270,7 +270,7 @@ const Navbar = () => {
 
               {/* Category Dropdown - Desktop */}
               <div className="hidden lg:block relative group">
-                <button className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-gray-100 dark:bg-[#0d0d0d] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-100 hover:bg-white dark:hover:bg-[#151515] transition-all duration-300">
+                <button className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-gray-50/70 dark:bg-[#0d0d0d] border border-gray-100 dark:border-white/10 text-gray-700 dark:text-gray-100 hover:bg-white dark:hover:bg-[#151515] transition-all duration-300">
                   <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
                     <BiCategory size={18} />
                   </div>
@@ -301,7 +301,7 @@ const Navbar = () => {
             </div>
 
             {/* Center: Navigation Links - Desktop */}
-            <div className="hidden xl:flex items-center bg-gray-100 dark:bg-[#0d0d0d] p-1.5 rounded-full border border-gray-200 dark:border-white/10">
+            <div className="hidden xl:flex items-center bg-gray-50/70 dark:bg-[#0d0d0d] p-1.5 rounded-full border border-gray-100 dark:border-white/10">
               {menu.map(({ href, label }) => (
                 <Link
                   key={href}

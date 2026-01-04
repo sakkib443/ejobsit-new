@@ -54,7 +54,7 @@ const AboutMission = () => {
                             <p className={`text-xl text-gray-600 dark:text-gray-400 leading-relaxed font-medium mb-12 max-w-lg ${bengaliClass}`}>
                                 {language === 'bn'
                                     ? 'আমরা শুধু শিক্ষা দিই না, আমরা আপনার ক্যারিয়ার গড়ার অংশীদার হিসেবে কাজ করি। আমাদের প্রতিটি পদক্ষেপই আপনার সাফল্যের জন্য।'
-                                    : 'We are architecting a future where skill meets strategy. Motion Boss is more than an academy; it\'s your partner in professional evolution.'
+                                    : 'We are architecting a future where skill meets strategy. ejobs it is more than an academy; it\'s your partner in professional evolution.'
                                 }
                             </p>
 

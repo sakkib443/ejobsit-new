@@ -8,6 +8,32 @@ import ProductCard from '@/components/sheard/ProductCard';
 import { useLanguage } from '@/context/LanguageContext';
 import { LuCpu, LuGlobe, LuSparkles, LuArrowRight } from 'react-icons/lu';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+
+// Professional Animation variants
+const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.12,
+            delayChildren: 0.1
+        }
+    }
+};
+
+const cardVariants = {
+    hidden: { opacity: 0, y: 40, scale: 0.95 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: {
+            duration: 0.6,
+            ease: [0.25, 0.46, 0.45, 0.94]
+        }
+    }
+};
 
 const DigitalProducts = () => {
     const dispatch = useDispatch();
@@ -15,14 +41,11 @@ const DigitalProducts = () => {
     const { websiteList = [] } = useSelector((state) => state.websites || {});
     const { language } = useLanguage();
     const [activeType, setActiveType] = useState('software');
-    const [isVisible, setIsVisible] = useState(false);
     const bengaliClass = language === "bn" ? "hind-siliguri" : "";
 
     useEffect(() => {
         dispatch(fetchSoftware());
         dispatch(fetchWebsites());
-        const timer = setTimeout(() => setIsVisible(true), 100);
-        return () => clearTimeout(timer);
     }, [dispatch]);
 
     const displayList = activeType === 'software' ? softwareList.slice(0, 4) : websiteList.slice(0, 4);
@@ -90,39 +113,69 @@ const DigitalProducts = () => {
 
             <div className="container mx-auto px-4 lg:px-16 relative z-10">
                 {/* Premium Section Header - Same as HomeCategory */}
-                <div className={`text-center mb-14 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+                <motion.div
+                    className="text-center mb-14"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                >
                     {/* Premium Badge */}
-                    <div className="inline-flex items-center gap-3 mb-5 px-5 py-2.5 rounded-full bg-white dark:bg-black/50 border border-[#F79952]/30 dark:border-[#F79952]/20 shadow-sm backdrop-blur-md transition-all">
+                    <motion.div
+                        className="inline-flex items-center gap-3 mb-5 px-5 py-2.5 rounded-full bg-white dark:bg-black/50 border border-[#F79952]/30 dark:border-[#F79952]/20 shadow-sm backdrop-blur-md"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                    >
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-[#F79952]/20 to-amber-500/20 flex items-center justify-center">
                             <LuSparkles className="text-[#F79952]" size={14} />
                         </div>
                         <span className={`text-xs font-black text-[#F79952] uppercase tracking-[0.2em] ${bengaliClass}`}>
                             {language === 'bn' ? 'ডিজিটাল পণ্য' : 'Digital Products'}
                         </span>
-                    </div>
+                    </motion.div>
 
                     {/* Premium Title */}
-                    <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-5 tracking-tight ${bengaliClass}`}>
+                    <motion.h2
+                        className={`text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-5 tracking-tight ${bengaliClass}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                    >
                         {language === 'bn'
                             ? <>আমাদের <span className="text-[#F79952]">প্রিমিয়াম</span> ডিজিটাল পণ্য</>
                             : <>Premium <span className="text-[#F79952]">Digital</span> Products</>}
-                    </h2>
+                    </motion.h2>
 
-                    <p className={`text-gray-500 dark:text-gray-400 text-base lg:text-lg max-w-2xl mx-auto leading-relaxed ${bengaliClass}`}>
+                    <motion.p
+                        className={`text-gray-500 dark:text-gray-400 text-base lg:text-lg max-w-2xl mx-auto leading-relaxed ${bengaliClass}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                    >
                         {language === 'bn'
                             ? 'আমাদের প্রিমিয়াম সফটওয়্যার এবং রেডিমেড ওয়েবসাইট কালেকশন আপনার ব্যবসা বাড়াতে সাহায্য করবে।'
                             : 'Explore our collection of premium software and ready-made websites designed to scale your business.'}
-                    </p>
-                </div>
+                    </motion.p>
+                </motion.div>
 
                 {/* Tab Filters - Same card style as HomeCategory */}
-                <div className={`flex justify-center mb-12 transition-all duration-700 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+                <motion.div
+                    className="flex justify-center mb-12"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                >
                     <div className="inline-flex bg-white dark:bg-[#0d0d0d] rounded-2xl p-2 border border-gray-200 dark:border-white/10 shadow-sm">
                         <button
                             onClick={() => setActiveType('software')}
                             className={`group relative flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${activeType === 'software'
-                                    ? 'bg-[#41bfb8]/10 text-[#41bfb8]'
-                                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white'
+                                ? 'bg-[#41bfb8]/10 text-[#41bfb8]'
+                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white'
                                 }`}
                         >
                             <LuCpu size={18} />
@@ -134,8 +187,8 @@ const DigitalProducts = () => {
                         <button
                             onClick={() => setActiveType('website')}
                             className={`group relative flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${activeType === 'website'
-                                    ? 'bg-[#F79952]/10 text-[#F79952]'
-                                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white'
+                                ? 'bg-[#F79952]/10 text-[#F79952]'
+                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white'
                                 }`}
                         >
                             <LuGlobe size={18} />
@@ -155,18 +208,24 @@ const DigitalProducts = () => {
                                 : (language === 'bn' ? 'প্রিমিয়াম টেমপ্লেট' : 'Premium Templates')}
                         </span>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Products Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-14">
+                <motion.div
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-14"
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-50px" }}
+                >
                     {displayList.map((item, index) => (
-                        <div
+                        <motion.div
                             key={item._id}
-                            className={`transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
-                            style={{ transitionDelay: `${(index + 2) * 100}ms` }}
+                            variants={cardVariants}
+                            whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.3 } }}
                         >
                             <ProductCard product={item} type={activeType} />
-                        </div>
+                        </motion.div>
                     ))}
                     {displayList.length === 0 && (
                         <div className="col-span-full py-20 text-center bg-white dark:bg-[#0d0d0d] rounded-[2rem] border border-dashed border-gray-200 dark:border-white/10">
@@ -176,10 +235,16 @@ const DigitalProducts = () => {
                             </p>
                         </div>
                     )}
-                </div>
+                </motion.div>
 
                 {/* CTA Section - Same card style as HomeCategory */}
-                <div className={`relative bg-white dark:bg-[#0d0d0d] rounded-[2rem] p-8 lg:p-12 border border-gray-200 dark:border-white/10 transition-all duration-500 overflow-hidden ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+                <motion.div
+                    className="relative bg-white dark:bg-[#0d0d0d] rounded-[2rem] p-8 lg:p-12 border border-gray-200 dark:border-white/10 overflow-hidden"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                >
                     {/* Decorative Corner */}
                     <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[#F79952] to-[#fb923c] opacity-10"></div>
                     <div className="absolute -bottom-10 -left-10 w-24 h-24 rounded-full bg-gradient-to-br from-[#41bfb8] to-[#2dd4bf] opacity-10"></div>
@@ -210,7 +275,7 @@ const DigitalProducts = () => {
                             <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F79952] to-[#fb923c] group-hover:w-full transition-all duration-500 rounded-b-2xl"></div>
                         </Link>
                     </div>
-                </div>
+                </motion.div>
             </div>
         </section>
     );

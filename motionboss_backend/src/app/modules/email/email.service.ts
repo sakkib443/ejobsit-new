@@ -31,7 +31,7 @@ const getEmailWrapper = (content: string) => `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExtraWeb</title>
+    <title>ejobsit</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
@@ -40,9 +40,9 @@ const getEmailWrapper = (content: string) => `
 <body style="background-color: #f8fafc; padding: 40px 20px;">
     <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
         <!-- Header -->
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
-            <h1 style="color: white; font-size: 28px; font-weight: bold; margin: 0;">ExtraWeb</h1>
-            <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin-top: 5px;">Premium Website Templates</p>
+        <div style="background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); padding: 30px; text-align: center;">
+            <h1 style="color: white; font-size: 28px; font-weight: bold; margin: 0;">ejobsit</h1>
+            <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin-top: 5px;">Premium IT Solutions & Training</p>
         </div>
         
         <!-- Content -->
@@ -53,10 +53,10 @@ const getEmailWrapper = (content: string) => `
         <!-- Footer -->
         <div style="background: #f8fafc; padding: 25px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
             <p style="color: #64748b; font-size: 12px; margin: 0;">
-                © ${new Date().getFullYear()} ExtraWeb. All rights reserved.
+                © ${new Date().getFullYear()} ejobsit. All rights reserved.
             </p>
             <p style="color: #94a3b8; font-size: 11px; margin-top: 8px;">
-                This email was sent from <a href="${config.frontend_url}" style="color: #667eea;">extrainweb.com</a>
+                This email was sent from <a href="${config.frontend_url}" style="color: #14b8a6;">ejobsit.com</a>
             </p>
         </div>
     </div>
@@ -70,7 +70,7 @@ const getWelcomeEmailTemplate = (firstName: string) => getEmailWrapper(`
         <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
             <span style="font-size: 36px;">🎉</span>
         </div>
-        <h2 style="color: #1e293b; font-size: 24px; margin-bottom: 10px;">Welcome to ExtraWeb!</h2>
+        <h2 style="color: #1e293b; font-size: 24px; margin-bottom: 10px;">Welcome to ejobsit!</h2>
         <p style="color: #64748b; font-size: 16px;">We're excited to have you on board</p>
     </div>
     
@@ -79,7 +79,7 @@ const getWelcomeEmailTemplate = (firstName: string) => getEmailWrapper(`
     </p>
     
     <p style="color: #334155; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
-        Thank you for joining ExtraWeb! You now have access to our premium collection of website templates and software solutions.
+        Thank you for joining ejobsit! You now have access to our premium collection of website templates and software solutions.
     </p>
     
     <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 12px; padding: 25px; margin-bottom: 25px;">
@@ -99,7 +99,7 @@ const getWelcomeEmailTemplate = (firstName: string) => getEmailWrapper(`
     </div>
     
     <p style="color: #64748b; font-size: 14px; text-align: center; margin-top: 30px;">
-        Need help? Contact us at <a href="mailto:support@extrainweb.com" style="color: #667eea;">support@extrainweb.com</a>
+        Need help? Contact us at <a href="mailto:support@ejobsit.com" style="color: #14b8a6;">support@ejobsit.com</a>
     </p>
 `);
 
@@ -200,7 +200,7 @@ const getInvoiceEmailTemplate = (data: InvoiceData) => {
         </div>
         
         <p style="color: #64748b; font-size: 14px; text-align: center; margin-top: 30px;">
-            Questions about your order? Contact us at <a href="mailto:support@extrainweb.com" style="color: #667eea;">support@extrainweb.com</a>
+            Questions about your order? Contact us at <a href="mailto:support@ejobsit.com" style="color: #14b8a6;">support@ejobsit.com</a>
         </p>
     `);
 };
@@ -250,9 +250,9 @@ const EmailService = {
     async sendWelcomeEmail(email: string, firstName: string): Promise<boolean> {
         try {
             await transporter.sendMail({
-                from: `"ExtraWeb" <${config.email.from}>`,
+                from: `"ejobsit" <${config.email.from}>`,
                 to: email,
-                subject: '🎉 Welcome to ExtraWeb - Your Premium Template Journey Begins!',
+                subject: '🎉 Welcome to ejobsit - Your Premium Template Journey Begins!',
                 html: getWelcomeEmailTemplate(firstName),
             });
             console.log(`✅ Welcome email sent to ${email}`);
@@ -267,7 +267,7 @@ const EmailService = {
     async sendInvoiceEmail(email: string, invoiceData: InvoiceData): Promise<boolean> {
         try {
             await transporter.sendMail({
-                from: `"ExtraWeb" <${config.email.from}>`,
+                from: `"ejobsit" <${config.email.from}>`,
                 to: email,
                 subject: `✅ Payment Confirmed - Order #${invoiceData.orderId.slice(-8).toUpperCase()}`,
                 html: getInvoiceEmailTemplate(invoiceData),
@@ -285,9 +285,9 @@ const EmailService = {
         try {
             const resetLink = `${config.frontend_url}/reset-password?token=${resetToken}`;
             await transporter.sendMail({
-                from: `"ExtraWeb" <${config.email.from}>`,
+                from: `"ejobsit" <${config.email.from}>`,
                 to: email,
-                subject: '🔐 Reset Your Password - ExtraWeb',
+                subject: '🔐 Reset Your Password - ejobsit',
                 html: getPasswordResetEmailTemplate(firstName, resetLink),
             });
             console.log(`✅ Password reset email sent to ${email}`);

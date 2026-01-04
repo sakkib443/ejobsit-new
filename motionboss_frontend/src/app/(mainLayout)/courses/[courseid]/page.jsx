@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchCoursesData } from "@/redux/CourseSlice";
+import { fetchCoursesData, fetchSingleCourse, toggleCourseLike } from "@/redux/CourseSlice";
 import { fetchMentorsData } from "@/redux/mentorSlice";
 import { useLanguage } from "@/context/LanguageContext";
 import { addToCart } from "@/redux/cartSlice";
@@ -17,6 +17,7 @@ import { FaHeart, FaRegHeart, FaStar, FaArrowRight } from "react-icons/fa";
 import { MdVerified, MdOutlineMenuBook, MdPlayCircleOutline } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import ReviewsSection from "@/components/Reviews/ReviewsSection";
 
 // Animated Counter - matching Website Details
 const AnimatedCounter = ({ value }) => {
@@ -51,7 +52,7 @@ const SingleCourse = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { t, language } = useLanguage();
-  const { courses = [], loading } = useSelector((state) => state.courses || {});
+  const { courses = [], currentCourse: reduxCourse, loading } = useSelector((state) => state.courses || {});
   const { mentors = [] } = useSelector((state) => state.mentors || {});
 
   const [activeTab, setActiveTab] = useState("overview");
@@ -64,24 +65,27 @@ const SingleCourse = () => {
   const bengaliClass = language === "bn" ? "hind-siliguri" : "";
 
   useEffect(() => {
+    dispatch(fetchSingleCourse(id));
     dispatch(fetchCoursesData());
     dispatch(fetchMentorsData());
-  }, [dispatch]);
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    if (reduxCourse) {
+      setCurrentCourse(reduxCourse);
+
+      if (reduxCourse.mentor && mentors.length > 0) {
+        const foundMentor = mentors.find(m => m._id === reduxCourse.mentor || m.id === reduxCourse.mentor || (typeof reduxCourse.mentor === 'object' && reduxCourse.mentor._id === m._id));
+        setInstructor(foundMentor);
+      }
+    }
+  }, [reduxCourse, mentors]);
 
   useEffect(() => {
     if (courses && courses.length > 0) {
-      const foundCourse = courses.find((c) => c._id === id || c.id === id);
-      if (foundCourse) {
-        setCurrentCourse(foundCourse);
-        setPopularCourses(courses.filter((c) => (c._id !== id && c.id !== id)).slice(0, 3));
-
-        if (foundCourse.mentor && mentors.length > 0) {
-          const foundMentor = mentors.find(m => m._id === foundCourse.mentor || m.id === foundCourse.mentor || (typeof foundCourse.mentor === 'object' && foundCourse.mentor._id === m._id));
-          setInstructor(foundMentor);
-        }
-      }
+      setPopularCourses(courses.filter((c) => (c._id !== id && c.id !== id)).slice(0, 3));
     }
-  }, [courses, mentors, id]);
+  }, [courses, id]);
 
   const handleAddToCart = () => {
     if (!currentCourse) return;
@@ -97,6 +101,25 @@ const SingleCourse = () => {
   const handleBuyNow = () => {
     handleAddToCart();
     router.push('/cart');
+  };
+
+  const handleToggleLike = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login to like this course");
+      router.push('/login');
+      return;
+    }
+    if (isLiking) return;
+    setIsLiking(true);
+    try {
+      await dispatch(toggleCourseLike(id)).unwrap();
+    } catch (err) {
+      console.error("Like error:", err);
+      alert(err.message || "Failed to like. Please try again.");
+    } finally {
+      setIsLiking(false);
+    }
   };
 
   // Loading State
@@ -231,7 +254,7 @@ const SingleCourse = () => {
                   <LuMonitor className="text-blue-600" size={14} />
                 </div>
                 <span className="text-gray-700 font-medium text-sm poppins">
-                  <AnimatedCounter value={currentCourse.totalLessons || currentCourse.lessons?.length || 0} />
+                  <AnimatedCounter value={currentCourse.totalLessons || 0} />
                   <span className="text-gray-400 ml-1">lessons</span>
                 </span>
               </div>
@@ -251,10 +274,17 @@ const SingleCourse = () => {
               </div>
 
               <button
-                className="flex items-center gap-2 px-3 py-2 rounded-md border transition-all bg-white border-gray-200 text-gray-600 hover:border-rose-200 hover:text-rose-500"
+                onClick={handleToggleLike}
+                disabled={isLiking}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md border transition-all ${currentCourse.isLiked
+                  ? 'bg-rose-50 border-rose-200 text-rose-600'
+                  : 'bg-white border-gray-200 text-gray-600 hover:border-rose-200 hover:text-rose-500'
+                  }`}
               >
-                <FaRegHeart size={14} />
-                <span className="font-semibold text-sm poppins">Like</span>
+                {currentCourse.isLiked ? <FaHeart size={14} /> : <FaRegHeart size={14} />}
+                <span className="font-semibold text-sm poppins">
+                  <AnimatedCounter value={currentCourse.likeCount || 0} />
+                </span>
               </button>
             </motion.div>
           </div>
@@ -290,6 +320,7 @@ const SingleCourse = () => {
                   { id: "curriculum", label: "Curriculum", icon: MdOutlineMenuBook },
                   { id: "whatyoulearn", label: "Learning", icon: LuZap },
                   { id: "instructor", label: "Instructor", icon: LuUsers },
+                  { id: "reviews", label: "Reviews", icon: FaStar },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -363,16 +394,32 @@ const SingleCourse = () => {
                         <span className="w-1 h-5 bg-teal-500 rounded-full"></span>
                         Learning Modules
                       </h2>
-                      <div className="space-y-3">
-                        {currentCourse.curriculum?.map((item, idx) => (
-                          <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-md hover:border-teal-200 hover:bg-teal-50/30 transition-all group">
-                            <div className="flex items-center gap-4">
-                              <div className="w-8 h-8 rounded bg-white flex items-center justify-center text-teal-600 shadow-sm font-bold text-xs outfit border border-teal-50">
-                                {String(idx + 1).padStart(2, '0')}
+                      <div className="space-y-4">
+                        {currentCourse.curriculum?.map((module, idx) => (
+                          <div key={idx} className="bg-gray-50 border border-gray-100 rounded-md overflow-hidden">
+                            <div className="flex items-center justify-between p-4 bg-white border-b border-gray-100">
+                              <div className="flex items-center gap-3">
+                                <span className="w-8 h-8 rounded bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-xs outfit">
+                                  {idx + 1}
+                                </span>
+                                <div>
+                                  <h3 className="font-bold text-gray-900 outfit text-sm">{module.moduleTitle}</h3>
+                                  <p className="text-[10px] text-gray-400 poppins uppercase tracking-wider">{module.totalLessons} Lessons • {module.totalDuration} min</p>
+                                </div>
                               </div>
-                              <span className="font-semibold text-gray-800 poppins text-sm">{typeof item === 'string' ? item : item.title}</span>
                             </div>
-                            <MdPlayCircleOutline className="text-gray-300 group-hover:text-teal-500 text-xl transition-colors cursor-pointer" />
+                            <div className="divide-y divide-gray-100/50">
+                              {module.lessons?.map((lesson, lIdx) => (
+                                <div key={lIdx} className="flex items-center justify-between p-4 pl-12 hover:bg-white transition-colors group">
+                                  <div className="flex items-center gap-3">
+                                    <MdPlayCircleOutline className="text-teal-400" size={18} />
+                                    <span className="text-sm font-medium text-gray-600 poppins group-hover:text-teal-600">{lesson.title}</span>
+                                    {lesson.isFree && <span className="text-[10px] font-bold text-teal-500 bg-teal-50 px-2 py-0.5 rounded border border-teal-100">FREE</span>}
+                                  </div>
+                                  <span className="text-[11px] font-medium text-gray-400 poppins">{lesson.videoDuration}s</span>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         ))}
                         {!currentCourse.curriculum?.length && <p className="text-gray-400 text-sm poppins py-10 text-center border border-dashed rounded-md">Curriculum details coming soon.</p>}
@@ -458,6 +505,18 @@ const SingleCourse = () => {
                           <p className="text-gray-400 text-sm poppins">Instructor details coming soon</p>
                         </div>
                       )}
+                    </motion.div>
+                  )}
+
+                  {activeTab === "reviews" && (
+                    <motion.div
+                      key="reviews"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ReviewsSection productId={currentCourse._id} productType="course" />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -571,8 +630,8 @@ const SingleCourse = () => {
             </div>
           </div>
         </div>
-      </section>
-    </div>
+      </section >
+    </div >
   );
 };
 

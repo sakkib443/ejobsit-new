@@ -30,29 +30,19 @@ const CourseCardSkeleton = () => (
   </div>
 );
 
-const RightCoursesDetalis = ({ searchQuery }) => {
+const RightCoursesDetalis = ({ searchQuery, selectedType }) => {
   const dispatch = useDispatch();
   const searchParams = useSearchParams();
 
   const { courses = [], loading = false } = useSelector((state) => state.courses || {});
   const { items: categories = [], selectedCategories = [] } = useSelector((state) => state.categories || {});
 
-  const urlType = searchParams.get("type");
-  const [selectedType, setSelectedType] = useState("All");
   const [sortBy, setSortBy] = useState("default");
   const [isGridView, setIsGridView] = useState(true);
 
   useEffect(() => {
     dispatch(fetchCoursesData());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (urlType && ["Online", "Offline", "Recorded"].includes(urlType)) {
-      setSelectedType(urlType);
-    } else {
-      setSelectedType("All");
-    }
-  }, [urlType]);
 
   // Get category name from ID
   const getCategoryName = (categoryId) => {
@@ -68,8 +58,17 @@ const RightCoursesDetalis = ({ searchQuery }) => {
     if (!course) return false;
 
     // Type filter
-    const cType = course?.courseType || course?.type || "Recorded";
-    const typeMatch = selectedType === "All" || cType === selectedType;
+    // Normalize type from course object (support multiple field names)
+    const rawType = course?.courseType || course?.type || course?.mode || "";
+    const cType = rawType.toString().toLowerCase();
+    const sType = (selectedType || "All").toLowerCase();
+
+    // If selected is 'all', match everything. Otherwise match specific type.
+    // If course has no type, we might want to default it or exclude it. 
+    // Assuming 'Recorded' might be default if missing, but let's be strict if field exists.
+    // If rawType is empty, let's assume it *might* match if we are loose, but better to check if your data actually has these fields.
+    // For now, loose match:
+    const typeMatch = sType === "all" || cType === sType;
 
     // Category filter
     let categoryMatch = true;
@@ -112,69 +111,49 @@ const RightCoursesDetalis = ({ searchQuery }) => {
     }
   });
 
-  const typeButtons = ["All", "Online", "Offline", "Recorded"];
-
   return (
     <div className="space-y-8">
-      {/* Top Bar */}
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-6 bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm">
-        {/* Left - Course Count & Type Filters */}
-        <div className="flex flex-col sm:flex-row items-center gap-6 w-full lg:w-auto">
-          <div className="flex items-center gap-3 px-4 py-2 bg-[#41bfb8]/10 rounded-xl">
-            <HiOutlineSparkles className="text-[#41bfb8]" />
-            <span className="text-slate-800 font-black outfit uppercase tracking-tight text-xs">
-              {sortedCourses.length} <span className="text-slate-400 font-bold ml-1">Courses</span>
-            </span>
-          </div>
-
-          {/* Type Buttons */}
-          <div className="flex items-center gap-2 p-1.5 bg-slate-50 rounded-2xl overflow-x-auto w-full sm:w-auto no-scrollbar">
-            {typeButtons.map((type) => (
-              <button
-                key={type}
-                onClick={() => setSelectedType(type)}
-                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${selectedType === type
-                  ? "bg-slate-900 text-white shadow-lg shadow-slate-200"
-                  : "text-slate-400 hover:text-slate-600"
-                  }`}
-              >
-                {type}
-              </button>
-            ))}
-          </div>
+      {/* Top Bar - Simplified */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white border border-slate-100 rounded-2xl p-4 shadow-sm sticky top-20 z-10 backdrop-blur-md bg-white/90">
+        {/* Left - Course Count */}
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#41bfb8]/10 rounded-lg">
+          <HiOutlineSparkles className="text-[#41bfb8]" />
+          <span className="text-slate-800 font-bold outfit text-xs">
+            {sortedCourses.length} <span className="text-slate-500 font-normal">Courses Found</span>
+          </span>
         </div>
 
         {/* Right - Sort & View Toggle */}
-        <div className="flex items-center gap-4 w-full lg:w-auto justify-end">
+        <div className="flex items-center gap-3">
           {/* Sort Dropdown */}
           <div className="relative group">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none pl-10 pr-10 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-600 focus:outline-none focus:ring-4 focus:ring-[#41bfb8]/10 focus:border-[#41bfb8] cursor-pointer transition-all"
+              className="appearance-none pl-3 pr-8 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-medium text-slate-600 focus:outline-none focus:ring-2 focus:ring-[#41bfb8]/20 focus:border-[#41bfb8] cursor-pointer transition-all hover:bg-white"
             >
-              <option value="default">Sort Options</option>
+              <option value="default">Sort By</option>
               <option value="rating">Top Rated</option>
               <option value="students">Most Popular</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
             </select>
-            <LuArrowUpDown className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm" />
+            <LuArrowUpDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
           </div>
 
           {/* View Toggle */}
-          <div className="flex items-center p-1 bg-slate-50 rounded-2xl">
+          <div className="flex items-center p-1 bg-slate-100 rounded-xl">
             <button
               onClick={() => setIsGridView(true)}
-              className={`p-2.5 rounded-xl transition-all ${isGridView ? 'bg-white text-[#41bfb8] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+              className={`p-1.5 rounded-lg transition-all ${isGridView ? 'bg-white text-[#41bfb8] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
             >
-              <LuLayoutGrid size={18} />
+              <LuLayoutGrid size={16} />
             </button>
             <button
               onClick={() => setIsGridView(false)}
-              className={`p-2.5 rounded-xl transition-all ${!isGridView ? 'bg-white text-[#41bfb8] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+              className={`p-1.5 rounded-lg transition-all ${!isGridView ? 'bg-white text-[#41bfb8] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
             >
-              <LuList size={18} />
+              <LuList size={16} />
             </button>
           </div>
         </div>
@@ -188,9 +167,13 @@ const RightCoursesDetalis = ({ searchQuery }) => {
           ))}
         </div>
       ) : sortedCourses.length > 0 ? (
-        <div className={`grid gap-8 ${isGridView ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'}`}>
+        <div className={`grid gap-6 ${isGridView ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'}`}>
           {sortedCourses.map((course) => (
-            <CourseCard key={course?._id || course?.id} course={course} />
+            <CourseCard
+              key={course?._id || course?.id}
+              course={course}
+              view={isGridView ? 'grid' : 'list'}
+            />
           ))}
         </div>
       ) : (

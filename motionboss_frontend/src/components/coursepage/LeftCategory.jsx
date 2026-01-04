@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCategories, setSelectedCategories } from "@/redux/categorySlice";
 import { IoSearchSharp, IoClose } from "react-icons/io5";
@@ -15,8 +15,12 @@ const LeftCategory = ({ searchQuery, setSearchQuery, selectedType, setSelectedTy
     (state) => state.categories
   );
   const initialUrlCategorySet = useRef(false);
+  const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => { dispatch(fetchCategories()); }, [dispatch]);
+  useEffect(() => {
+    setIsMounted(true);
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   // Handle URL category parameter - only once on initial load
   useEffect(() => {
@@ -72,7 +76,7 @@ const LeftCategory = ({ searchQuery, setSearchQuery, selectedType, setSelectedTy
       </div>
 
       {/* Clear Filters */}
-      {hasActiveFilters && (
+      {isMounted && hasActiveFilters && (
         <button
           onClick={clearAllFilters}
           className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-md text-sm font-medium work hover:bg-red-100 transition-colors"
@@ -82,25 +86,30 @@ const LeftCategory = ({ searchQuery, setSearchQuery, selectedType, setSelectedTy
         </button>
       )}
 
-      {/* Skill Level Filter */}
-      <div className="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
+      {/* Course Type Filter */}
+      <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
         <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-200">
           <HiOutlineSparkles className="text-[#F79952]" />
-          <h3 className="font-semibold text-gray-800 outfit text-sm">Skill Level</h3>
+          <h3 className="font-semibold text-gray-800 outfit text-sm">Course Type</h3>
         </div>
-        <div className="p-3 flex flex-wrap gap-2">
-          {["All", "Beginner", "Intermediate", "Advanced"].map((level) => (
-            <button
-              key={level}
-              onClick={() => setSelectedType && setSelectedType(level)}
-              className={`px-3 py-1.5 rounded-md text-sm font-medium work transition-all duration-200 ${selectedType === level
-                ? "bg-[#41bfb8] text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-            >
-              {level}
-            </button>
-          ))}
+        <div className="p-3">
+          <div className="space-y-1">
+            {["All", "Online", "Offline", "Recorded"].map((type) => (
+              <button
+                key={type}
+                onClick={() => setSelectedType && setSelectedType(type)}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${selectedType === type
+                  ? "bg-[#41bfb8]/10 text-[#41bfb8]"
+                  : "text-gray-600 hover:bg-gray-50"
+                  }`}
+              >
+                <span className="work">{type}</span>
+                {selectedType === type && (
+                  <div className="w-2 h-2 rounded-full bg-[#41bfb8]"></div>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -109,7 +118,7 @@ const LeftCategory = ({ searchQuery, setSearchQuery, selectedType, setSelectedTy
         <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-200">
           <LuFilter className="text-[#41bfb8]" />
           <h3 className="font-semibold text-gray-800 outfit text-sm">Categories</h3>
-          {selectedCategories.length > 0 && (
+          {isMounted && selectedCategories.length > 0 && (
             <span className="ml-auto text-xs bg-[#41bfb8] text-white px-2 py-0.5 rounded-full">
               {selectedCategories.length}
             </span>
@@ -119,15 +128,15 @@ const LeftCategory = ({ searchQuery, setSearchQuery, selectedType, setSelectedTy
         <div className="p-3 space-y-1  overflow-y-auto">
           {/* All Option */}
           <label
-            className={`flex items-center gap-3 px-2 py-2 rounded-md cursor-pointer transition-colors ${selectedCategories.length === 0
+            className={`flex items-center gap-3 px-2 py-2 rounded-md cursor-pointer transition-colors ${isMounted && selectedCategories.length === 0
               ? "bg-[#41bfb8]/10 text-[#41bfb8]"
               : "hover:bg-gray-50 text-gray-700"
               }`}
             onClick={() => dispatch(setSelectedCategories([]))}
           >
-            <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${selectedCategories.length === 0 ? "border-[#41bfb8] bg-[#41bfb8]" : "border-gray-300"
+            <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${isMounted && selectedCategories.length === 0 ? "border-[#41bfb8] bg-[#41bfb8]" : "border-gray-300"
               }`}>
-              {selectedCategories.length === 0 && (
+              {isMounted && selectedCategories.length === 0 && (
                 <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
@@ -136,13 +145,13 @@ const LeftCategory = ({ searchQuery, setSearchQuery, selectedType, setSelectedTy
             <span className="text-sm font-medium work">All Categories</span>
           </label>
 
-          {status === "loading" && (
+          {isMounted && status === "loading" && (
             <div className="text-center py-4">
               <div className="w-5 h-5 border-2 border-[#41bfb8] border-t-transparent rounded-full animate-spin mx-auto"></div>
             </div>
           )}
 
-          {status === "succeeded" &&
+          {isMounted && status === "succeeded" &&
             filteredCategories.map((category) => (
               <label
                 key={category._id || category.id}

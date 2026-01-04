@@ -4,12 +4,16 @@
     "name": "Sheikh Sakibul Hasan",
     "designation": "Department Head",
     "subject": "Web Development",
-    "specialized_area": ["Web Development", "MERN", "Wordpress", "PHP"],
+    "specialized_area": [
+      "Web Development",
+      "MERN",
+      "Wordpress",
+      "PHP"
+    ],
     "education_qualification": [
       "BSc in Computer Science",
       "Diploma In Web Development",
       "Diploma In Merchandising"
-      
     ],
     "work_experience": [
       "Web Development For Freelancing(Level-3), NSDA",
@@ -44,7 +48,7 @@
     ],
     "work_experience": [
       "Former UI Designer at TechnoNext",
-      "Lead Trainer at Bdcalling Academy",
+      "Lead Trainer at ejobs it",
       "Freelance Web Designer"
     ],
     "training_experience": {
@@ -134,14 +138,13 @@
     ],
     "education_qualification": [
       "MA in English",
-
       "BA in English",
       "Higher Secondary School Certificate",
       "Secondary School Certificate",
       "Training: Certified in Digital Marketing"
     ],
     "work_experience": [
-      "Assistant Mentor, BDCalling Academy",
+      "Assistant Mentor, ejobs it",
       "Certified NSDA Level 3 Digital Marketing For Freelancing",
       "Digital Marketing Practitioner & Strategist",
       "Campaign Manager for Various Local Businesses",
@@ -173,7 +176,7 @@
       "Secondary School Certificate (SSC), Barisal Zilla School (2017)"
     ],
     "work_experience": [
-      "Assistant Mentor – MERN Stack, Bdcalling Academy",
+      "Assistant Mentor – MERN Stack, ejobs it",
       "AI & Web Design Coding Instructor, Dreamers Academy",
       "Full-Stack Web Developer (Project-Based & Freelance Work)"
     ],
@@ -185,7 +188,6 @@
     "details": "Saide Bin Sabid is an Assistant Mentor – MERN Stack specializing in Web Development. He focuses on building modern, scalable, and user-friendly web applications using the MERN stack and Next.js. Alongside development, he actively mentors students and junior developers, helping them gain practical, real-world coding experience.",
     "lifeJourney": "Saide Bin Sabid began his journey in technology with a strong interest in problem-solving and software development. While completing his Bachelor’s degree in Computer Science & Engineering at United International University, he built a solid foundation in full-stack web development. Through hands-on projects involving authentication, payments, and role-based systems, he gained real-world experience. His passion for teaching led him to work as an AI and Web Design Coding Instructor, where he guided learners through JavaScript, APIs, and responsive design. Currently, as an Assistant Mentor – MERN Stack, he continues to support students by combining industry-focused development skills with effective mentoring, helping shape the next generation of developers."
   },
-
   {
     "id": 5,
     "name": "Nengminza Bapon",

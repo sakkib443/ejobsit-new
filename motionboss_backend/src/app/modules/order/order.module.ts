@@ -108,8 +108,11 @@ const deliverOrderItems = async (order: any, rawItems?: any[]): Promise<void> =>
 
             if (item.productType === 'course') {
                 const { EnrollmentService } = await import('../enrollment/enrollment.service');
+                const { Course } = await import('../course/course.model');
                 try {
                     await EnrollmentService.enrollStudent(userId, productId, order._id!.toString());
+                    // Increment totalEnrollments for course
+                    await Course.findByIdAndUpdate(productId, { $inc: { totalEnrollments: 1 } });
                     console.log(`Enrolled user ${userId} in course ${productId}`);
                 } catch (enrollError: any) {
                     // Ignore "already enrolled" errors but log others
@@ -117,7 +120,19 @@ const deliverOrderItems = async (order: any, rawItems?: any[]): Promise<void> =>
                         console.error(`Enrollment failed for ${productId}:`, enrollError);
                     }
                 }
-            } else {
+            } else if (item.productType === 'website') {
+                const { Website } = await import('../website/website.model');
+                await Website.findByIdAndUpdate(productId, { $inc: { salesCount: 1 } });
+                await DownloadService.createDownloadRecord(
+                    userId,
+                    order._id!.toString(),
+                    productId,
+                    item.productType,
+                    item.title
+                );
+            } else if (item.productType === 'software') {
+                const { Software } = await import('../software/software.model');
+                await Software.findByIdAndUpdate(productId, { $inc: { salesCount: 1 } });
                 await DownloadService.createDownloadRecord(
                     userId,
                     order._id!.toString(),

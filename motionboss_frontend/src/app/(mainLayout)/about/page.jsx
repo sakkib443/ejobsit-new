@@ -42,6 +42,15 @@ const MouseLight = () => {
 // Generic Transition Wrapper defined OUTSIDE to prevent remounting on every parent render
 const ScrollSection = ({ children, className = "" }) => {
   const ref = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const { scrollYProgress: rawSectionProgress } = useScroll({
     target: ref,
     offset: ["start end", "center center", "end start"]
@@ -61,7 +70,7 @@ const ScrollSection = ({ children, className = "" }) => {
   return (
     <motion.div
       ref={ref}
-      style={{
+      style={isMobile ? {} : {
         scale,
         opacity,
         willChange: "transform, opacity"
@@ -75,9 +84,19 @@ const ScrollSection = ({ children, className = "" }) => {
 
 const AboutPage = () => {
   const { scrollYProgress } = useScroll();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Initialize Smooth Scroll (Lenis) - remains stable
   useEffect(() => {
+    if (window.innerWidth < 1024) return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -118,9 +137,9 @@ const AboutPage = () => {
 
       <main className="relative">
         {/* Layer 0: Original Sticky Hero */}
-        <section className="sticky top-0 h-screen w-full overflow-hidden z-0 bg-white dark:bg-black">
+        <section className={`${isMobile ? 'relative' : 'sticky top-0'} h-[50vh] lg:h-screen w-full overflow-hidden z-0 bg-white dark:bg-black`}>
           <motion.div
-            style={{
+            style={isMobile ? {} : {
               scale: heroScale,
               opacity: heroOpacity,
               y: heroY,
@@ -133,7 +152,7 @@ const AboutPage = () => {
         </section>
 
         {/* Following Sections with Stabilized Transitions */}
-        <section className="relative z-10 bg-white dark:bg-[#020202] shadow-[0_-80px_100px_rgba(0,0,0,0.1)] dark:shadow-[0_-80px_100px_rgba(0,0,0,0.6)] rounded-t-[50px] lg:rounded-t-[100px]">
+        <section className={`relative z-10 bg-white dark:bg-[#020202] ${isMobile ? '' : 'shadow-[0_-80px_100px_rgba(0,0,0,0.1)] dark:shadow-[0_-80px_100px_rgba(0,0,0,0.6)] rounded-t-[50px] lg:rounded-t-[100px]'}`}>
           {/* First Section - Extra top padding for rounded area */}
           <ScrollSection className="pt-16 lg:pt-24 pb-12 lg:pb-16">
             <AboutFounder />
@@ -149,7 +168,7 @@ const AboutPage = () => {
             <AboutStats />
           </ScrollSection>
 
-          <ScrollSection className="py-12 lg:py-16">
+          <ScrollSection>
             <AboutGlobal />
           </ScrollSection>
 

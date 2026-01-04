@@ -77,8 +77,8 @@ const AboutHero = () => {
                         >
                             <p className={`text-base lg:text-lg text-gray-500 dark:text-gray-500 leading-relaxed mb-8 font-normal ${bengaliClass}`}>
                                 {language === 'bn'
-                                    ? 'আমরা শুধু দক্ষতা শেখাই না, আমরা আপনার ক্যারিয়ারের ভিত্তি তৈরি করি। মোশন বস একাডেমি—যেখানে স্বপ্ন বাস্তবায়িত হয়।'
-                                    : 'We don\'t just teach skills; we build the architectural foundation of your professional career. Motion Boss: Where ambition meets elite training.'
+                                    ? 'আমরা শুধু দক্ষতা শেখাই না, আমরা আপনার ক্যারিয়ারের ভিত্তি তৈরি করি। ইজবস আইটি—যেখানে স্বপ্ন বাস্তবায়িত হয়।'
+                                    : 'We don\'t just teach skills; we build the architectural foundation of your professional career. ejobs it: Where ambition meets elite training.'
                                 }
                             </p>
 

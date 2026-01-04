@@ -1,5 +1,5 @@
 // ===================================================================
-// MotionBoss LMS - Main Application File
+// ejobs it LMS - Main Application File
 // Express app setup with all routes and middleware
 // মূল এপ্লিকেশন ফাইল - সব routes এবং middleware এখানে connect হয়েছে
 // ===================================================================
@@ -53,8 +53,8 @@ app.use(cookieParser());
 const allowedOrigins = [
   config.frontend_url,
   'http://localhost:3000',
-  'https://motionboss.vercel.app',
-  'https://motion-boss.vercel.app',
+  'https://ejobsit.vercel.app',
+  'https://ejobs-it.vercel.app',
 ].filter(Boolean);
 
 app.use(
@@ -79,7 +79,7 @@ app.use(
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
-    message: '🚀 MotionBoss LMS API Server is running!',
+    message: '🚀 ejobs it LMS API Server is running!',
     version: '1.0.0',
     environment: config.env,
     timestamp: new Date().toISOString(),

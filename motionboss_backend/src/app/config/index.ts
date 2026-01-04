@@ -1,5 +1,5 @@
 // ===================================================================
-// ExtraWeb Backend - Configuration File
+// ejobsit Backend - Configuration File
 // কনফিগারেশন ফাইল - সব environment variables এখানে manage হবে
 // ===================================================================
 
@@ -18,7 +18,7 @@ export default {
 
   // ==================== Database Configuration ====================
   // ডাটাবেস কনফিগারেশন (MongoDB)
-  database_url: process.env.DATABASE_URL || 'mongodb://localhost:27017/extrainweb',
+  database_url: process.env.DATABASE_URL || 'mongodb://localhost:27017/ejobsit',
 
   // ==================== JWT Configuration ====================
   // JWT টোকেন কনফিগারেশন (Authentication)
@@ -48,7 +48,7 @@ export default {
     port: Number(process.env.EMAIL_PORT) || 587,
     user: process.env.EMAIL_USER || '',
     pass: process.env.EMAIL_PASS || '',
-    from: process.env.EMAIL_FROM || 'noreply@extrainweb.com',
+    from: process.env.EMAIL_FROM || 'noreply@ejobsit.com',
   },
 
   // ==================== Frontend URL ====================

@@ -97,10 +97,14 @@ const getCourseById = async (req: Request, res: Response, next: NextFunction) =>
         const { id } = req.params;
         const course = await CourseService.getCourseById(id);
 
+        // Check if user has liked
+        const userId = req.user?.userId;
+        const isLiked = userId && course.likedBy?.some((id: any) => id.toString() === userId);
+
         res.status(200).json({
             success: true,
             message: 'Course retrieved successfully',
-            data: course,
+            data: { ...JSON.parse(JSON.stringify(course)), isLiked: !!isLiked },
         });
     } catch (error) {
         next(error);
@@ -116,10 +120,14 @@ const getCourseBySlug = async (req: Request, res: Response, next: NextFunction) 
         const { slug } = req.params;
         const course = await CourseService.getCourseBySlug(slug);
 
+        // Check if user has liked
+        const userId = req.user?.userId;
+        const isLiked = userId && course.likedBy?.some((id: any) => id.toString() === userId);
+
         res.status(200).json({
             success: true,
             message: 'Course retrieved successfully',
-            data: course,
+            data: { ...JSON.parse(JSON.stringify(course)), isLiked: !!isLiked },
         });
     } catch (error) {
         next(error);
@@ -262,7 +270,45 @@ const getCourseContentForStudent = async (req: Request, res: Response, next: Nex
     }
 };
 
+/**
+ * Sync all course statistics
+ * POST /api/courses/sync-stats
+ */
+const syncAllCourseStats = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        await CourseService.syncAllCourseStats();
 
+        res.status(200).json({
+            success: true,
+            message: 'All course statistics synced successfully',
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Toggle like for a course
+ * POST /api/courses/:id/toggle-like
+ */
+const toggleLike = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user?.userId || (req.user as any)?._id || (req.user as any)?.id;
+        if (!userId) {
+            throw new AppError(401, 'User ID not found in token');
+        }
+        const result = await CourseService.toggleLike(id, userId.toString());
+
+        res.status(200).json({
+            success: true,
+            message: result.isLiked ? 'Course liked' : 'Course unliked',
+            data: result,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
 
 export const CourseController = {
     createCourse,
@@ -275,4 +321,6 @@ export const CourseController = {
     getPopularCourses,
     getCoursesByCategory,
     getCourseContentForStudent,
+    syncAllCourseStats,
+    toggleLike,
 };

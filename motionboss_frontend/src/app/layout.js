@@ -56,9 +56,17 @@ const hindSiliguri = Hind_Siliguri({
 });
 
 export const metadata = {
-  title: "Bd Calling Academy",
+  title: {
+    template: "ejobs it | %s",
+    default: "ejobs it | Home",
+  },
   description:
-    "Bdcalling Academy — a leading IT training institute in Bangladesh and a proud part of Betopia Group. We specialize in career-oriented education designed to help you develop practical digital skills and grow professionally.",
+    "ejobs it — a leading IT training institute and digital solutions provider. We specialize in professional courses, ready-made software, and premium website templates to help you grow your skills and business.",
+  icons: {
+    icon: "/images/ejobsitlogo.png",
+    shortcut: "/images/ejobsitlogo.png",
+    apple: "/images/ejobsitlogo.png",
+  },
 };
 
 export default function RootLayout({ children }) {

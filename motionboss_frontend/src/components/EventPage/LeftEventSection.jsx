@@ -23,7 +23,7 @@ const LeftEventSection = () => {
             <div>
               <div>
                 <img
-                  src="https://api.bdcallingacademy.com/adminAsset/image/197693287.jpg"
+                  src="https://api.ejobsit.com/adminAsset/image/197693287.jpg"
                   alt=""
                 />
               </div>
@@ -79,7 +79,7 @@ const LeftEventSection = () => {
               <div>
                 <div>
                   <img
-                    src="https://api.bdcallingacademy.com/adminAsset/image/2086206721.jpg"
+                    src="https://api.ejobsit.com/adminAsset/image/2086206721.jpg"
                     alt=""
                   />
                 </div>
@@ -136,7 +136,7 @@ const LeftEventSection = () => {
               <div>
                 <div>
                   <img
-                    src="https://api.bdcallingacademy.com/adminAsset/image/197693287.jpg"
+                    src="https://api.ejobsit.com/adminAsset/image/197693287.jpg"
                     alt=""
                   />
                 </div>

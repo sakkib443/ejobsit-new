@@ -292,6 +292,15 @@ const SoftwareService = {
                 $pull: { likedBy: userObjectId },
                 $inc: { likeCount: -1 },
             });
+
+            // Remove from wishlist
+            try {
+                const WishlistService = (await import('../wishlist/wishlist.module')).default;
+                await WishlistService.removeFromWishlist(userId, id);
+            } catch (error) {
+                console.error('Wishlist sync error (unlike):', error);
+            }
+
             return { liked: false, likeCount: Math.max(0, (software.likeCount || 0) - 1) };
         } else {
             // Like
@@ -299,6 +308,15 @@ const SoftwareService = {
                 $addToSet: { likedBy: userObjectId },
                 $inc: { likeCount: 1 },
             });
+
+            // Add to wishlist
+            try {
+                const WishlistService = (await import('../wishlist/wishlist.module')).default;
+                await WishlistService.addToWishlist(userId, id, 'software');
+            } catch (error) {
+                console.error('Wishlist sync error (like):', error);
+            }
+
             return { liked: true, likeCount: (software.likeCount || 0) + 1 };
         }
     },

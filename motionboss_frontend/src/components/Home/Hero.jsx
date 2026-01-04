@@ -14,6 +14,14 @@ const Hero = () => {
     const { scrollY } = useScroll();
     const [searchQuery, setSearchQuery] = useState("");
     const [heroData, setHeroData] = useState(null);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     // Mouse parallax tracking
     const mouseX = useMotionValue(0);
@@ -169,12 +177,12 @@ const Hero = () => {
             const text = language === 'bn' ? heroData.description.textBn : heroData.description.text;
             const brand = heroData.description.brandName;
             if (text && text.trim()) {
-                return { text, brand: brand || 'Motion Boss' };
+                return { text, brand: brand || 'ejobs it' };
             }
         }
         return {
             text: language === 'bn' ? 'সবচেয়ে নির্ভরযোগ্য লার্নিং প্ল্যাটফর্ম' : 'The most powerful learning and creative platform by',
-            brand: 'Motion Boss'
+            brand: 'ejobs it'
         };
     };
 
@@ -217,7 +225,7 @@ const Hero = () => {
 
                 {/* Large Brand Text with Parallax */}
                 <motion.div
-                    style={{ y: y1 }}
+                    style={isMobile ? {} : { y: y1 }}
                     className={`absolute -top-[5%] -left-[5%] text-[25vw] font-black text-gray-950/[0.03] dark:text-white/[0.015] select-none leading-none whitespace-nowrap ${headingFont}`}
                 >
                     EJOBSIT
@@ -225,25 +233,25 @@ const Hero = () => {
 
                 {/* 3D Floating Orbs with Mouse Parallax */}
                 <motion.div
-                    style={{ x: smoothMouseX, y: smoothMouseY }}
+                    style={isMobile ? {} : { x: smoothMouseX, y: smoothMouseY }}
                     className="absolute top-[15%] right-[15%] w-[300px] h-[300px] rounded-full bg-gradient-to-br from-teal-400/20 to-cyan-500/10 blur-[80px] animate-float-slow"
                 />
                 <motion.div
-                    style={{
+                    style={isMobile ? {} : {
                         x: useTransform(smoothMouseX, v => v * -1.5),
                         y: useTransform(smoothMouseY, v => v * -1.5)
                     }}
                     className="absolute top-[40%] left-[10%] w-[250px] h-[250px] rounded-full bg-gradient-to-br from-blue-400/15 to-indigo-500/10 blur-[70px] animate-float-medium"
                 />
                 <motion.div
-                    style={{
+                    style={isMobile ? {} : {
                         x: useTransform(smoothMouseX, v => v * 2),
                         y: useTransform(smoothMouseY, v => v * 2)
                     }}
                     className="absolute bottom-[20%] right-[25%] w-[350px] h-[350px] rounded-full bg-gradient-to-br from-orange-400/15 to-amber-500/10 blur-[90px] animate-float-fast"
                 />
                 <motion.div
-                    style={{
+                    style={isMobile ? {} : {
                         x: useTransform(smoothMouseX, v => v * -0.8),
                         y: useTransform(smoothMouseY, v => v * -0.8)
                     }}
@@ -524,7 +532,7 @@ const Hero = () => {
 
             {/* Premium Marquee with Glassmorphism */}
             <div className="absolute bottom-12 left-0 w-full overflow-hidden z-20">
-                <div className="relative border-y border-gray-400/60 dark:border-white/20 bg-white/70 dark:bg-black/70 backdrop-blur-2xl py-6">
+                <div className="relative border-y border-gray-100 dark:border-white/20 bg-white/70 dark:bg-black/70 backdrop-blur-2xl py-6">
                     {/* Gradient Overlays */}
                     <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white dark:from-black to-transparent z-10" />
                     <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white dark:from-black to-transparent z-10" />

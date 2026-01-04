@@ -6,7 +6,7 @@
 import express from 'express';
 import SoftwareController from './software.controller';
 import validateRequest from '../../middlewares/validateRequest';
-import { authMiddleware, authorizeRoles } from '../../middlewares/auth';
+import { authMiddleware, authorizeRoles, optionalAuth } from '../../middlewares/auth';
 import { createSoftwareValidation, updateSoftwareValidation, softwareQueryValidation } from './software.validation';
 
 const router = express.Router();
@@ -22,7 +22,7 @@ router.get('/', validateRequest(softwareQueryValidation), SoftwareController.get
 router.get('/featured', SoftwareController.getFeaturedSoftware);
 
 // GET /api/software/slug/:slug - Get by slug (public detail page)
-router.get('/slug/:slug', SoftwareController.getSoftwareBySlug);
+router.get('/slug/:slug', optionalAuth, SoftwareController.getSoftwareBySlug);
 
 // ===================================================================
 // ADMIN ROUTES - Software Management (seller removed)
@@ -106,6 +106,6 @@ router.post(
 );
 
 // GET /api/software/:id - Get by ID
-router.get('/:id', SoftwareController.getSoftwareById);
+router.get('/:id', optionalAuth, SoftwareController.getSoftwareById);
 
 export const SoftwareRoutes = router;

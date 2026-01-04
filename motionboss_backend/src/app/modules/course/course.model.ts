@@ -206,6 +206,14 @@ const courseSchema = new Schema<ICourse, CourseModel>(
             type: Number,
             default: 0,
         },
+        likeCount: {
+            type: Number,
+            default: 0,
+        },
+        likedBy: [{
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+        }],
 
         // ==================== SEO ====================
         metaTitle: {

@@ -22,7 +22,7 @@ router.get('/', validateRequest(websiteQueryValidation), WebsiteController.getAl
 router.get('/featured', WebsiteController.getFeaturedWebsites);
 
 // GET /api/websites/slug/:slug - Get by slug (public detail page)
-router.get('/slug/:slug', WebsiteController.getWebsiteBySlug);
+router.get('/slug/:slug', optionalAuth, WebsiteController.getWebsiteBySlug);
 
 // ===================================================================
 // ADMIN ROUTES - Website Management (seller removed)

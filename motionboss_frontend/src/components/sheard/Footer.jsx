@@ -34,10 +34,10 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: FaFacebook, href: "https://www.facebook.com/bdcallingacademy.bd", color: "#1877F2", label: "Facebook" },
-    { icon: FaLinkedin, href: "https://www.linkedin.com/company/bdcalling-academy/", color: "#0A66C2", label: "LinkedIn" },
-    { icon: FaYoutube, href: "https://www.youtube.com/@bdcallingacademy", color: "#FF0000", label: "YouTube" },
-    { icon: FaInstagram, href: "https://www.instagram.com/bdcallingacademy/", color: "#E4405F", label: "Instagram" },
+    { icon: FaFacebook, href: "https://www.facebook.com/ejobsit", color: "#1877F2", label: "Facebook" },
+    { icon: FaLinkedin, href: "https://www.linkedin.com/company/ejobsit/", color: "#0A66C2", label: "LinkedIn" },
+    { icon: FaYoutube, href: "https://www.youtube.com/@ejobsit", color: "#FF0000", label: "YouTube" },
+    { icon: FaInstagram, href: "https://www.instagram.com/ejobsit/", color: "#E4405F", label: "Instagram" },
   ];
 
   return (
@@ -186,13 +186,13 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="mailto:info@bdcallingacademy.com" className="group flex items-start gap-3">
+                <a href="mailto:info@ejobsit.com" className="group flex items-start gap-3">
                   <div className="w-9 h-9 rounded-md bg-[#F79952]/10 flex items-center justify-center shrink-0 group-hover:bg-[#F79952]/20 transition-colors">
                     <IoMailOutline className="text-[#F79952]" />
                   </div>
                   <div>
                     <p className={`text-xs text-gray-400 work ${bengaliClass}`}>{t("footer.email")}</p>
-                    <p className="text-gray-700 text-sm work group-hover:text-[#F79952] transition-colors break-all">info@bdcallingacademy.com</p>
+                    <p className="text-gray-700 text-sm work group-hover:text-[#F79952] transition-colors break-all">info@ejobsit.com</p>
                   </div>
                 </a>
               </li>

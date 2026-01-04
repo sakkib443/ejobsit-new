@@ -39,8 +39,8 @@ const ContactPage = () => {
     {
       icon: LuMail,
       titleKey: "emailUs",
-      value: "info@bdcallingacademy.com",
-      link: "mailto:info@bdcallingacademy.com",
+      value: "info@ejobsit.com",
+      link: "mailto:info@ejobsit.com",
       color: "#41bfb8",
       gradient: "from-teal-500 to-cyan-500",
     },
@@ -72,11 +72,11 @@ const ContactPage = () => {
   ];
 
   const socialLinks = [
-    { icon: FaFacebookF, href: "https://www.facebook.com/bdcallingacademy.bd", label: "Facebook", color: "#1877F2", bg: "bg-blue-500/10 hover:bg-blue-500" },
-    { icon: FaYoutube, href: "https://www.youtube.com/@bdCalling", label: "YouTube", color: "#FF0000", bg: "bg-red-500/10 hover:bg-red-500" },
-    { icon: FaLinkedinIn, href: "https://www.linkedin.com/company/bdcallingitltd", label: "LinkedIn", color: "#0A66C2", bg: "bg-sky-500/10 hover:bg-sky-500" },
+    { icon: FaFacebookF, href: "https://www.facebook.com/ejobsit", label: "Facebook", color: "#1877F2", bg: "bg-blue-500/10 hover:bg-blue-500" },
+    { icon: FaYoutube, href: "https://www.youtube.com/@ejobsit", label: "YouTube", color: "#FF0000", bg: "bg-red-500/10 hover:bg-red-500" },
+    { icon: FaLinkedinIn, href: "https://www.linkedin.com/company/ejobsit", label: "LinkedIn", color: "#0A66C2", bg: "bg-sky-500/10 hover:bg-sky-500" },
     { icon: FaWhatsapp, href: "https://wa.me/8801730481212", label: "WhatsApp", color: "#25D366", bg: "bg-green-500/10 hover:bg-green-500" },
-    { icon: FaInstagram, href: "#", label: "Instagram", color: "#E4405F", bg: "bg-pink-500/10 hover:bg-pink-500" },
+    { icon: FaInstagram, href: "https://www.instagram.com/ejobsit/", label: "Instagram", color: "#E4405F", bg: "bg-pink-500/10 hover:bg-pink-500" },
   ];
 
   return (
@@ -111,7 +111,7 @@ const ContactPage = () => {
       )}
 
       {/* Premium Hero Section */}
-      <section className="relative py-24 lg:py-32 overflow-hidden">
+      <section className="relative py-16 lg:py-20 overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {/* Gradient Orbs */}
@@ -188,12 +188,12 @@ const ContactPage = () => {
                 {item.link ? (
                   <a
                     href={item.link}
-                    className={`text-gray-900 dark:text-white font-bold text-base hover:text-teal-500 dark:hover:text-teal-400 transition-colors ${bengaliClass}`}
+                    className={`text-gray-900 dark:text-white font-normal text-base hover:text-teal-500 dark:hover:text-teal-400 transition-colors ${bengaliClass}`}
                   >
                     {language === "bn" && item.valueBn ? item.valueBn : item.value}
                   </a>
                 ) : (
-                  <p className={`text-gray-900 dark:text-white font-bold text-base ${bengaliClass}`}>
+                  <p className={`text-gray-900 dark:text-white font-normal text-base ${bengaliClass}`}>
                     {item.valueKey ? t(`contactPage.${item.valueKey}`) : item.value}
                   </p>
                 )}
@@ -313,14 +313,14 @@ const ContactPage = () => {
                 </p>
               </div>
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d8662.770468055722!2d90.41722969357912!3d23.765697600000006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c754583dd209%3A0xdd0c5fcc7d2d3836!2sbdCalling%20IT%20Ltd.%20-%20Corporate%20Office!5e1!3m2!1sen!2sbd!4v1744982086149!5m2!1sen!2sbd"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.8986834879085!2d90.41723!3d23.7656976!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c754583dd209%3A0xdd0c5fcc7d2d3836!2sDaisy%20Garden!5e0!3m2!1sen!2sbd!4v1704532086149!5m2!1sen!2sbd"
                 width="100%"
                 height="300"
                 className="border-0 grayscale hover:grayscale-0 transition-all duration-500"
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="BD Calling Academy Location"
+                title="ejobs it Location"
               />
             </div>
 

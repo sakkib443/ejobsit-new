@@ -26,7 +26,7 @@ const createLesson = async (payload: Partial<ILesson>): Promise<ILesson> => {
 
     // Add lesson ID to Course.lessons array
     await Course.findByIdAndUpdate(payload.course, {
-        $push: { lessons: lesson._id },
+        $addToSet: { lessons: lesson._id },
     });
 
     // Update course stats
@@ -56,6 +56,12 @@ const bulkCreateLessons = async (
 
     // Create all lessons
     const lessons = await Lesson.insertMany(lessonsWithCourse);
+
+    // Add lesson IDs to Course.lessons array
+    const lessonIds = lessons.map((l) => l._id);
+    await Course.findByIdAndUpdate(courseId, {
+        $addToSet: { lessons: { $each: lessonIds } },
+    });
 
     // Update course stats
     await updateCourseStats(courseId);
@@ -296,29 +302,32 @@ const togglePublishStatus = async (lessonId: string): Promise<ILesson | null> =>
  * Internal helper function
  */
 const updateCourseStats = async (courseId: string): Promise<void> => {
+    // 1. Get lesson stats (total duration and total lessons count)
     const stats = await Lesson.aggregate([
-        { $match: { course: courseId } },
+        { $match: { course: new Types.ObjectId(courseId) } },
         {
             $group: {
                 _id: null,
                 totalDuration: { $sum: '$videoDuration' },
                 totalLessons: { $sum: 1 },
-                totalModules: { $addToSet: '$module' },
             },
         },
     ]);
+
+    // 2. Get total modules count directly from Module collection
+    const totalModules = await Module.countDocuments({ course: courseId });
 
     if (stats.length > 0) {
         await Course.findByIdAndUpdate(courseId, {
             totalDuration: Math.round(stats[0].totalDuration / 60), // Convert to minutes
             totalLessons: stats[0].totalLessons,
-            totalModules: stats[0].totalModules.length,
+            totalModules: totalModules,
         });
     } else {
         await Course.findByIdAndUpdate(courseId, {
             totalDuration: 0,
             totalLessons: 0,
-            totalModules: 0,
+            totalModules: totalModules,
         });
     }
 };

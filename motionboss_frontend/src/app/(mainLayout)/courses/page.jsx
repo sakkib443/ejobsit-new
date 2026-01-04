@@ -26,6 +26,7 @@ const CourseContent = () => {
   const dispatch = useDispatch();
   const { courses = [], loading } = useSelector((state) => state.courses || {});
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedType, setSelectedType] = useState("All");
   const [showMobileFilter, setShowMobileFilter] = useState(false);
   const { t, language } = useLanguage();
   const bengaliClass = language === "bn" ? "hind-siliguri" : "";
@@ -109,6 +110,8 @@ const CourseContent = () => {
                 <LeftCategory
                   searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
+                  selectedType={selectedType}
+                  setSelectedType={setSelectedType}
                 />
               </Suspense>
             </div>
@@ -117,7 +120,10 @@ const CourseContent = () => {
           {/* Right - Course Grid */}
           <div className="flex-1 min-w-0">
             <Suspense fallback={<LoadingFallback />}>
-              <RightCoursesDetalis searchQuery={searchQuery} />
+              <RightCoursesDetalis
+                searchQuery={searchQuery}
+                selectedType={selectedType}
+              />
             </Suspense>
           </div>
         </div>

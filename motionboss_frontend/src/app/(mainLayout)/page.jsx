@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import Lenis from 'lenis';
@@ -44,6 +44,15 @@ const MouseLight = () => {
 // Generic Transition Wrapper for scroll animations
 const ScrollSection = ({ children, className = "" }) => {
   const ref = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const { scrollYProgress: rawSectionProgress } = useScroll({
     target: ref,
     offset: ["start end", "center center", "end start"]
@@ -63,7 +72,7 @@ const ScrollSection = ({ children, className = "" }) => {
   return (
     <motion.div
       ref={ref}
-      style={{
+      style={isMobile ? {} : {
         scale,
         opacity,
         willChange: "transform, opacity"
@@ -78,6 +87,14 @@ const ScrollSection = ({ children, className = "" }) => {
 const HomePage = () => {
   const dispatch = useDispatch();
   const { scrollYProgress } = useScroll();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     dispatch(fetchCoursesData());
@@ -86,6 +103,9 @@ const HomePage = () => {
 
   // Initialize Smooth Scroll (Lenis)
   useEffect(() => {
+    // Disable smooth scroll on mobile for better native experience
+    if (window.innerWidth < 1024) return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -126,9 +146,9 @@ const HomePage = () => {
 
       <main className="relative">
         {/* Sticky Hero with Parallax Effect */}
-        <section className="sticky top-0 h-screen w-full overflow-hidden z-0 bg-white dark:bg-black">
+        <section className={`${isMobile ? 'relative' : 'sticky top-0'} h-screen w-full overflow-hidden z-0 bg-white dark:bg-black`}>
           <motion.div
-            style={{
+            style={isMobile ? {} : {
               scale: heroScale,
               opacity: heroOpacity,
               y: heroY,
@@ -141,7 +161,7 @@ const HomePage = () => {
         </section>
 
         {/* Following Sections with Scroll Transitions */}
-        <section className="relative z-10 bg-white dark:bg-[#020202] shadow-[0_-80px_100px_rgba(0,0,0,0.1)] dark:shadow-[0_-80px_100px_rgba(0,0,0,0.6)] rounded-t-[50px] lg:rounded-t-[100px]">
+        <section className={`relative z-10 bg-white dark:bg-[#020202] ${isMobile ? '' : 'shadow-[0_-80px_100px_rgba(0,0,0,0.1)] dark:shadow-[0_-80px_100px_rgba(0,0,0,0.6)] rounded-t-[50px] lg:rounded-t-[100px]'}`}>
           {/* All sections with consistent scroll effects */}
           <ScrollSection>
             <HomeCategory />

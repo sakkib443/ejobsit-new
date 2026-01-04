@@ -131,10 +131,10 @@ const AdminSidebar = () => {
       gradient: 'from-green-500 to-emerald-500'
     },
     {
-      title: 'Reviews',
-      href: '/dashboard/admin/reviews',
+      title: 'Like & Rating',
+      href: '/dashboard/admin/favorites-ratings',
       icon: FiStar,
-      gradient: 'from-yellow-500 to-amber-500'
+      gradient: 'from-rose-500 to-pink-500'
     },
     {
       title: 'Reports',

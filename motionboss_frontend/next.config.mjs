@@ -4,7 +4,11 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "api.bdcallingacademy.com",
+        hostname: "api.ejobsit.com",
+      },
+      {
+        protocol: "https",
+        hostname: "api.ejobsit.com",
       },
       {
         protocol: "https",

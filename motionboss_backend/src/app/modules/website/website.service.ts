@@ -373,6 +373,15 @@ const WebsiteService = {
                 $pull: { likedBy: userObjectId },
                 $inc: { likeCount: -1 }
             });
+
+            // Remove from wishlist
+            try {
+                const WishlistService = (await import('../wishlist/wishlist.module')).default;
+                await WishlistService.removeFromWishlist(userId, id);
+            } catch (error) {
+                console.error('Wishlist sync error (unlike):', error);
+            }
+
             const updated = await Website.findById(id).select('likeCount');
             return { isLiked: false, likeCount: Math.max(0, updated?.likeCount || 0) };
         } else {
@@ -381,6 +390,15 @@ const WebsiteService = {
                 $addToSet: { likedBy: userObjectId },
                 $inc: { likeCount: 1 }
             });
+
+            // Add to wishlist
+            try {
+                const WishlistService = (await import('../wishlist/wishlist.module')).default;
+                await WishlistService.addToWishlist(userId, id, 'website');
+            } catch (error) {
+                console.error('Wishlist sync error (like):', error);
+            }
+
             const updated = await Website.findById(id).select('likeCount');
             return { isLiked: true, likeCount: updated?.likeCount || 0 };
         }

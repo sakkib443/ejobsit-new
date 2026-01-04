@@ -134,7 +134,7 @@ const AboutFounder = () => {
                                     >
                                         {language === 'bn'
                                             ? 'আমরা বিশ্বাস করি প্রতিটি তরুণের মধ্যে অসীম সম্ভাবনা লুকিয়ে আছে। আমরা শুধু সেই সম্ভাবনা প্রকাশের মাধ্যম হিসেবে কাজ করছি।'
-                                            : 'We believe that boundless potential lies within every individual. Motion Boss exists to serve as the high-performance catalyst for that potential.'
+                                            : 'We believe that boundless potential lies within every individual. ejobs it exists to serve as the high-performance catalyst for that potential.'
                                         }
                                     </motion.p>
                                 </div>

@@ -16,7 +16,8 @@ import validateRequest from '../../middlewares/validateRequest';
 // ==================== INTERFACE ====================
 export interface IWishlistItem {
     product: Types.ObjectId;
-    productType: 'website' | 'software';
+    productType: 'website' | 'software' | 'course';
+    productModel: 'Website' | 'Software' | 'Course';
     addedAt: Date;
 }
 
@@ -32,8 +33,9 @@ const wishlistSchema = new Schema<IWishlist>(
         user: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
         items: [
             {
-                product: { type: Schema.Types.ObjectId, required: true },
-                productType: { type: String, enum: ['website', 'software'], required: true },
+                product: { type: Schema.Types.ObjectId, required: true, refPath: 'items.productModel' },
+                productType: { type: String, enum: ['website', 'software', 'course'], required: true },
+                productModel: { type: String, enum: ['Website', 'Software', 'Course'], required: true },
                 addedAt: { type: Date, default: Date.now },
             },
         ],
@@ -47,30 +49,58 @@ export const Wishlist = model<IWishlist>('Wishlist', wishlistSchema);
 export const addToWishlistValidation = z.object({
     body: z.object({
         productId: z.string({ required_error: 'Product ID is required' }),
-        productType: z.enum(['website', 'software']),
+        productType: z.enum(['website', 'software', 'course']),
     }),
 });
 
 // ==================== SERVICE ====================
 const WishlistService = {
     async getWishlist(userId: string): Promise<IWishlist | null> {
-        return await Wishlist.findOne({ user: userId }).populate('items.product', 'title slug images price offerPrice');
+        return await Wishlist.findOne({ user: userId }).populate('items.product', 'title slug images thumbnail price offerPrice discountPrice');
     },
 
-    async addToWishlist(userId: string, productId: string, productType: 'website' | 'software'): Promise<IWishlist> {
+    async getAllWishlists(): Promise<any[]> {
+        // Get all wishlists with user and product details
+        const wishlists = await Wishlist.find({})
+            .populate('user', 'firstName lastName email avatar')
+            .populate('items.product', 'title slug images thumbnail price offerPrice discountPrice');
+
+        // Flatten the data for admin view - each item becomes a row
+        const allFavorites: any[] = [];
+        wishlists.forEach((wishlist: any) => {
+            wishlist.items.forEach((item: any) => {
+                allFavorites.push({
+                    _id: `${wishlist._id}-${item.product?._id}`,
+                    user: wishlist.user,
+                    product: item.product,
+                    productType: item.productType,
+                    createdAt: item.addedAt
+                });
+            });
+        });
+
+        // Sort by most recent
+        allFavorites.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+        return allFavorites;
+    },
+
+    async addToWishlist(userId: string, productId: string, productType: 'website' | 'software' | 'course'): Promise<IWishlist> {
         let wishlist = await Wishlist.findOne({ user: userId });
+
+        const productModel = productType === 'website' ? 'Website' : productType === 'software' ? 'Software' : 'Course';
 
         if (!wishlist) {
             wishlist = await Wishlist.create({
                 user: userId,
-                items: [{ product: new Types.ObjectId(productId), productType, addedAt: new Date() }],
+                items: [{ product: new Types.ObjectId(productId), productType, productModel, addedAt: new Date() }],
             });
         } else {
             const exists = wishlist.items.find((i) => i.product.toString() === productId);
             if (exists) {
                 throw new AppError(400, 'Already in wishlist');
             }
-            wishlist.items.push({ product: new Types.ObjectId(productId), productType, addedAt: new Date() });
+            wishlist.items.push({ product: new Types.ObjectId(productId), productType, productModel, addedAt: new Date() });
             await wishlist.save();
         }
 
@@ -100,6 +130,11 @@ const WishlistController = {
         sendResponse(res, { statusCode: 200, success: true, message: 'Wishlist fetched', data: wishlist });
     }),
 
+    getAllWishlists: catchAsync(async (req: Request, res: Response) => {
+        const favorites = await WishlistService.getAllWishlists();
+        sendResponse(res, { statusCode: 200, success: true, message: 'All favorites fetched', data: favorites });
+    }),
+
     addToWishlist: catchAsync(async (req: Request, res: Response) => {
         const { productId, productType } = req.body;
         const wishlist = await WishlistService.addToWishlist(req.user!.userId, productId, productType);
@@ -121,6 +156,7 @@ const WishlistController = {
 const router = express.Router();
 
 router.get('/', authMiddleware, WishlistController.getWishlist);
+router.get('/all', authMiddleware, WishlistController.getAllWishlists); // Admin route to get all favorites
 router.post('/', authMiddleware, validateRequest(addToWishlistValidation), WishlistController.addToWishlist);
 router.delete('/:productId', authMiddleware, WishlistController.removeFromWishlist);
 router.get('/check/:productId', authMiddleware, WishlistController.checkWishlist);

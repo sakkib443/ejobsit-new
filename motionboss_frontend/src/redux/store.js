@@ -9,6 +9,8 @@ import orderReducer from "./orderSlice";
 import downloadReducer from "./downloadSlice";
 import enrollmentReducer from "./enrollmentSlice";
 
+import reviewReducer from "./reviewSlice";
+
 export default configureStore({
   reducer: {
     courses: courseReducer,
@@ -20,6 +22,7 @@ export default configureStore({
     order: orderReducer,
     download: downloadReducer,
     enrollment: enrollmentReducer,
+    reviews: reviewReducer,
   },
 });
 

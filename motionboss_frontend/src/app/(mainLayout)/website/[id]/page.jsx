@@ -14,7 +14,9 @@ import {
 import { FaHeart, FaRegHeart, FaStar, FaArrowRight } from "react-icons/fa";
 import { MdVerified, MdOutlineMenuBook, MdPlayCircleOutline } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import ReviewsSection from "@/components/Reviews/ReviewsSection";
 
 // Animated Counter - smoother animation
 const AnimatedCounter = ({ value }) => {
@@ -96,7 +98,7 @@ const WebsiteDetailsPage = () => {
             await dispatch(toggleWebsiteLike(id)).unwrap();
         } catch (err) {
             console.error("Like error:", err);
-            alert("Failed to like. Please try again.");
+            alert(err.message || "Failed to like. Please try again.");
         } finally {
             setIsLiking(false);
         }
@@ -309,6 +311,7 @@ const WebsiteDetailsPage = () => {
                                     { id: "gallery", label: "Gallery", icon: LuImage },
                                     { id: "features", label: "Features", icon: LuZap },
                                     { id: "technical", label: "Technical", icon: LuSettings },
+                                    { id: "reviews", label: "Reviews", icon: FaStar },
                                 ].map((tab) => (
                                     <button
                                         key={tab.id}
@@ -510,6 +513,17 @@ const WebsiteDetailsPage = () => {
                                                     </div>
                                                 </div>
                                             </div>
+                                        </motion.div>
+                                    )}
+                                    {activeTab === "reviews" && (
+                                        <motion.div
+                                            key="reviews"
+                                            initial={{ opacity: 0, y: 12 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -12 }}
+                                            transition={{ duration: 0.2 }}
+                                        >
+                                            <ReviewsSection productId={website._id} productType="website" />
                                         </motion.div>
                                     )}
                                 </AnimatePresence>

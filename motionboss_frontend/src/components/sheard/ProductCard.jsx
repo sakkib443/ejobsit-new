@@ -2,15 +2,31 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '@/redux/cartSlice';
-import { LuShoppingCart, LuEye, LuStar, LuCheck, LuSparkles, LuPlus, LuArrowRight, LuClock, LuUsers } from 'react-icons/lu';
-import { BiCategory } from "react-icons/bi";
+import {
+    LuShoppingCart,
+    LuEye,
+    LuCheck,
+    LuClock,
+    LuUsers,
+    LuLayoutGrid,
+    LuLayers,
+    LuList,
+    LuHeart
+} from 'react-icons/lu';
 import { FaStar } from "react-icons/fa";
+import { useLanguage } from "@/context/LanguageContext";
+import { useTheme } from "@/providers/ThemeProvider";
 
-const ProductCard = ({ product, type }) => {
+const ProductCard = ({ product, type, view = "grid" }) => {
     const dispatch = useDispatch();
     const [isAdded, setIsAdded] = useState(false);
+    const { isDark } = useTheme();
+    const { language } = useLanguage();
+    const bengaliClass = language === "bn" ? "hind-siliguri" : "";
+
     const detailUrl = `/${type}/${product._id}`;
 
     // Get first image from images array or fallback
@@ -18,11 +34,10 @@ const ProductCard = ({ product, type }) => {
 
     // Calculate discount percentage
     const hasDiscount = product.offerPrice && product.offerPrice > 0 && product.offerPrice < product.price;
-    const discountPercent = hasDiscount
-        ? Math.round(((product.price - product.offerPrice) / product.price) * 100)
-        : 0;
 
+    // Display Price logic
     const displayPrice = hasDiscount ? product.offerPrice : product.price;
+    const originalPrice = product.price;
 
     const handleAddToCart = (e) => {
         e.preventDefault();
@@ -38,121 +53,215 @@ const ProductCard = ({ product, type }) => {
         setTimeout(() => setIsAdded(false), 2000);
     };
 
-    return (
-        <div className="group relative w-full">
-            {/* Card Container */}
-            <div className={`relative bg-white dark:bg-[#0d0d0d] rounded-[2rem] border border-gray-200 dark:border-white/10 overflow-hidden transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] hover:-translate-y-2 flex flex-col group/card`}>
+    // Fields
+    const title = product.title || product.name || "Untitled Product";
+    const categoryName = product.category?.name || (type === 'website' ? 'Website' : 'Software');
+    const version = product.version || 'v1.0';
+    const sales = product.salesCount || product.totalSales || 10;
+    const rating = product.rating || 5;
+    const reviewsCount = product.reviews?.length || 0;
+    const lastUpdated = product.updatedAt ? new Date(product.updatedAt).toLocaleDateString() : "Recently Updated";
 
-                {/* Image Container */}
-                <div className="relative h-48 w-full overflow-hidden">
-                    <Link href={detailUrl}>
+    // List View Rendering
+    if (view === "list") {
+        return (
+            <div className="group w-full flex flex-col md:flex-row bg-white dark:bg-[#0d0d0d] rounded-md border border-gray-100 dark:border-white/10 overflow-hidden hover:shadow-xl transition-all duration-300">
+                {/* Left: Image (35%) */}
+                <div className="relative w-full md:w-[35%] h-56 md:h-auto shrink-0 overflow-hidden p-3">
+                    <Link href={detailUrl} className="block h-full w-full">
                         <img
                             src={productImage}
-                            alt={product.title || product.name}
-                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            alt={title}
+                            className="h-full w-full object-cover rounded-lg transition-transform duration-700 group-hover:scale-105"
+                        />
+                    </Link>
+                    {/* Eye Overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20 backdrop-blur-[1px]">
+                        <Link href={detailUrl} className="w-12 h-12 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/50 hover:bg-[#41bfb8] hover:border-[#41bfb8] transition-colors">
+                            <LuEye className="ml-1" size={20} />
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Middle: Content (40%) */}
+                <div className="flex-1 p-6 border-r border-gray-50 flex flex-col justify-center">
+                    <Link href={detailUrl}>
+                        <h3 className={`text-xl font-bold text-slate-800 leading-tight mb-2 hover:text-[#41bfb8] transition-colors ${bengaliClass}`}>
+                            {title}
+                        </h3>
+                    </Link>
+                    <div className="flex items-center gap-2 mb-4 text-sm text-slate-500">
+                        <span className="italic">in</span>
+                        <span className="font-medium text-slate-700 bg-slate-100 px-2 py-0.5 rounded text-xs uppercase tracking-wide">
+                            {categoryName}
+                        </span>
+                    </div>
+
+                    <ul className="space-y-2 mb-4">
+                        <li className="flex items-start gap-2 text-sm text-slate-600">
+                            <LuLayers className="text-[#41bfb8] mt-0.5 shrink-0" size={16} />
+                            <span>Version: {version}</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-sm text-slate-600">
+                            <LuUsers className="text-[#41bfb8] mt-0.5 shrink-0" size={16} />
+                            <span>{sales}+ Sales</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-sm text-slate-600">
+                            <LuCheck className="text-[#41bfb8] mt-0.5 shrink-0" size={16} />
+                            <span>Lifetime Updates</span>
+                        </li>
+                    </ul>
+                </div>
+
+                {/* Right: Actions (25%) */}
+                <div className="w-full md:w-[25%] p-6 bg-gray-50/50 flex flex-col items-center justify-center text-center gap-1 border-l border-gray-100">
+                    {/* Icons Top Right */}
+                    <div className="flex w-full justify-end gap-2 mb-2 text-slate-400">
+                        <button className="hover:text-[#41bfb8]"><LuList size={18} /></button>
+                        <button className="hover:text-amber-500"><LuHeart size={18} /></button>
+                    </div>
+
+                    <div className="text-3xl font-bold text-[#41bfb8] font-outfit mb-1">
+                        ৳{displayPrice?.toLocaleString()}
+                    </div>
+
+                    <div className="flex text-amber-500 gap-0.5 text-xs mb-1">
+                        {[...Array(5)].map((_, i) => (
+                            <FaStar key={i} className={i < Math.round(rating) ? "fill-current" : "text-slate-200"} />
+                        ))}
+                        <span className="text-slate-400 ml-1">({reviewsCount})</span>
+                    </div>
+
+                    <p className="text-xs text-slate-500 mb-1">{sales}+ Sales</p>
+                    <p className="text-[10px] text-slate-400 mb-4">Last updated: {lastUpdated}</p>
+
+                    <div className="flex items-center gap-3 w-full">
+                        <button
+                            onClick={handleAddToCart}
+                            disabled={isAdded}
+                            className={`p-2.5 border rounded-md transition-colors shadow-sm ${isAdded ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-white border-slate-200 text-slate-600 hover:text-[#41bfb8] hover:border-[#41bfb8]'}`}
+                        >
+                            {isAdded ? <LuCheck size={20} /> : <LuShoppingCart size={20} />}
+                        </button>
+                        <Link
+                            href={detailUrl}
+                            className="flex-1 py-2.5 bg-white border border-[#41bfb8] text-[#41bfb8] rounded-md text-sm font-normal hover:bg-[#41bfb8] hover:text-white transition-all shadow-sm flex items-center justify-center gap-2"
+                        >
+                            Details
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Grid View Rendering
+    return (
+        <div className="group w-full h-full flex flex-col">
+            <div className={`relative h-full bg-white dark:bg-[#0d0d0d] rounded-md border border-gray-100 dark:border-white/10 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col`}>
+
+                {/* Image Section */}
+                <div className="relative h-48 w-full overflow-hidden shrink-0 p-3">
+                    <Link href={detailUrl} className="block h-full w-full">
+                        <img
+                            src={productImage}
+                            alt={title}
+                            className="h-full w-full object-cover rounded-lg transition-transform duration-700 group-hover:scale-105"
                         />
                     </Link>
 
-                    {/* Overlay Gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                    {/* Type Badge */}
+                    {/* Type Badge (Top Left) */}
                     <div className="absolute top-3 left-3">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#F79952] text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-[#F79952]/20">
+                        <span className={`inline-block px-3 py-1 rounded-md text-xs font-bold text-white shadow-sm bg-[#F79952]`}>
                             {type}
                         </span>
                     </div>
 
-                    {/* Icon Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <Link href={detailUrl} className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl transform scale-75 group-hover:scale-100 transition-transform duration-300">
-                            <LuEye className="w-8 h-8 text-[#41bfb8]" />
-                        </Link>
+                    {/* Rating Badge (Top Right) */}
+                    <div className="absolute top-3 right-3 bg-white rounded-md px-2 py-1 flex items-center gap-1 shadow-sm">
+                        <FaStar className="text-amber-500 text-xs" />
+                        <span className="text-xs font-bold text-slate-800">{rating}</span>
                     </div>
 
-                    {/* Rating Badge */}
-                    <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-white/95 backdrop-blur-sm rounded-md shadow-lg">
-                        <FaStar className="text-[#F79952] text-sm" />
-                        <span className="text-sm font-semibold text-gray-800">{product.rating || 5}</span>
+                    {/* Eye Overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20 backdrop-blur-[1px]">
+                        <Link href={detailUrl} className="w-12 h-12 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/50 hover:bg-[#41bfb8] hover:border-[#41bfb8] transition-colors">
+                            <LuEye className="ml-1" size={20} />
+                        </Link>
                     </div>
                 </div>
 
-                {/* Content Area */}
-                <div className="p-4 space-y-3">
+                {/* Content Section */}
+                <div className="p-4 flex flex-col flex-1">
                     {/* Category */}
-                    <div className="flex items-center gap-1.5 text-gray-500">
-                        <BiCategory className="text-[#41bfb8]" />
-                        <span className="text-xs work">{product.category?.name || (type === 'website' ? 'Website Template' : 'Software')}</span>
+                    <div className="flex items-center gap-2 mb-2 text-slate-500">
+                        <LuLayoutGrid className="text-[#41bfb8]" />
+                        <span className={`text-xs font-medium ${bengaliClass}`}>
+                            {categoryName}
+                        </span>
                     </div>
 
                     {/* Title */}
-                    <Link href={detailUrl}>
-                        <h3 className="text-lg font-bold text-gray-800 outfit-semibold line-clamp-2 group-hover:text-[#41bfb8] transition-colors duration-300 leading-tight min-h-[48px]">
-                            {product.title || product.name}
+                    <Link href={detailUrl} className="mb-3 block">
+                        <h3 className={`text-lg font-bold text-slate-800 leading-tight line-clamp-2 hover:text-[#41bfb8] transition-colors ${bengaliClass}`}>
+                            {title}
                         </h3>
                     </Link>
 
-                    {/* Meta Info */}
-                    <div className="flex items-center gap-4 text-[10px] text-gray-500 font-bold uppercase tracking-tight">
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-400/20 dark:border-white/5">
-                            <LuClock className="text-[#41bfb8]" />
-                            <span>{product.version || 'v1.0.0'}</span>
+                    {/* Metadata */}
+                    <div className="flex items-center gap-4 mb-4 text-xs text-slate-500 font-medium pb-4 border-b border-slate-50">
+                        <div className="flex items-center gap-1.5">
+                            <LuLayers className="text-[#41bfb8]" />
+                            <span>{version}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-400/20 dark:border-white/5">
+                        <div className="flex items-center gap-1.5">
                             <LuUsers className="text-[#41bfb8]" />
-                            <span>{product.salesCount || 10}+</span>
+                            <span>{sales}+ Sales</span>
                         </div>
                     </div>
 
-                    {/* Divider */}
-                    <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
-
                     {/* Price & Rating Row */}
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-4">
                         <div>
-                            <span className="text-xs text-gray-400 work">License Fee</span>
-                            <div className="flex items-baseline gap-2">
-                                <p className="text-xl font-bold text-[#41bfb8] outfit">৳{displayPrice?.toLocaleString()}</p>
+                            <p className="text-[10px] text-slate-400 font-medium mb-0.5">Price</p>
+                            <div className="flex items-center gap-2">
+                                <span className="text-xl font-bold text-[#41bfb8] font-outfit">
+                                    ৳{displayPrice?.toLocaleString()}
+                                </span>
                                 {hasDiscount && (
-                                    <span className="text-xs text-gray-400 line-through">৳{product.price?.toLocaleString()}</span>
+                                    <span className="text-xs text-slate-300 line-through">৳{originalPrice?.toLocaleString()}</span>
                                 )}
                             </div>
                         </div>
-                        <div className="flex gap-0.5">
+                        <div className="flex text-amber-500 gap-0.5 text-xs">
                             {[...Array(5)].map((_, i) => (
-                                <FaStar
-                                    key={i}
-                                    className={`text-sm ${i < (product.rating || 5) ? "text-[#F79952]" : "text-gray-200"}`}
-                                />
+                                <FaStar key={i} className={i < Math.round(rating) ? "fill-current" : "text-slate-200"} />
                             ))}
                         </div>
                     </div>
 
-                    {/* CTA Buttons */}
-                    <div className="flex gap-2 pt-2">
+                    {/* Buttons */}
+                    <div className="grid grid-cols-2 gap-3 mt-auto">
                         <Link
                             href={detailUrl}
-                            className="flex-1 flex items-center justify-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-4 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#41bfb8] dark:hover:bg-[#41bfb8] dark:hover:text-white transition-all duration-300"
+                            className="flex items-center justify-center gap-2 py-2.5 bg-[#41bfb8] text-white rounded-md text-sm font-normal hover:bg-[#3aa8a2] transition-colors"
                         >
-                            <LuEye className="text-sm" />
-                            <span>Details</span>
+                            <LuEye size={16} />
+                            Details
                         </Link>
                         <button
                             onClick={handleAddToCart}
                             disabled={isAdded}
-                            className={`flex flex-1 items-center justify-center gap-2 border px-4 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all duration-300 ${isAdded
-                                ? 'bg-emerald-500 text-white border-emerald-500'
-                                : 'border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'
+                            className={`flex items-center justify-center gap-2 py-2.5 border rounded-md text-sm font-normal transition-colors ${isAdded
+                                ? 'bg-emerald-500 border-emerald-500 text-white'
+                                : 'bg-white border-[#41bfb8] text-[#41bfb8] hover:bg-teal-50'
                                 }`}
                         >
-                            {isAdded ? <LuCheck className="text-sm" /> : <LuShoppingCart className="text-sm" />}
-                            <span>{isAdded ? 'Added' : 'Cart'}</span>
+                            {isAdded ? <LuCheck size={16} /> : <LuShoppingCart size={16} />}
+                            {isAdded ? 'Added' : 'Add To Cart'}
                         </button>
                     </div>
                 </div>
-
-                {/* Bottom Accent Line */}
-                <div className="absolute bottom-0 left-0 w-0 group-hover:w-full h-1 bg-gradient-to-r from-[#41bfb8] to-[#F79952] transition-all duration-500"></div>
             </div>
         </div>
     );

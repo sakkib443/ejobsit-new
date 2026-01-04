@@ -7,7 +7,7 @@ export default function MentorProfilePage() {
     const [isEditing, setIsEditing] = useState(false);
     const [profile, setProfile] = useState({
         name: 'Mentor User',
-        email: 'mentor@bdcalling.com',
+        email: 'mentor@ejobsit.com',
         phone: '+880 1712 345 678',
         designation: 'Senior Instructor',
         specialization: 'Full Stack Development',
@@ -54,8 +54,8 @@ export default function MentorProfilePage() {
                 <button
                     onClick={() => setIsEditing(!isEditing)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isEditing
-                            ? 'bg-green-500 text-white hover:bg-green-600'
-                            : 'bg-[#41bfb8] text-white hover:bg-[#38a89d]'
+                        ? 'bg-green-500 text-white hover:bg-green-600'
+                        : 'bg-[#41bfb8] text-white hover:bg-[#38a89d]'
                         }`}
                 >
                     {isEditing ? <><FiSave /> Save Changes</> : <><FiEdit /> Edit Profile</>}

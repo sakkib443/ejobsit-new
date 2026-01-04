@@ -9,6 +9,7 @@ import sendResponse from '../../utils/sendResponse';
 import SoftwareService from './software.service';
 import pick from '../../utils/pick';
 import { ISoftwareFilters, ISoftwareQuery } from './software.interface';
+import AppError from '../../utils/AppError';
 
 const SoftwareController = {
     // ==================== CREATE (Seller/Admin) ====================
@@ -72,11 +73,15 @@ const SoftwareController = {
         // Increment view count (fire and forget)
         SoftwareService.incrementViewCount(req.params.id).catch(() => { });
 
+        // Check if user has liked
+        const userId = req.user?.userId;
+        const isLiked = userId && software.likedBy?.some((id: any) => id.toString() === userId);
+
         sendResponse(res, {
             statusCode: 200,
             success: true,
             message: 'Software fetched successfully',
-            data: software,
+            data: { ...JSON.parse(JSON.stringify(software)), isLiked: !!isLiked },
         });
     }),
 
@@ -84,11 +89,15 @@ const SoftwareController = {
     getSoftwareBySlug: catchAsync(async (req: Request, res: Response) => {
         const software = await SoftwareService.getSoftwareBySlug(req.params.slug);
 
+        // Check if user has liked
+        const userId = req.user?.userId;
+        const isLiked = userId && software.likedBy?.some((id: any) => id.toString() === userId);
+
         sendResponse(res, {
             statusCode: 200,
             success: true,
             message: 'Software fetched successfully',
-            data: software,
+            data: { ...JSON.parse(JSON.stringify(software)), isLiked: !!isLiked },
         });
     }),
 
@@ -178,7 +187,11 @@ const SoftwareController = {
 
     // ==================== TOGGLE LIKE ====================
     toggleLike: catchAsync(async (req: Request, res: Response) => {
-        const result = await SoftwareService.toggleLike(req.params.id, req.user!.userId);
+        const userId = req.user?.userId || (req.user as any)?._id || (req.user as any)?.id;
+        if (!userId) {
+            throw new AppError(401, 'User ID not found in token');
+        }
+        const result = await SoftwareService.toggleLike(req.params.id, userId.toString());
 
         sendResponse(res, {
             statusCode: 200,

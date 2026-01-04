@@ -7,7 +7,7 @@
 import express from 'express';
 import { CourseController } from './course.controller';
 import { CourseValidation } from './course.validation';
-import { authMiddleware, authorizeRoles } from '../../middlewares/auth';
+import { authMiddleware, authorizeRoles, optionalAuth } from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
 
 const router = express.Router();
@@ -36,6 +36,7 @@ router.get(
 // Get course by slug (public view)
 router.get(
     '/slug/:slug',
+    optionalAuth,
     CourseController.getCourseBySlug
 );
 
@@ -48,6 +49,7 @@ router.get(
 // Get single course by ID
 router.get(
     '/:id',
+    optionalAuth,
     CourseController.getCourseById
 );
 
@@ -58,6 +60,21 @@ router.get(
     '/:id/content',
     authMiddleware,
     CourseController.getCourseContentForStudent
+);
+
+// Toggle course like
+router.post(
+    '/:id/toggle-like',
+    authMiddleware,
+    CourseController.toggleLike
+);
+
+// Sync all course statistics (Admin only)
+router.post(
+    '/sync-stats',
+    authMiddleware,
+    authorizeRoles('admin'),
+    CourseController.syncAllCourseStats
 );
 
 // ==================== Admin Only Routes ====================
