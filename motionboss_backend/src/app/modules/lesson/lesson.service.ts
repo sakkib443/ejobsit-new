@@ -7,7 +7,7 @@
 import { Lesson } from './lesson.model';
 import { Module } from '../module/module.model';
 import { Course } from '../course/course.model';
-import { ILesson, ILessonFilters, IModuleGroup } from './lesson.interface';
+import { ILesson, ILessonFilters, IModuleGroup, IQuestion, IDocument, ITextContent } from './lesson.interface';
 import AppError from '../../utils/AppError';
 import { Types } from 'mongoose';
 
@@ -354,6 +354,420 @@ const getAdjacentLessons = async (
     };
 };
 
+// ==================== Question Management ====================
+
+/**
+ * Add question to lesson
+ */
+const addQuestion = async (
+    lessonId: string,
+    questionData: IQuestion
+): Promise<ILesson | null> => {
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) {
+        throw new AppError(404, 'Lesson not found');
+    }
+
+    // Set order if not provided
+    if (!questionData.order) {
+        questionData.order = (lesson.questions?.length || 0) + 1;
+    }
+
+    const updatedLesson = await Lesson.findByIdAndUpdate(
+        lessonId,
+        {
+            $push: { questions: questionData },
+            hasQuiz: true,
+        },
+        { new: true, runValidators: true }
+    );
+
+    return updatedLesson;
+};
+
+/**
+ * Update question in lesson
+ */
+const updateQuestion = async (
+    lessonId: string,
+    questionId: string,
+    questionData: Partial<IQuestion>
+): Promise<ILesson | null> => {
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) {
+        throw new AppError(404, 'Lesson not found');
+    }
+
+    const questionIndex = lesson.questions?.findIndex(
+        (q) => q._id?.toString() === questionId
+    );
+
+    if (questionIndex === undefined || questionIndex === -1) {
+        throw new AppError(404, 'Question not found');
+    }
+
+    // Build update object
+    const updateFields: any = {};
+    Object.keys(questionData).forEach((key) => {
+        updateFields[`questions.${questionIndex}.${key}`] = (questionData as any)[key];
+    });
+
+    const updatedLesson = await Lesson.findByIdAndUpdate(
+        lessonId,
+        { $set: updateFields },
+        { new: true, runValidators: true }
+    );
+
+    return updatedLesson;
+};
+
+/**
+ * Delete question from lesson
+ */
+const deleteQuestion = async (
+    lessonId: string,
+    questionId: string
+): Promise<ILesson | null> => {
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) {
+        throw new AppError(404, 'Lesson not found');
+    }
+
+    const updatedLesson = await Lesson.findByIdAndUpdate(
+        lessonId,
+        {
+            $pull: { questions: { _id: new Types.ObjectId(questionId) } },
+        },
+        { new: true }
+    );
+
+    // Update hasQuiz flag
+    if (updatedLesson && (!updatedLesson.questions || updatedLesson.questions.length === 0)) {
+        updatedLesson.hasQuiz = false;
+        await updatedLesson.save();
+    }
+
+    return updatedLesson;
+};
+
+/**
+ * Reorder questions in lesson
+ */
+const reorderQuestions = async (
+    lessonId: string,
+    questionOrders: { questionId: string; order: number }[]
+): Promise<ILesson | null> => {
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) {
+        throw new AppError(404, 'Lesson not found');
+    }
+
+    // Update each question's order
+    for (const item of questionOrders) {
+        const questionIndex = lesson.questions?.findIndex(
+            (q) => q._id?.toString() === item.questionId
+        );
+        if (questionIndex !== undefined && questionIndex !== -1 && lesson.questions) {
+            lesson.questions[questionIndex].order = item.order;
+        }
+    }
+
+    // Sort questions by order
+    if (lesson.questions) {
+        lesson.questions.sort((a, b) => a.order - b.order);
+    }
+
+    await lesson.save();
+    return lesson;
+};
+
+// ==================== Document Management ====================
+
+/**
+ * Add document to lesson
+ */
+const addDocument = async (
+    lessonId: string,
+    documentData: IDocument
+): Promise<ILesson | null> => {
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) {
+        throw new AppError(404, 'Lesson not found');
+    }
+
+    // Set order if not provided
+    if (!documentData.order) {
+        documentData.order = (lesson.documents?.length || 0) + 1;
+    }
+
+    const updatedLesson = await Lesson.findByIdAndUpdate(
+        lessonId,
+        { $push: { documents: documentData } },
+        { new: true, runValidators: true }
+    );
+
+    return updatedLesson;
+};
+
+/**
+ * Update document in lesson
+ */
+const updateDocument = async (
+    lessonId: string,
+    documentId: string,
+    documentData: Partial<IDocument>
+): Promise<ILesson | null> => {
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) {
+        throw new AppError(404, 'Lesson not found');
+    }
+
+    const docIndex = lesson.documents?.findIndex(
+        (d) => d._id?.toString() === documentId
+    );
+
+    if (docIndex === undefined || docIndex === -1) {
+        throw new AppError(404, 'Document not found');
+    }
+
+    const updateFields: any = {};
+    Object.keys(documentData).forEach((key) => {
+        updateFields[`documents.${docIndex}.${key}`] = (documentData as any)[key];
+    });
+
+    const updatedLesson = await Lesson.findByIdAndUpdate(
+        lessonId,
+        { $set: updateFields },
+        { new: true, runValidators: true }
+    );
+
+    return updatedLesson;
+};
+
+/**
+ * Delete document from lesson
+ */
+const deleteDocument = async (
+    lessonId: string,
+    documentId: string
+): Promise<ILesson | null> => {
+    const updatedLesson = await Lesson.findByIdAndUpdate(
+        lessonId,
+        { $pull: { documents: { _id: new Types.ObjectId(documentId) } } },
+        { new: true }
+    );
+
+    if (!updatedLesson) {
+        throw new AppError(404, 'Lesson not found');
+    }
+
+    return updatedLesson;
+};
+
+// ==================== TextBlock Management ====================
+
+/**
+ * Add text block to lesson
+ */
+const addTextBlock = async (
+    lessonId: string,
+    textBlockData: ITextContent
+): Promise<ILesson | null> => {
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) {
+        throw new AppError(404, 'Lesson not found');
+    }
+
+    if (!textBlockData.order) {
+        textBlockData.order = (lesson.textBlocks?.length || 0) + 1;
+    }
+
+    const updatedLesson = await Lesson.findByIdAndUpdate(
+        lessonId,
+        { $push: { textBlocks: textBlockData } },
+        { new: true, runValidators: true }
+    );
+
+    return updatedLesson;
+};
+
+/**
+ * Update text block in lesson
+ */
+const updateTextBlock = async (
+    lessonId: string,
+    textBlockId: string,
+    textBlockData: Partial<ITextContent>
+): Promise<ILesson | null> => {
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) {
+        throw new AppError(404, 'Lesson not found');
+    }
+
+    const blockIndex = lesson.textBlocks?.findIndex(
+        (t) => t._id?.toString() === textBlockId
+    );
+
+    if (blockIndex === undefined || blockIndex === -1) {
+        throw new AppError(404, 'Text block not found');
+    }
+
+    const updateFields: any = {};
+    Object.keys(textBlockData).forEach((key) => {
+        updateFields[`textBlocks.${blockIndex}.${key}`] = (textBlockData as any)[key];
+    });
+
+    const updatedLesson = await Lesson.findByIdAndUpdate(
+        lessonId,
+        { $set: updateFields },
+        { new: true, runValidators: true }
+    );
+
+    return updatedLesson;
+};
+
+/**
+ * Delete text block from lesson
+ */
+const deleteTextBlock = async (
+    lessonId: string,
+    textBlockId: string
+): Promise<ILesson | null> => {
+    const updatedLesson = await Lesson.findByIdAndUpdate(
+        lessonId,
+        { $pull: { textBlocks: { _id: new Types.ObjectId(textBlockId) } } },
+        { new: true }
+    );
+
+    if (!updatedLesson) {
+        throw new AppError(404, 'Lesson not found');
+    }
+
+    return updatedLesson;
+};
+
+// ==================== Quiz Submission & Grading ====================
+
+/**
+ * Submit quiz answers and grade them
+ */
+const submitQuiz = async (
+    lessonId: string,
+    userId: string,
+    answers: { questionId: string; answer: string | string[] }[]
+): Promise<{
+    score: number;
+    totalPoints: number;
+    percentage: number;
+    passed: boolean;
+    results: {
+        questionId: string;
+        correct: boolean;
+        userAnswer: string | string[];
+        correctAnswer?: string | string[];
+        points: number;
+        earnedPoints: number;
+    }[];
+}> => {
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) {
+        throw new AppError(404, 'Lesson not found');
+    }
+
+    if (!lesson.questions || lesson.questions.length === 0) {
+        throw new AppError(400, 'This lesson has no quiz questions');
+    }
+
+    let totalScore = 0;
+    let totalPoints = 0;
+    const results: any[] = [];
+
+    for (const question of lesson.questions) {
+        totalPoints += question.points || 1;
+
+        const userAnswerObj = answers.find(
+            (a) => a.questionId === question._id?.toString()
+        );
+        const userAnswer = userAnswerObj?.answer || '';
+
+        let isCorrect = false;
+        let correctAnswer: string | string[] = '';
+
+        if (question.type === 'mcq') {
+            // Find correct option
+            const correctOption = question.options?.find((opt) => opt.isCorrect);
+            correctAnswer = correctOption?.text || '';
+
+            // Check if user selected the correct option
+            if (typeof userAnswer === 'string') {
+                isCorrect = correctOption?._id?.toString() === userAnswer ||
+                    correctOption?.text.toLowerCase() === userAnswer.toLowerCase();
+            }
+        } else if (question.type === 'short') {
+            correctAnswer = question.correctAnswer || '';
+
+            // Compare answers
+            if (question.caseSensitive) {
+                isCorrect = question.correctAnswer?.trim() === (userAnswer as string).trim();
+            } else {
+                isCorrect = question.correctAnswer?.toLowerCase().trim() ===
+                    (userAnswer as string).toLowerCase().trim();
+            }
+        }
+
+        const earnedPoints = isCorrect ? (question.points || 1) : 0;
+        totalScore += earnedPoints;
+
+        results.push({
+            questionId: question._id?.toString(),
+            correct: isCorrect,
+            userAnswer,
+            correctAnswer: lesson.quizSettings?.showCorrectAnswers ? correctAnswer : undefined,
+            points: question.points || 1,
+            earnedPoints,
+        });
+    }
+
+    const percentage = Math.round((totalScore / totalPoints) * 100);
+    const passingScore = lesson.quizSettings?.passingScore || 70;
+    const passed = percentage >= passingScore;
+
+    return {
+        score: totalScore,
+        totalPoints,
+        percentage,
+        passed,
+        results,
+    };
+};
+
+/**
+ * Get lesson quiz (questions without correct answers)
+ */
+const getLessonQuiz = async (lessonId: string): Promise<IQuestion[]> => {
+    const lesson = await Lesson.findById(lessonId).lean();
+    if (!lesson) {
+        throw new AppError(404, 'Lesson not found');
+    }
+
+    if (!lesson.questions || lesson.questions.length === 0) {
+        return [];
+    }
+
+    // Remove correct answer info from questions
+    return lesson.questions.map((q) => ({
+        ...q,
+        correctAnswer: undefined,
+        correctAnswerBn: undefined,
+        options: q.options?.map((opt) => ({
+            ...opt,
+            isCorrect: undefined, // Don't reveal correct answer
+        })),
+        explanation: undefined,
+        explanationBn: undefined,
+    })) as IQuestion[];
+};
+
 export const LessonService = {
     createLesson,
     bulkCreateLessons,
@@ -367,4 +781,20 @@ export const LessonService = {
     reorderLessons,
     togglePublishStatus,
     getAdjacentLessons,
+    // Question management
+    addQuestion,
+    updateQuestion,
+    deleteQuestion,
+    reorderQuestions,
+    // Document management
+    addDocument,
+    updateDocument,
+    deleteDocument,
+    // TextBlock management
+    addTextBlock,
+    updateTextBlock,
+    deleteTextBlock,
+    // Quiz
+    submitQuiz,
+    getLessonQuiz,
 };

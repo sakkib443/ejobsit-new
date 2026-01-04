@@ -4,10 +4,12 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearCart } from '@/redux/cartSlice';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { LuShieldCheck, LuPackage, LuCreditCard, LuChevronLeft, LuBadgeCheck, LuSmartphone, LuLoader, LuArrowRight } from 'react-icons/lu';
+import { LuShieldCheck, LuPackage, LuCreditCard, LuChevronLeft, LuBadgeCheck, LuSmartphone, LuLoader, LuArrowRight, LuTag, LuCheck, LuX } from 'react-icons/lu';
 import { useLanguage } from '@/context/LanguageContext';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://motionboss-backend.vercel.app/api';
 
 const CheckoutContent = () => {
     const { items: cartItems, totalAmount: cartTotal } = useSelector((state) => state.cart || { items: [], totalAmount: 0 });
@@ -24,6 +26,12 @@ const CheckoutContent = () => {
     const [paymentMethod, setPaymentMethod] = useState('bkash');
     const [checkoutItems, setCheckoutItems] = useState([]);
     const [totalValue, setTotalValue] = useState(0);
+
+    // Coupon states
+    const [couponCode, setCouponCode] = useState('');
+    const [couponApplying, setCouponApplying] = useState(false);
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const [discountAmount, setDiscountAmount] = useState(0);
 
     // Auth Check
     useEffect(() => {
@@ -94,6 +102,55 @@ const CheckoutContent = () => {
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+
+    // Apply Coupon Handler
+    const handleApplyCoupon = async () => {
+        if (!couponCode.trim()) {
+            toast.error('Please enter a coupon code');
+            return;
+        }
+
+        setCouponApplying(true);
+        try {
+            const res = await fetch(`${API_URL}/coupons/apply`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: couponCode.trim(),
+                    cartTotal: totalValue,
+                    productType: checkoutItems[0]?.type || 'all'
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.success && data.data?.valid) {
+                setAppliedCoupon({
+                    code: data.data.couponCode,
+                    discountType: data.data.discountType,
+                    discountValue: data.data.discountValue
+                });
+                setDiscountAmount(data.data.discount);
+                toast.success(`Coupon applied! You save ৳${data.data.discount}`);
+            } else {
+                toast.error(data.message || 'Invalid coupon code');
+            }
+        } catch (error) {
+            console.error('Coupon error:', error);
+            toast.error('Failed to apply coupon');
+        } finally {
+            setCouponApplying(false);
+        }
+    };
+
+    const removeCoupon = () => {
+        setAppliedCoupon(null);
+        setDiscountAmount(0);
+        setCouponCode('');
+        toast.success('Coupon removed');
+    };
+
+    const finalAmount = totalValue - discountAmount;
 
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
@@ -381,13 +438,75 @@ const CheckoutContent = () => {
                                     <span>Subtotal</span>
                                     <span className="text-slate-900 text-sm font-medium">৳{totalValue.toLocaleString()}</span>
                                 </div>
+
+                                {/* Coupon Section */}
+                                <div className="py-4 border-t border-b border-slate-50">
+                                    {appliedCoupon ? (
+                                        <div className="flex items-center justify-between bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                                                    <LuCheck className="text-white" size={16} />
+                                                </div>
+                                                <div>
+                                                    <p className="font-bold text-emerald-700 text-sm">{appliedCoupon.code}</p>
+                                                    <p className="text-[10px] text-emerald-600">
+                                                        {appliedCoupon.discountType === 'percentage'
+                                                            ? `${appliedCoupon.discountValue}% OFF`
+                                                            : `৳${appliedCoupon.discountValue} OFF`
+                                                        }
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={removeCoupon}
+                                                className="text-red-500 hover:text-red-700 p-1"
+                                            >
+                                                <LuX size={18} />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex gap-2">
+                                            <div className="flex-1 relative">
+                                                <LuTag className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Enter coupon code"
+                                                    value={couponCode}
+                                                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-lg text-sm font-bold uppercase focus:border-[#41bfb8] focus:ring-2 focus:ring-[#41bfb8]/10 outline-none"
+                                                />
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={handleApplyCoupon}
+                                                disabled={couponApplying}
+                                                className="px-5 py-3 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-[#41bfb8] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                {couponApplying ? <LuLoader className="animate-spin" size={18} /> : 'Apply'}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {discountAmount > 0 && (
+                                    <div className="flex justify-between items-center text-emerald-600 font-bold uppercase tracking-widest text-[10px]">
+                                        <span>Discount</span>
+                                        <span className="text-emerald-600 text-sm">-৳{discountAmount.toLocaleString()}</span>
+                                    </div>
+                                )}
+
                                 <div className="flex justify-between items-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
                                     <span>Instant Access Fee</span>
                                     <span className="text-[#41bfb8] text-sm">FREE</span>
                                 </div>
                                 <div className="pt-4 flex justify-between items-center border-t-2 border-dashed border-slate-100">
                                     <span className="text-slate-900 font-black text-lg">Total Amount</span>
-                                    <span className="text-3xl font-black text-[#41bfb8] outfit">৳{totalValue.toLocaleString()}</span>
+                                    <div className="text-right">
+                                        {discountAmount > 0 && (
+                                            <span className="text-sm text-slate-400 line-through mr-2">৳{totalValue.toLocaleString()}</span>
+                                        )}
+                                        <span className="text-3xl font-black text-[#41bfb8] outfit">৳{finalAmount.toLocaleString()}</span>
+                                    </div>
                                 </div>
                             </div>
 

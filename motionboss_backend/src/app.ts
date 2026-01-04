@@ -35,6 +35,7 @@ import { EnrollmentRoutes } from './app/modules/enrollment/enrollment.routes';
 import { NotificationRoutes } from './app/modules/notification/notification.module';
 import { DesignRoutes } from './app/modules/design/design.routes';
 import { StatsRoutes } from './app/modules/stats/stats.routes';
+import { CouponRoutes } from './app/modules/coupon/coupon.routes';
 
 // ==================== App Initialization ====================
 const app: Application = express();
@@ -158,6 +159,9 @@ app.use('/api/design', DesignRoutes);
 
 // Stats routes (real-time database statistics)
 app.use('/api/stats', StatsRoutes);
+
+// Coupon routes (discount codes)
+app.use('/api/coupons', CouponRoutes);
 
 // ==================== Error Handling ====================
 // 404 Not Found handler (must be after all routes)

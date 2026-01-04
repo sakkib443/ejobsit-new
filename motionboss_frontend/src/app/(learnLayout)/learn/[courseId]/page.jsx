@@ -11,9 +11,15 @@ import Link from 'next/link';
 import {
     FiPlay, FiCheck, FiChevronDown, FiChevronUp,
     FiArrowLeft, FiClock, FiBookOpen, FiMenu, FiX,
-    FiChevronRight, FiPlayCircle, FiAward
+    FiChevronRight, FiPlayCircle, FiAward, FiFileText,
+    FiFile, FiHelpCircle
 } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Import new components
+import LessonDocuments from '@/components/learn/LessonDocuments';
+import LessonQuiz from '@/components/learn/LessonQuiz';
+import LessonTextContent from '@/components/learn/LessonTextContent';
 
 export default function CourseLearnPage() {
     const { courseId } = useParams();
@@ -25,6 +31,7 @@ export default function CourseLearnPage() {
     const [expandedModules, setExpandedModules] = useState({});
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [completedLessons, setCompletedLessons] = useState([]);
+    const [activeTab, setActiveTab] = useState('video'); // video, text, documents, quiz
 
     useEffect(() => {
         if (courseId) {
@@ -55,6 +62,24 @@ export default function CourseLearnPage() {
             }
         }
     }, [groupedContent, activeLesson]);
+
+    // Reset activeTab when lesson changes
+    useEffect(() => {
+        if (activeLesson) {
+            // Default to video if has video, otherwise text, otherwise documents, otherwise quiz
+            if (activeLesson.videoUrl) {
+                setActiveTab('video');
+            } else if (activeLesson.textContent || activeLesson.textBlocks?.length > 0) {
+                setActiveTab('text');
+            } else if (activeLesson.documents?.length > 0) {
+                setActiveTab('documents');
+            } else if (activeLesson.questions?.length > 0) {
+                setActiveTab('quiz');
+            } else {
+                setActiveTab('video');
+            }
+        }
+    }, [activeLesson?._id]);
 
     const handleMarkAsDone = async () => {
         if (!activeLesson || !courseId) return;
@@ -105,6 +130,16 @@ export default function CourseLearnPage() {
     const totalLessons = groupedContent.reduce((sum, m) => sum + m.lessons.length, 0);
     const totalDuration = groupedContent.reduce((sum, m) => sum + m.lessons.reduce((s, l) => s + (l.videoDuration || 0), 0), 0);
     const progressPercent = totalLessons > 0 ? Math.round((completedLessons.length / totalLessons) * 100) : 0;
+
+    // Content tabs configuration
+    const contentTabs = [
+        { id: 'video', label: 'Video', icon: FiPlay, show: !!activeLesson?.videoUrl },
+        { id: 'text', label: 'Notes', icon: FiFileText, show: !!(activeLesson?.textContent || activeLesson?.textBlocks?.length > 0) },
+        { id: 'documents', label: 'Resources', icon: FiFile, show: activeLesson?.documents?.length > 0, badge: activeLesson?.documents?.length },
+        { id: 'quiz', label: 'Quiz', icon: FiHelpCircle, show: activeLesson?.questions?.length > 0 || activeLesson?.hasQuiz, badge: activeLesson?.questions?.length },
+    ];
+
+    const visibleTabs = contentTabs.filter(tab => tab.show);
 
     // Loading
     if (contentLoading) {
@@ -220,7 +255,7 @@ export default function CourseLearnPage() {
                                 </div>
                                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 text-purple-600 text-sm font-medium">
                                     <FiClock size={14} />
-                                    <span>{totalDuration}m</span>
+                                    <span>{Math.round(totalDuration / 60)}m</span>
                                 </div>
                             </div>
 
@@ -241,36 +276,97 @@ export default function CourseLearnPage() {
                 <div className="flex gap-8">
                     {/* Video & Info Section */}
                     <main className="flex-1 min-w-0">
-                        {/* Video Player Card */}
-                        <div className="bg-slate-900 rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/20 mb-6">
-                            <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
-                                {activeLesson?.videoUrl ? (
-                                    <iframe
-                                        src={getVideoEmbedUrl(activeLesson.videoUrl)}
-                                        title={activeLesson.title}
-                                        className="absolute inset-0 w-full h-full"
-                                        allowFullScreen
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    ></iframe>
-                                ) : (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-900 to-indigo-950">
-                                        <div className="text-center">
-                                            <div className="w-20 h-20 rounded-full bg-white/5 backdrop-blur-sm flex items-center justify-center mx-auto mb-4 border border-white/10">
-                                                <FiPlayCircle size={40} className="text-white/50" />
-                                            </div>
-                                            <p className="text-white/50 font-medium">Select a lesson to start learning</p>
-                                        </div>
-                                    </div>
-                                )}
+                        {/* Content Tabs - Show if there are multiple content types */}
+                        {visibleTabs.length > 1 && (
+                            <div className="flex gap-1 mb-4 p-1 bg-slate-100 rounded-xl overflow-x-auto">
+                                {visibleTabs.map(tab => (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-semibold text-sm transition-all whitespace-nowrap ${activeTab === tab.id
+                                                ? 'bg-white text-slate-800 shadow-sm'
+                                                : 'text-slate-500 hover:text-slate-700'
+                                            }`}
+                                    >
+                                        <tab.icon size={16} />
+                                        {tab.label}
+                                        {tab.badge > 0 && (
+                                            <span className="ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-600">
+                                                {tab.badge}
+                                            </span>
+                                        )}
+                                    </button>
+                                ))}
                             </div>
-                        </div>
+                        )}
+
+                        {/* Video Tab */}
+                        {activeTab === 'video' && (
+                            <div className="bg-slate-900 rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/20 mb-6">
+                                <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
+                                    {activeLesson?.videoUrl ? (
+                                        <iframe
+                                            src={getVideoEmbedUrl(activeLesson.videoUrl)}
+                                            title={activeLesson.title}
+                                            className="absolute inset-0 w-full h-full"
+                                            allowFullScreen
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        ></iframe>
+                                    ) : (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-900 to-indigo-950">
+                                            <div className="text-center">
+                                                <div className="w-20 h-20 rounded-full bg-white/5 backdrop-blur-sm flex items-center justify-center mx-auto mb-4 border border-white/10">
+                                                    <FiPlayCircle size={40} className="text-white/50" />
+                                                </div>
+                                                <p className="text-white/50 font-medium">No video available for this lesson</p>
+                                                <p className="text-white/30 text-sm mt-2">Check Notes, Resources, or Quiz tabs</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Text Content Tab */}
+                        {activeTab === 'text' && (
+                            <div className="mb-6">
+                                <LessonTextContent
+                                    textContent={activeLesson?.textContent}
+                                    textContentBn={activeLesson?.textContentBn}
+                                    textBlocks={activeLesson?.textBlocks}
+                                />
+                            </div>
+                        )}
+
+                        {/* Documents Tab */}
+                        {activeTab === 'documents' && (
+                            <div className="bg-white rounded-2xl border border-gray-100 shadow-lg shadow-gray-100/50 p-6 mb-6">
+                                <LessonDocuments documents={activeLesson?.documents} />
+                            </div>
+                        )}
+
+                        {/* Quiz Tab */}
+                        {activeTab === 'quiz' && (
+                            <div className="bg-white rounded-2xl border border-gray-100 shadow-lg shadow-gray-100/50 p-6 mb-6">
+                                <LessonQuiz
+                                    lessonId={activeLesson?._id}
+                                    questions={activeLesson?.questions}
+                                    quizSettings={activeLesson?.quizSettings}
+                                    onComplete={(result) => {
+                                        if (result.passed) {
+                                            // Optionally auto-complete lesson when quiz is passed
+                                        }
+                                    }}
+                                />
+                            </div>
+                        )}
 
                         {/* Lesson Info Card */}
                         <div className="bg-white rounded-2xl border border-gray-100 shadow-lg shadow-gray-100/50 p-6 lg:p-8">
                             <div className="flex flex-col lg:flex-row lg:items-start gap-6">
                                 <div className="flex-1">
                                     {/* Breadcrumb Tags */}
-                                    <div className="flex items-center gap-2 mb-4">
+                                    <div className="flex items-center gap-2 mb-4 flex-wrap">
                                         <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600 text-xs font-semibold border border-indigo-100/50">
                                             <FiBookOpen size={12} />
                                             Module {groupedContent.findIndex(m => m.lessons.some(l => l._id === activeLesson?._id)) + 1}
@@ -279,6 +375,19 @@ export default function CourseLearnPage() {
                                         <span className="px-3 py-1.5 rounded-lg bg-slate-50 text-slate-600 text-xs font-semibold border border-slate-100">
                                             Lesson {activeLesson?.order || 1}
                                         </span>
+                                        {activeLesson?.lessonType && activeLesson.lessonType !== 'video' && (
+                                            <>
+                                                <FiChevronRight size={14} className="text-gray-300" />
+                                                <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${activeLesson.lessonType === 'quiz' ? 'bg-indigo-50 text-indigo-600' :
+                                                        activeLesson.lessonType === 'text' ? 'bg-amber-50 text-amber-600' :
+                                                            'bg-purple-50 text-purple-600'
+                                                    }`}>
+                                                    {activeLesson.lessonType === 'quiz' ? 'Quiz' :
+                                                        activeLesson.lessonType === 'text' ? 'Reading' :
+                                                            'Mixed Content'}
+                                                </span>
+                                            </>
+                                        )}
                                     </div>
 
                                     {/* Title */}
@@ -293,13 +402,27 @@ export default function CourseLearnPage() {
                                         </p>
                                     )}
 
-                                    {/* Duration Badge */}
-                                    {activeLesson?.videoDuration && (
-                                        <div className="inline-flex items-center gap-2 text-sm text-slate-400 bg-slate-50 px-3 py-1.5 rounded-lg">
-                                            <FiClock size={14} />
-                                            <span>{activeLesson.videoDuration} minutes</span>
-                                        </div>
-                                    )}
+                                    {/* Stats Badges */}
+                                    <div className="flex flex-wrap gap-2">
+                                        {activeLesson?.videoDuration > 0 && (
+                                            <div className="inline-flex items-center gap-2 text-sm text-slate-400 bg-slate-50 px-3 py-1.5 rounded-lg">
+                                                <FiClock size={14} />
+                                                <span>{Math.round(activeLesson.videoDuration / 60)} minutes</span>
+                                            </div>
+                                        )}
+                                        {activeLesson?.documents?.length > 0 && (
+                                            <div className="inline-flex items-center gap-2 text-sm text-emerald-500 bg-emerald-50 px-3 py-1.5 rounded-lg">
+                                                <FiFile size={14} />
+                                                <span>{activeLesson.documents.length} resources</span>
+                                            </div>
+                                        )}
+                                        {activeLesson?.questions?.length > 0 && (
+                                            <div className="inline-flex items-center gap-2 text-sm text-indigo-500 bg-indigo-50 px-3 py-1.5 rounded-lg">
+                                                <FiHelpCircle size={14} />
+                                                <span>{activeLesson.questions.length} questions</span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {/* Action Button */}
@@ -380,7 +503,7 @@ export default function CourseLearnPage() {
                                                     {module.title}
                                                 </h4>
                                                 <p className="text-xs text-slate-400 mt-1">
-                                                    {module.lessons.length} lessons • {module.lessons.reduce((s, l) => s + (l.videoDuration || 0), 0)} min
+                                                    {module.lessons.length} lessons • {Math.round(module.lessons.reduce((s, l) => s + (l.videoDuration || 0), 0) / 60)} min
                                                 </p>
                                             </div>
                                             <div className={`text-slate-400 transition-transform ${expandedModules[module._id] ? 'rotate-180' : ''}`}>
@@ -401,6 +524,8 @@ export default function CourseLearnPage() {
                                                         {module.lessons.map((lesson) => {
                                                             const isActive = activeLesson?._id === lesson._id;
                                                             const isCompleted = completedLessons.includes(lesson._id);
+                                                            const hasQuiz = lesson.questions?.length > 0 || lesson.hasQuiz;
+                                                            const hasDocs = lesson.documents?.length > 0;
 
                                                             return (
                                                                 <button
@@ -423,9 +548,11 @@ export default function CourseLearnPage() {
                                                                         <p className={`text-sm font-medium truncate ${isActive ? 'text-white' : 'text-slate-600'}`}>
                                                                             {lesson.title}
                                                                         </p>
-                                                                        <p className={`text-xs ${isActive ? 'text-white/70' : 'text-slate-400'}`}>
-                                                                            {lesson.videoDuration || 0} min
-                                                                        </p>
+                                                                        <div className={`flex items-center gap-2 text-xs ${isActive ? 'text-white/70' : 'text-slate-400'}`}>
+                                                                            <span>{Math.round((lesson.videoDuration || 0) / 60)} min</span>
+                                                                            {hasQuiz && <span>• Quiz</span>}
+                                                                            {hasDocs && <span>• {lesson.documents.length} files</span>}
+                                                                        </div>
                                                                     </div>
                                                                 </button>
                                                             );

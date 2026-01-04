@@ -4,13 +4,20 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-    FiPlay, FiArrowLeft, FiSave, FiUpload, FiClock, FiBook, FiLayers
+    FiPlay, FiArrowLeft, FiSave, FiClock, FiBook, FiLayers,
+    FiFileText, FiHelpCircle, FiFile, FiType, FiSettings, FiCheck
 } from 'react-icons/fi';
+
+// Import custom components
+import QuestionBuilder from '@/components/admin/lesson/QuestionBuilder';
+import DocumentManager from '@/components/admin/lesson/DocumentManager';
+import TextContentManager from '@/components/admin/lesson/TextContentManager';
 
 export default function CreateLessonPage() {
     const router = useRouter();
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [activeTab, setActiveTab] = useState('video'); // video, text, documents, questions, settings
     const [formData, setFormData] = useState({
         title: '',
         titleBn: '',
@@ -18,9 +25,28 @@ export default function CreateLessonPage() {
         descriptionBn: '',
         course: '',
         module: '',
+        lessonType: 'video',
+        // Video
         videoUrl: '',
         videoDuration: 0,
         videoProvider: 'youtube',
+        videoThumbnail: '',
+        // Text Content
+        textContent: '',
+        textContentBn: '',
+        textBlocks: [],
+        // Documents
+        documents: [],
+        // Questions
+        questions: [],
+        quizSettings: {
+            passingScore: 70,
+            maxAttempts: 0,
+            showCorrectAnswers: true,
+            shuffleQuestions: false,
+            timeLimit: 0,
+        },
+        // Order & Access
         order: 1,
         isPublished: false,
         isFree: false,
@@ -79,19 +105,39 @@ export default function CreateLessonPage() {
         }
     };
 
+    const handleNestedChange = (field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleQuizSettingsChange = (field, value) => {
+        setFormData(prev => ({
+            ...prev,
+            quizSettings: { ...prev.quizSettings, [field]: value }
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
 
         try {
             const token = localStorage.getItem('token');
+
+            // Prepare payload - remove empty optional fields
+            const payload = { ...formData };
+            if (!payload.videoUrl) delete payload.videoUrl;
+            if (!payload.textContent) delete payload.textContent;
+            if (payload.documents?.length === 0) delete payload.documents;
+            if (payload.questions?.length === 0) delete payload.questions;
+            if (payload.textBlocks?.length === 0) delete payload.textBlocks;
+
             const res = await fetch(`${BASE_URL}/lessons`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(payload)
             });
 
             const result = await res.json();
@@ -116,8 +162,16 @@ export default function CreateLessonPage() {
     const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100 outline-none text-sm transition-all bg-white text-slate-700 placeholder:text-slate-400";
     const labelClass = "block text-sm font-medium text-slate-700 mb-2";
 
+    const tabs = [
+        { id: 'video', label: 'Video', icon: FiPlay, color: 'rose' },
+        { id: 'text', label: 'Text Content', icon: FiType, color: 'amber' },
+        { id: 'documents', label: 'Documents', icon: FiFile, color: 'emerald' },
+        { id: 'questions', label: 'Questions', icon: FiHelpCircle, color: 'indigo', badge: formData.questions?.length },
+        { id: 'settings', label: 'Settings', icon: FiSettings, color: 'slate' },
+    ];
+
     return (
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className="max-w-5xl mx-auto space-y-6">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm">
                 <div className="flex items-center gap-4">
@@ -129,7 +183,7 @@ export default function CreateLessonPage() {
                     </div>
                     <div>
                         <h1 className="text-lg font-bold text-slate-800">Create New Lesson</h1>
-                        <p className="text-sm text-slate-500">Add a new lesson to your course</p>
+                        <p className="text-sm text-slate-500">Add video, text, documents & quiz to your lesson</p>
                     </div>
                 </div>
                 <button
@@ -142,8 +196,10 @@ export default function CreateLessonPage() {
                 </button>
             </div>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm space-y-5">
+            {/* Basic Info */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm space-y-5">
+                <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">Basic Information</h3>
+
                 {/* Titles */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -223,7 +279,7 @@ export default function CreateLessonPage() {
                             name="description"
                             value={formData.description}
                             onChange={handleChange}
-                            rows={4}
+                            rows={3}
                             placeholder="Describe the lesson content..."
                             className={`${inputClass} resize-none`}
                         />
@@ -234,124 +290,300 @@ export default function CreateLessonPage() {
                             name="descriptionBn"
                             value={formData.descriptionBn}
                             onChange={handleChange}
-                            rows={4}
+                            rows={3}
                             placeholder="লেসনের বর্ণনা লিখুন..."
                             className={`${inputClass} resize-none`}
                         />
                     </div>
                 </div>
 
-                {/* Video Info */}
-                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 space-y-4">
-                    <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">Video Configuration</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className={labelClass}>Video URL *</label>
-                            <div className="relative">
-                                <FiPlay className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                                <input
-                                    type="url"
-                                    name="videoUrl"
-                                    value={formData.videoUrl}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder="https://youtube.com/watch?v=..."
-                                    className={`${inputClass} pl-11`}
-                                />
+                {/* Lesson Type */}
+                <div>
+                    <label className={labelClass}>Lesson Type</label>
+                    <div className="flex flex-wrap gap-2">
+                        {[
+                            { value: 'video', label: 'Video Lesson', icon: FiPlay, color: 'rose' },
+                            { value: 'text', label: 'Text Only', icon: FiFileText, color: 'amber' },
+                            { value: 'quiz', label: 'Quiz Only', icon: FiHelpCircle, color: 'indigo' },
+                            { value: 'mixed', label: 'Mixed Content', icon: FiLayers, color: 'purple' },
+                        ].map(type => (
+                            <button
+                                key={type.value}
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, lessonType: type.value }))}
+                                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 font-semibold text-sm transition-all ${formData.lessonType === type.value
+                                        ? `border-${type.color}-500 bg-${type.color}-500 text-white`
+                                        : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                                    }`}
+                            >
+                                <type.icon size={16} />
+                                {type.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Content Tabs */}
+            <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+                {/* Tab Navigation */}
+                <div className="flex border-b border-slate-200 overflow-x-auto">
+                    {tabs.map(tab => (
+                        <button
+                            key={tab.id}
+                            type="button"
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`flex items-center gap-2 px-5 py-4 font-semibold text-sm border-b-2 transition-all whitespace-nowrap ${activeTab === tab.id
+                                    ? `border-${tab.color}-500 text-${tab.color}-600 bg-${tab.color}-50/50`
+                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                                }`}
+                        >
+                            <tab.icon size={16} />
+                            {tab.label}
+                            {tab.badge > 0 && (
+                                <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold bg-${tab.color}-100 text-${tab.color}-600`}>
+                                    {tab.badge}
+                                </span>
+                            )}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Tab Content */}
+                <div className="p-6">
+                    {/* Video Tab */}
+                    {activeTab === 'video' && (
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className={labelClass}>Video URL</label>
+                                    <div className="relative">
+                                        <FiPlay className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                        <input
+                                            type="url"
+                                            name="videoUrl"
+                                            value={formData.videoUrl}
+                                            onChange={handleChange}
+                                            placeholder="https://youtube.com/watch?v=..."
+                                            className={`${inputClass} pl-11`}
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className={labelClass}>Video Provider</label>
+                                    <select
+                                        name="videoProvider"
+                                        value={formData.videoProvider}
+                                        onChange={handleChange}
+                                        className={inputClass}
+                                    >
+                                        <option value="youtube">YouTube</option>
+                                        <option value="vimeo">Vimeo</option>
+                                        <option value="bunny">Bunny</option>
+                                        <option value="cloudinary">Cloudinary</option>
+                                        <option value="custom">Custom</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className={labelClass}>Duration (seconds)</label>
+                                    <div className="relative">
+                                        <FiClock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                        <input
+                                            type="number"
+                                            name="videoDuration"
+                                            value={formData.videoDuration}
+                                            onChange={handleChange}
+                                            placeholder="e.g. 900 for 15 minutes"
+                                            className={`${inputClass} pl-11`}
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className={labelClass}>Order in Module</label>
+                                    <input
+                                        type="number"
+                                        name="order"
+                                        value={formData.order}
+                                        onChange={handleChange}
+                                        min="1"
+                                        className={inputClass}
+                                    />
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <label className={labelClass}>Video Provider</label>
-                            <select
-                                name="videoProvider"
-                                value={formData.videoProvider}
-                                onChange={handleChange}
-                                className={inputClass}
-                            >
-                                <option value="youtube">YouTube</option>
-                                <option value="vimeo">Vimeo</option>
-                                <option value="bunny">Bunny</option>
-                                <option value="cloudinary">Cloudinary</option>
-                                <option value="custom">Custom</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                    )}
 
-                {/* Duration & Order */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label className={labelClass}>Duration (minutes) *</label>
-                        <div className="relative">
-                            <FiClock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                            <input
-                                type="number"
-                                name="videoDuration"
-                                value={formData.videoDuration}
-                                onChange={handleChange}
-                                required
-                                placeholder="e.g. 15"
-                                className={`${inputClass} pl-11`}
+                    {/* Text Content Tab */}
+                    {activeTab === 'text' && (
+                        <TextContentManager
+                            textBlocks={formData.textBlocks}
+                            mainContent={formData.textContent}
+                            mainContentBn={formData.textContentBn}
+                            onChangeBlocks={(blocks) => handleNestedChange('textBlocks', blocks)}
+                            onChangeMain={handleNestedChange}
+                        />
+                    )}
+
+                    {/* Documents Tab */}
+                    {activeTab === 'documents' && (
+                        <DocumentManager
+                            documents={formData.documents}
+                            onChange={(docs) => handleNestedChange('documents', docs)}
+                        />
+                    )}
+
+                    {/* Questions Tab */}
+                    {activeTab === 'questions' && (
+                        <div className="space-y-4">
+                            <QuestionBuilder
+                                questions={formData.questions}
+                                onChange={(qs) => handleNestedChange('questions', qs)}
                             />
+
+                            {/* Quiz Settings */}
+                            {formData.questions?.length > 0 && (
+                                <div className="mt-6 p-4 bg-indigo-50 rounded-2xl border border-indigo-100 space-y-4">
+                                    <h4 className="font-bold text-slate-800 text-sm flex items-center gap-2">
+                                        <FiSettings className="text-indigo-600" />
+                                        Quiz Settings
+                                    </h4>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div>
+                                            <label className="text-xs font-semibold text-slate-600 mb-1 block">Passing Score (%)</label>
+                                            <input
+                                                type="number"
+                                                value={formData.quizSettings.passingScore}
+                                                onChange={(e) => handleQuizSettingsChange('passingScore', Number(e.target.value))}
+                                                min="0"
+                                                max="100"
+                                                className={inputClass}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs font-semibold text-slate-600 mb-1 block">Max Attempts (0=∞)</label>
+                                            <input
+                                                type="number"
+                                                value={formData.quizSettings.maxAttempts}
+                                                onChange={(e) => handleQuizSettingsChange('maxAttempts', Number(e.target.value))}
+                                                min="0"
+                                                className={inputClass}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs font-semibold text-slate-600 mb-1 block">Time Limit (min)</label>
+                                            <input
+                                                type="number"
+                                                value={formData.quizSettings.timeLimit}
+                                                onChange={(e) => handleQuizSettingsChange('timeLimit', Number(e.target.value))}
+                                                min="0"
+                                                className={inputClass}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.quizSettings.showCorrectAnswers}
+                                                    onChange={(e) => handleQuizSettingsChange('showCorrectAnswers', e.target.checked)}
+                                                    className="w-4 h-4 rounded border-slate-300 text-indigo-600"
+                                                />
+                                                <span className="text-xs font-medium text-slate-700">Show Answers</span>
+                                            </label>
+                                            <label className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.quizSettings.shuffleQuestions}
+                                                    onChange={(e) => handleQuizSettingsChange('shuffleQuestions', e.target.checked)}
+                                                    className="w-4 h-4 rounded border-slate-300 text-indigo-600"
+                                                />
+                                                <span className="text-xs font-medium text-slate-700">Shuffle Questions</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    </div>
-                    <div>
-                        <label className={labelClass}>Order</label>
-                        <input
-                            type="number"
-                            name="order"
-                            value={formData.order}
-                            onChange={handleChange}
-                            min="1"
-                            className={inputClass}
-                        />
-                    </div>
-                </div>
+                    )}
 
-                {/* Checkboxes */}
-                <div className="flex flex-wrap gap-4">
-                    <label className="flex items-center gap-3 cursor-pointer p-4 bg-slate-50 rounded-2xl border border-slate-200 flex-1">
-                        <input
-                            type="checkbox"
-                            name="isPublished"
-                            checked={formData.isPublished}
-                            onChange={handleChange}
-                            className="w-5 h-5 rounded-lg border-slate-300 text-rose-600 focus:ring-rose-500"
-                        />
-                        <span className="text-sm font-bold text-slate-700">Publish this lesson</span>
-                    </label>
-                    <label className="flex items-center gap-3 cursor-pointer p-4 bg-slate-50 rounded-2xl border border-slate-200 flex-1">
-                        <input
-                            type="checkbox"
-                            name="isFree"
-                            checked={formData.isFree}
-                            onChange={handleChange}
-                            className="w-5 h-5 rounded-lg border-slate-300 text-emerald-600 focus:ring-emerald-500"
-                        />
-                        <span className="text-sm font-bold text-slate-700">Free preview lesson</span>
-                    </label>
-                </div>
+                    {/* Settings Tab */}
+                    {activeTab === 'settings' && (
+                        <div className="space-y-4">
+                            <div className="flex flex-wrap gap-4">
+                                <label className="flex items-center gap-3 cursor-pointer p-4 bg-slate-50 rounded-2xl border border-slate-200 flex-1">
+                                    <input
+                                        type="checkbox"
+                                        name="isPublished"
+                                        checked={formData.isPublished}
+                                        onChange={handleChange}
+                                        className="w-5 h-5 rounded-lg border-slate-300 text-rose-600 focus:ring-rose-500"
+                                    />
+                                    <div>
+                                        <span className="text-sm font-bold text-slate-700 block">Publish Lesson</span>
+                                        <span className="text-xs text-slate-500">Make this lesson visible to students</span>
+                                    </div>
+                                </label>
+                                <label className="flex items-center gap-3 cursor-pointer p-4 bg-slate-50 rounded-2xl border border-slate-200 flex-1">
+                                    <input
+                                        type="checkbox"
+                                        name="isFree"
+                                        checked={formData.isFree}
+                                        onChange={handleChange}
+                                        className="w-5 h-5 rounded-lg border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                                    />
+                                    <div>
+                                        <span className="text-sm font-bold text-slate-700 block">Free Preview</span>
+                                        <span className="text-xs text-slate-500">Allow non-enrolled users to view</span>
+                                    </div>
+                                </label>
+                            </div>
 
-                {/* Actions */}
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-                    <button
-                        type="button"
-                        onClick={() => router.back()}
-                        className="px-6 py-3 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-sm transition-colors"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-600 text-white font-bold text-sm hover:shadow-lg hover:shadow-rose-500/30 transition-all disabled:opacity-50"
-                    >
-                        <FiSave size={18} />
-                        {loading ? 'Creating...' : 'Create Lesson'}
-                    </button>
+                            {/* Summary */}
+                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                                <h4 className="font-bold text-slate-800 text-sm mb-3">Lesson Summary</h4>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                                    <div className="p-3 bg-white rounded-xl">
+                                        <p className="text-2xl font-bold text-rose-600">{formData.videoUrl ? '1' : '0'}</p>
+                                        <p className="text-xs text-slate-500">Video</p>
+                                    </div>
+                                    <div className="p-3 bg-white rounded-xl">
+                                        <p className="text-2xl font-bold text-emerald-600">{formData.documents?.length || 0}</p>
+                                        <p className="text-xs text-slate-500">Documents</p>
+                                    </div>
+                                    <div className="p-3 bg-white rounded-xl">
+                                        <p className="text-2xl font-bold text-indigo-600">{formData.questions?.length || 0}</p>
+                                        <p className="text-xs text-slate-500">Questions</p>
+                                    </div>
+                                    <div className="p-3 bg-white rounded-xl">
+                                        <p className="text-2xl font-bold text-amber-600">{formData.textBlocks?.length || 0}</p>
+                                        <p className="text-xs text-slate-500">Text Sections</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            </form>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center justify-end gap-3 bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm">
+                <button
+                    type="button"
+                    onClick={() => router.back()}
+                    className="px-6 py-3 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-sm transition-colors"
+                >
+                    Cancel
+                </button>
+                <button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-600 text-white font-bold text-sm hover:shadow-lg hover:shadow-rose-500/30 transition-all disabled:opacity-50"
+                >
+                    <FiSave size={18} />
+                    {loading ? 'Creating...' : 'Create Lesson'}
+                </button>
+            </div>
         </div>
     );
 }
-

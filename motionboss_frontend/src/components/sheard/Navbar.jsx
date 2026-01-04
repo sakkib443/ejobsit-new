@@ -8,13 +8,203 @@ import { BiCategory, BiMenu, BiX } from "react-icons/bi";
 import {
   LuBookOpenCheck, LuChevronDown, LuLogOut,
   LuLayoutDashboard, LuShoppingCart, LuSearch,
-  LuSparkles, LuUser, LuArrowRight, LuSun, LuMoon
+  LuSparkles, LuUser, LuArrowRight, LuSun, LuMoon, LuChevronRight,
+  LuCode, LuGlobe, LuBookOpen, LuLayers, LuPalette, LuCpu, LuDatabase, LuSmartphone
 } from "react-icons/lu";
 import { HiOutlineSparkles, HiOutlineUserCircle } from "react-icons/hi2";
 import { useSelector } from "react-redux";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://motionboss-backend.vercel.app/api';
+
+// Category icons mapping
+const categoryIcons = {
+  'web-development': LuGlobe,
+  'programming': LuCode,
+  'design': LuPalette,
+  'database': LuDatabase,
+  'mobile': LuSmartphone,
+  'software': LuCpu,
+  'default': LuLayers
+};
+
+// Category Mega Menu Component
+const CategoryMegaMenu = ({ closeMobileMenu, language, bengaliClass }) => {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeParent, setActiveParent] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(`${API_URL}/categories`);
+        const data = await res.json();
+        if (data.success) {
+          // Organize categories into parent and child structure
+          const allCategories = data.data || [];
+          const parentCategories = allCategories.filter(cat => !cat.parentCategory);
+          const organized = parentCategories.map(parent => ({
+            ...parent,
+            children: allCategories.filter(cat =>
+              cat.parentCategory &&
+              (cat.parentCategory._id === parent._id || cat.parentCategory === parent._id)
+            )
+          }));
+          setCategories(organized);
+          if (organized.length > 0) {
+            setActiveParent(organized[0]._id);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const handleCategoryClick = (slug, type) => {
+    closeMobileMenu();
+    if (type === 'course') {
+      router.push(`/courses?category=${slug}`);
+    } else if (type === 'website') {
+      router.push(`/website?category=${slug}`);
+    } else if (type === 'software') {
+      router.push(`/software?category=${slug}`);
+    } else {
+      router.push(`/courses?category=${slug}`);
+    }
+  };
+
+  const getIcon = (slug) => {
+    const IconComponent = categoryIcons[slug] || categoryIcons['default'];
+    return IconComponent;
+  };
+
+  if (loading) {
+    return (
+      <div className="p-8 flex items-center justify-center">
+        <div className="w-8 h-8 border-3 border-teal-500/30 border-t-teal-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (categories.length === 0) {
+    return (
+      <div className="p-8 text-center text-gray-500">
+        <p className={bengaliClass}>{language === 'bn' ? 'কোনো ক্যাটাগরি পাওয়া যায়নি' : 'No categories found'}</p>
+      </div>
+    );
+  }
+
+  const activeCategory = categories.find(cat => cat._id === activeParent);
+
+  return (
+    <div className="flex">
+      {/* Left Side - Parent Categories */}
+      <div className="w-[220px] bg-gray-50 dark:bg-[#0a0a0a] p-3 border-r border-gray-100 dark:border-white/5">
+        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3 px-3">
+          {language === 'bn' ? 'ক্যাটাগরি' : 'Categories'}
+        </p>
+        <div className="space-y-1">
+          {categories.map((category) => {
+            const Icon = getIcon(category.slug);
+            const isActive = activeParent === category._id;
+            return (
+              <button
+                key={category._id}
+                onMouseEnter={() => setActiveParent(category._id)}
+                onClick={() => handleCategoryClick(category.slug, category.type)}
+                className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-all ${isActive
+                    ? 'bg-white dark:bg-white/10 text-teal-600 dark:text-teal-400 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-white/5'
+                  }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isActive
+                      ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30'
+                      : 'bg-gray-100 dark:bg-white/10 text-gray-500 dark:text-gray-400'
+                    }`}>
+                    <Icon size={16} />
+                  </div>
+                  <span className={`text-[13px] font-semibold ${bengaliClass}`}>
+                    {language === 'bn' && category.nameBn ? category.nameBn : category.name}
+                  </span>
+                </div>
+                {category.children && category.children.length > 0 && (
+                  <LuChevronRight size={14} className={`transition-transform ${isActive ? 'translate-x-1' : ''}`} />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Right Side - Child Categories */}
+      <div className="flex-1 p-4">
+        {activeCategory && (
+          <>
+            {/* Active Parent Header */}
+            <div className="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100 dark:border-white/5">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
+                {(() => {
+                  const Icon = getIcon(activeCategory.slug);
+                  return <Icon size={20} />;
+                })()}
+              </div>
+              <div>
+                <h4 className={`text-base font-bold text-gray-900 dark:text-white ${bengaliClass}`}>
+                  {language === 'bn' && activeCategory.nameBn ? activeCategory.nameBn : activeCategory.name}
+                </h4>
+                <p className={`text-xs text-gray-500 dark:text-gray-400 ${bengaliClass}`}>
+                  {activeCategory.children?.length || 0} {language === 'bn' ? 'টি সাব-ক্যাটাগরি' : 'subcategories'}
+                </p>
+              </div>
+            </div>
+
+            {/* Child Categories Grid */}
+            {activeCategory.children && activeCategory.children.length > 0 ? (
+              <div className="grid grid-cols-2 gap-2">
+                {activeCategory.children.map((child) => (
+                  <button
+                    key={child._id}
+                    onClick={() => handleCategoryClick(child.slug, child.type)}
+                    className="flex items-center gap-3 p-3 rounded-xl text-left hover:bg-teal-50 dark:hover:bg-white/5 transition-all group"
+                  >
+                    <div className="w-2 h-2 rounded-full bg-teal-500 group-hover:scale-125 transition-transform"></div>
+                    <span className={`text-[13px] font-medium text-gray-600 dark:text-gray-300 group-hover:text-teal-700 dark:group-hover:text-teal-400 ${bengaliClass}`}>
+                      {language === 'bn' && child.nameBn ? child.nameBn : child.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3">
+                  <LuLayers className="text-gray-400" size={24} />
+                </div>
+                <p className={`text-sm text-gray-500 dark:text-gray-400 ${bengaliClass}`}>
+                  {language === 'bn' ? 'এই ক্যাটাগরিতে কোনো সাব-ক্যাটাগরি নেই' : 'No subcategories in this category'}
+                </p>
+                <button
+                  onClick={() => handleCategoryClick(activeCategory.slug, activeCategory.type)}
+                  className={`mt-3 text-sm font-semibold text-teal-600 dark:text-teal-400 hover:underline ${bengaliClass}`}
+                >
+                  {language === 'bn' ? 'সব দেখুন →' : 'View all →'}
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
 
 const Navbar = () => {
   const [isSticky, setIsSticky] = useState(false);
@@ -280,22 +470,9 @@ const Navbar = () => {
                   <LuChevronDown className="text-gray-400 dark:text-gray-500 group-hover:rotate-180 transition-transform duration-300" />
                 </button>
 
-                {/* Premium Dropdown */}
-                <div className="absolute top-full left-0 mt-4 w-64 bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-gray-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 translate-y-4 transition-all duration-500 z-50 overflow-hidden p-3">
-                  <div className="grid gap-2">
-                    {courseTypes.map((type) => (
-                      <button
-                        key={type.key}
-                        onClick={() => handleCourseTypeClick(type.key)}
-                        className="flex items-center gap-4 p-3 rounded-2xl hover:bg-teal-50 transition-all group/item"
-                      >
-                        <span className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-lg group-hover/item:bg-white group-hover/item:shadow-sm transition-all">{type.icon}</span>
-                        <span className={`text-[14px] font-semibold text-gray-600 group-hover/item:text-teal-700 ${bengaliClass}`}>
-                          {type.label}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+                {/* Categories Mega Menu */}
+                <div className="absolute top-full left-0 mt-4 w-[600px] bg-white dark:bg-[#0d0d0d] rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gray-100 dark:border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 translate-y-4 transition-all duration-500 z-50 overflow-hidden">
+                  <CategoryMegaMenu closeMobileMenu={closeMobileMenu} language={language} bengaliClass={bengaliClass} />
                 </div>
               </div>
             </div>

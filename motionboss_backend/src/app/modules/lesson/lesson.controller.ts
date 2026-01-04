@@ -304,6 +304,256 @@ const formatDuration = (seconds: number): string => {
     return `${minutes}m`;
 };
 
+// ==================== Question Controllers ====================
+
+/**
+ * Add question to lesson
+ * POST /api/lessons/:id/questions
+ */
+const addQuestion = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const lesson = await LessonService.addQuestion(id, req.body);
+
+        res.status(201).json({
+            success: true,
+            message: 'Question added successfully',
+            data: lesson,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Update question in lesson
+ * PATCH /api/lessons/:id/questions/:questionId
+ */
+const updateQuestion = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id, questionId } = req.params;
+        const lesson = await LessonService.updateQuestion(id, questionId, req.body);
+
+        res.status(200).json({
+            success: true,
+            message: 'Question updated successfully',
+            data: lesson,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Delete question from lesson
+ * DELETE /api/lessons/:id/questions/:questionId
+ */
+const deleteQuestion = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id, questionId } = req.params;
+        const lesson = await LessonService.deleteQuestion(id, questionId);
+
+        res.status(200).json({
+            success: true,
+            message: 'Question deleted successfully',
+            data: lesson,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Reorder questions in lesson
+ * PATCH /api/lessons/:id/questions/reorder
+ */
+const reorderQuestions = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const { questions } = req.body;
+        const lesson = await LessonService.reorderQuestions(id, questions);
+
+        res.status(200).json({
+            success: true,
+            message: 'Questions reordered successfully',
+            data: lesson,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ==================== Document Controllers ====================
+
+/**
+ * Add document to lesson
+ * POST /api/lessons/:id/documents
+ */
+const addDocument = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const lesson = await LessonService.addDocument(id, req.body);
+
+        res.status(201).json({
+            success: true,
+            message: 'Document added successfully',
+            data: lesson,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Update document in lesson
+ * PATCH /api/lessons/:id/documents/:documentId
+ */
+const updateDocument = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id, documentId } = req.params;
+        const lesson = await LessonService.updateDocument(id, documentId, req.body);
+
+        res.status(200).json({
+            success: true,
+            message: 'Document updated successfully',
+            data: lesson,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Delete document from lesson
+ * DELETE /api/lessons/:id/documents/:documentId
+ */
+const deleteDocument = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id, documentId } = req.params;
+        const lesson = await LessonService.deleteDocument(id, documentId);
+
+        res.status(200).json({
+            success: true,
+            message: 'Document deleted successfully',
+            data: lesson,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ==================== TextBlock Controllers ====================
+
+/**
+ * Add text block to lesson
+ * POST /api/lessons/:id/text-blocks
+ */
+const addTextBlock = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const lesson = await LessonService.addTextBlock(id, req.body);
+
+        res.status(201).json({
+            success: true,
+            message: 'Text block added successfully',
+            data: lesson,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Update text block in lesson
+ * PATCH /api/lessons/:id/text-blocks/:textBlockId
+ */
+const updateTextBlock = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id, textBlockId } = req.params;
+        const lesson = await LessonService.updateTextBlock(id, textBlockId, req.body);
+
+        res.status(200).json({
+            success: true,
+            message: 'Text block updated successfully',
+            data: lesson,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Delete text block from lesson
+ * DELETE /api/lessons/:id/text-blocks/:textBlockId
+ */
+const deleteTextBlock = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id, textBlockId } = req.params;
+        const lesson = await LessonService.deleteTextBlock(id, textBlockId);
+
+        res.status(200).json({
+            success: true,
+            message: 'Text block deleted successfully',
+            data: lesson,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ==================== Quiz Controllers ====================
+
+/**
+ * Get lesson quiz (questions for students)
+ * GET /api/lessons/:id/quiz
+ */
+const getLessonQuiz = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const questions = await LessonService.getLessonQuiz(id);
+
+        res.status(200).json({
+            success: true,
+            message: 'Quiz retrieved successfully',
+            data: questions,
+            meta: {
+                totalQuestions: questions.length,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Submit quiz answers
+ * POST /api/lessons/:id/quiz/submit
+ */
+const submitQuiz = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user?._id;
+
+        if (!userId) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not authenticated',
+            });
+        }
+
+        const { answers } = req.body;
+        const result = await LessonService.submitQuiz(id, userId, answers);
+
+        res.status(200).json({
+            success: true,
+            message: result.passed ? 'Congratulations! You passed the quiz!' : 'Quiz submitted. Keep practicing!',
+            data: result,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const LessonController = {
     createLesson,
     bulkCreateLessons,
@@ -317,4 +567,20 @@ export const LessonController = {
     reorderLessons,
     togglePublishStatus,
     getAdjacentLessons,
+    // Question management
+    addQuestion,
+    updateQuestion,
+    deleteQuestion,
+    reorderQuestions,
+    // Document management
+    addDocument,
+    updateDocument,
+    deleteDocument,
+    // TextBlock management
+    addTextBlock,
+    updateTextBlock,
+    deleteTextBlock,
+    // Quiz
+    getLessonQuiz,
+    submitQuiz,
 };

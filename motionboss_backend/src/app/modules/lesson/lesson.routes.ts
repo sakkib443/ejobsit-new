@@ -1,6 +1,6 @@
 // ===================================================================
-// MotionBoss LMS - Lesson Routes
-// Lesson module এর API endpoints
+// MotionBoss LMS - Lesson Routes (Enhanced)
+// Lesson module এর API endpoints - Questions, Documents, TextBlocks, Quiz সহ
 // লেসন মডিউলের API রাউটস
 // ===================================================================
 
@@ -32,6 +32,23 @@ router.get(
     '/course/:courseId',
     optionalAuth,
     LessonController.getLessonsByCourse
+);
+
+// ==================== Quiz Routes (Authenticated) ====================
+
+// Get lesson quiz (questions without answers)
+router.get(
+    '/:id/quiz',
+    authMiddleware,
+    LessonController.getLessonQuiz
+);
+
+// Submit quiz answers
+router.post(
+    '/:id/quiz/submit',
+    authMiddleware,
+    validateRequest(LessonValidation.submitQuizSchema),
+    LessonController.submitQuiz
 );
 
 // ==================== Authenticated Routes ====================
@@ -110,6 +127,96 @@ router.delete(
     authMiddleware,
     authorizeRoles('admin'),
     LessonController.deleteLesson
+);
+
+// ==================== Question Routes (Admin) ====================
+
+// Add question to lesson
+router.post(
+    '/:id/questions',
+    authMiddleware,
+    authorizeRoles('admin'),
+    validateRequest(LessonValidation.addQuestionSchema),
+    LessonController.addQuestion
+);
+
+// Reorder questions (must be before :questionId route)
+router.patch(
+    '/:id/questions/reorder',
+    authMiddleware,
+    authorizeRoles('admin'),
+    LessonController.reorderQuestions
+);
+
+// Update question
+router.patch(
+    '/:id/questions/:questionId',
+    authMiddleware,
+    authorizeRoles('admin'),
+    validateRequest(LessonValidation.updateQuestionSchema),
+    LessonController.updateQuestion
+);
+
+// Delete question
+router.delete(
+    '/:id/questions/:questionId',
+    authMiddleware,
+    authorizeRoles('admin'),
+    LessonController.deleteQuestion
+);
+
+// ==================== Document Routes (Admin) ====================
+
+// Add document to lesson
+router.post(
+    '/:id/documents',
+    authMiddleware,
+    authorizeRoles('admin'),
+    validateRequest(LessonValidation.addDocumentSchema),
+    LessonController.addDocument
+);
+
+// Update document
+router.patch(
+    '/:id/documents/:documentId',
+    authMiddleware,
+    authorizeRoles('admin'),
+    LessonController.updateDocument
+);
+
+// Delete document
+router.delete(
+    '/:id/documents/:documentId',
+    authMiddleware,
+    authorizeRoles('admin'),
+    LessonController.deleteDocument
+);
+
+// ==================== TextBlock Routes (Admin) ====================
+
+// Add text block to lesson
+router.post(
+    '/:id/text-blocks',
+    authMiddleware,
+    authorizeRoles('admin'),
+    validateRequest(LessonValidation.addTextBlockSchema),
+    LessonController.addTextBlock
+);
+
+// Update text block
+router.patch(
+    '/:id/text-blocks/:textBlockId',
+    authMiddleware,
+    authorizeRoles('admin'),
+    LessonController.updateTextBlock
+);
+
+// Delete text block
+router.delete(
+    '/:id/text-blocks/:textBlockId',
+    authMiddleware,
+    authorizeRoles('admin'),
+    LessonController.deleteTextBlock
 );
 
 export const LessonRoutes = router;

@@ -93,11 +93,8 @@ const Login = () => {
               </div>
 
               <div className="relative z-10 h-full flex flex-col justify-center">
-                {/* Logo/Brand */}
+                {/* Welcome Message */}
                 <div className="mb-8">
-                  <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-sm">
-                    <span className="text-2xl font-bold">BD</span>
-                  </div>
                   <h2 className={`text-3xl font-bold mb-2 outfit ${bengaliClass}`}>
                     {language === "bn" ? "স্বাগতম!" : "Welcome Back!"}
                   </h2>

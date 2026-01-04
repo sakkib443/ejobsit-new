@@ -32,6 +32,7 @@ import {
   FiClipboard,
   FiBell,
   FiLock,
+  FiTag,
 } from 'react-icons/fi';
 import { useTheme } from '@/providers/ThemeProvider';
 
@@ -131,6 +132,12 @@ const AdminSidebar = () => {
       gradient: 'from-green-500 to-emerald-500'
     },
     {
+      title: 'Coupons',
+      href: '/dashboard/admin/coupons',
+      icon: FiTag,
+      gradient: 'from-amber-500 to-orange-500'
+    },
+    {
       title: 'Like & Rating',
       href: '/dashboard/admin/favorites-ratings',
       icon: FiStar,
@@ -148,6 +155,7 @@ const AdminSidebar = () => {
       gradient: 'from-pink-500 to-purple-500',
       submenu: [
         { title: 'Hero Section', href: '/dashboard/admin/design/hero', icon: FiImage },
+        { title: 'Contact Page', href: '/dashboard/admin/design/contact', icon: FiMessageSquare },
         { title: 'Top Header', href: '/dashboard/admin/design/topheader', icon: FiLayers },
       ],
     },

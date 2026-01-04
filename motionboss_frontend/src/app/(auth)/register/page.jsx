@@ -103,26 +103,11 @@ const Register = () => {
               </div>
 
               <div className="relative z-10">
-                {/* Logo/Brand */}
-                <div className="mb-8">
-                  <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-sm">
-                    <span className="text-2xl font-bold">BD</span>
-                  </div>
-                  <h2 className={`text-3xl font-bold mb-2 outfit ${bengaliClass}`}>
-                    {language === "bn" ? "বিডি কলিং একাডেমি" : "BD Calling Academy"}
-                  </h2>
-                  <p className={`text-white/80 text-sm ${bengaliClass}`}>
-                    {language === "bn"
-                      ? "বাংলাদেশের শীর্ষস্থানীয় আইটি ট্রেনিং ইনস্টিটিউট"
-                      : "Bangladesh's Leading IT Training Institute"}
-                  </p>
-                </div>
-
                 {/* Welcome Message */}
                 <div className="mb-10">
-                  <h3 className={`text-xl font-semibold mb-3 ${bengaliClass}`}>
+                  <h2 className={`text-3xl font-bold mb-3 outfit ${bengaliClass}`}>
                     {language === "bn" ? "আপনার ক্যারিয়ার শুরু করুন" : "Start Your Career Journey"}
-                  </h3>
+                  </h2>
                   <p className={`text-white/80 text-sm leading-relaxed ${bengaliClass}`}>
                     {language === "bn"
                       ? "একটি অ্যাকাউন্ট তৈরি করুন এবং প্রিমিয়াম কোর্স, লাইভ ক্লাস এবং ক্যারিয়ার সাপোর্ট অ্যাক্সেস করুন।"

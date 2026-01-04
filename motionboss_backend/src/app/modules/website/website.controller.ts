@@ -9,6 +9,7 @@ import sendResponse from '../../utils/sendResponse';
 import WebsiteService from './website.service';
 import pick from '../../utils/pick';
 import { IWebsiteFilters, IWebsiteQuery } from './website.interface';
+import AppError from '../../utils/AppError';
 
 const WebsiteController = {
     // ==================== CREATE (Admin) ====================
