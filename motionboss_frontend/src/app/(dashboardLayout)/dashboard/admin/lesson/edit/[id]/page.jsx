@@ -9,9 +9,9 @@ import {
 } from 'react-icons/fi';
 
 // Import custom components
-import QuestionBuilder from '@/components/admin/lesson/QuestionBuilder';
-import DocumentManager from '@/components/admin/lesson/DocumentManager';
-import TextContentManager from '@/components/admin/lesson/TextContentManager';
+import QuestionBuilder from '@/components/Admin/lesson/QuestionBuilder';
+import DocumentManager from '@/components/Admin/lesson/DocumentManager';
+import TextContentManager from '@/components/Admin/lesson/TextContentManager';
 
 export default function EditLessonPage() {
     const router = useRouter();
@@ -388,8 +388,8 @@ export default function EditLessonPage() {
                                 type="button"
                                 onClick={() => setFormData(prev => ({ ...prev, lessonType: type.value }))}
                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 font-semibold text-sm transition-all ${formData.lessonType === type.value
-                                        ? `border-${type.color}-500 bg-${type.color}-500 text-white`
-                                        : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                                    ? `border-${type.color}-500 bg-${type.color}-500 text-white`
+                                    : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
                                     }`}
                             >
                                 <type.icon size={16} />
@@ -410,8 +410,8 @@ export default function EditLessonPage() {
                             type="button"
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 px-5 py-4 font-semibold text-sm border-b-2 transition-all whitespace-nowrap ${activeTab === tab.id
-                                    ? `border-${tab.color}-500 text-${tab.color}-600 bg-${tab.color}-50/50`
-                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                                ? `border-${tab.color}-500 text-${tab.color}-600 bg-${tab.color}-50/50`
+                                : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
                                 }`}
                         >
                             <tab.icon size={16} />
