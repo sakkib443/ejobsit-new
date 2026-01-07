@@ -97,13 +97,17 @@ const AreaChart = ({ data, height = 250 }) => {
     const points = getPoints();
     if (points.length < 2) return '';
 
-    let path = `M 0 ${points[0].y}`;
+    let path = `M ${points[0].x} ${points[0].y}`;
 
     for (let i = 0; i < points.length - 1; i++) {
       const current = points[i];
       const next = points[i + 1];
-      const midX = (current.x + next.x) / 2;
-      path += ` C ${midX} ${current.y}, ${midX} ${next.y}, ${next.x} ${next.y}`;
+      const tension = 0.4;
+      const cp1x = current.x + (next.x - current.x) * tension;
+      const cp1y = current.y;
+      const cp2x = next.x - (next.x - current.x) * tension;
+      const cp2y = next.y;
+      path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${next.x} ${next.y}`;
     }
 
     return path;
@@ -112,7 +116,8 @@ const AreaChart = ({ data, height = 250 }) => {
   // Area path (closed)
   const generateAreaPath = () => {
     const curvePath = generateCurvePath();
-    return `${curvePath} L 100 100 L 0 100 Z`;
+    const points = getPoints();
+    return `${curvePath} L ${points[points.length - 1].x} 100 L ${points[0].x} 100 Z`;
   };
 
   return (
@@ -120,18 +125,18 @@ const AreaChart = ({ data, height = 250 }) => {
       {/* Chart Container */}
       <div className="relative h-full">
         {/* Y-axis labels */}
-        <div className="absolute left-0 top-0 bottom-8 w-12 flex flex-col justify-between text-right pr-3">
+        <div className="absolute left-0 top-0 bottom-8 w-10 flex flex-col justify-between text-right pr-2">
           {[10000, 7500, 5000, 2500, 0].map((val, i) => (
-            <span key={i} className="text-[11px] text-slate-400 leading-none">{val >= 1000 ? `${val / 1000}k` : val}</span>
+            <span key={i} className="text-[11px] text-slate-400 font-medium leading-none">{val >= 1000 ? `${val / 1000}k` : val}</span>
           ))}
         </div>
 
         {/* Chart Area */}
-        <div className="absolute left-12 right-0 top-0 bottom-8">
-          {/* Grid Lines */}
+        <div className="absolute left-10 right-0 top-0 bottom-8">
+          {/* Grid Lines - subtle dashed */}
           <div className="absolute inset-0 flex flex-col justify-between">
             {[0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="border-b border-slate-100" style={{ height: 1 }} />
+              <div key={i} className="border-b border-slate-100/80 border-dashed" style={{ height: 1 }} />
             ))}
           </div>
 
@@ -143,56 +148,74 @@ const AreaChart = ({ data, height = 250 }) => {
           >
             <defs>
               <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#6366F1" stopOpacity="0.25" />
-                <stop offset="100%" stopColor="#6366F1" stopOpacity="0.02" />
+                <stop offset="0%" stopColor="#818CF8" stopOpacity="0.3" />
+                <stop offset="50%" stopColor="#A5B4FC" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="#C7D2FE" stopOpacity="0.05" />
               </linearGradient>
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="0.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
             </defs>
 
-            {/* Area */}
+            {/* Area Fill */}
             <path
               d={generateAreaPath()}
               fill="url(#chartGradient)"
-              className={`transition-opacity duration-700 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+              className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
             />
 
-            {/* Line */}
+            {/* Curve Line */}
             <path
               d={generateCurvePath()}
               fill="none"
-              stroke="#6366F1"
-              strokeWidth="0.6"
+              stroke="#818CF8"
+              strokeWidth="0.8"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className={`transition-opacity duration-700 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+              filter="url(#glow)"
+              className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
             />
 
             {/* Data points */}
             {getPoints().map((point, i) => (
-              <circle
-                key={i}
-                cx={point.x}
-                cy={point.y}
-                r="1.2"
-                fill="white"
-                stroke="#6366F1"
-                strokeWidth="0.4"
-                className={`transition-all duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
-                style={{ transitionDelay: `${i * 50}ms` }}
-              />
+              <g key={i} className={`transition-all duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`} style={{ transitionDelay: `${i * 80}ms` }}>
+                {/* Outer glow */}
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  r="2"
+                  fill="#818CF8"
+                  fillOpacity="0.2"
+                />
+                {/* Inner circle */}
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  r="1.2"
+                  fill="white"
+                  stroke="#818CF8"
+                  strokeWidth="0.5"
+                />
+              </g>
             ))}
           </svg>
         </div>
 
         {/* X-axis labels */}
-        <div className="absolute left-12 right-0 bottom-0 h-8 flex justify-between items-start pt-2">
+        <div className="absolute left-10 right-0 bottom-0 h-8 flex justify-between items-start pt-3">
           {data.map((d, i) => (
-            <span key={i} className="text-[11px] text-slate-400">{d.label}</span>
+            <span key={i} className="text-[11px] text-slate-400 font-medium">{d.label}</span>
           ))}
         </div>
       </div>
     </div>
   );
 };
+
 
 // ==================== DONUT CHART COMPONENT ====================
 const DonutChart = ({ data, size = 160 }) => {
@@ -539,24 +562,29 @@ export default function AdminDashboard() {
       {/* ==================== CHARTS SECTION ==================== */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Area Chart - Revenue Overview */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm">
-          <div className="flex items-center justify-between p-6 border-b border-slate-100">
-            <div>
-              <h2 className="text-lg font-bold text-slate-800">Revenue Overview</h2>
-              <p className="text-sm text-slate-500">Monthly revenue and sales</p>
-            </div>
+        <div className="lg:col-span-2 p-6 rounded-2xl border transition-all hover:shadow-lg bg-white border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-indigo-500/10 text-indigo-600 rounded-2xl flex items-center justify-center">
+                <FiBarChart2 size={28} />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-slate-800">Revenue Overview</h2>
+                <p className="text-sm text-slate-500">Monthly revenue and sales</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500" />
                 <span className="text-xs text-slate-500">Revenue</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg text-emerald-600 text-sm font-semibold">
-                <FiTrendingUp />
+              <div className="px-3 py-1 bg-emerald-500/10 text-emerald-600 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                <FiTrendingUp size={10} />
                 +18.2%
               </div>
             </div>
           </div>
-          <div className="p-6">
+          <div>
             <AreaChart
               data={chartData}
               height={280}
@@ -573,14 +601,17 @@ export default function AdminDashboard() {
         </div>
 
         {/* Donut Chart - Platform Distribution */}
-        <div className="bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm">
-          <div className="flex items-center justify-between p-6 border-b border-slate-100">
+        <div className="p-6 rounded-2xl border transition-all hover:shadow-lg bg-white border-slate-200 shadow-sm">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-14 h-14 bg-purple-500/10 text-purple-600 rounded-2xl flex items-center justify-center">
+              <FiLayers size={28} />
+            </div>
             <div>
               <h2 className="text-lg font-bold text-slate-800">Platform Distribution</h2>
               <p className="text-sm text-slate-500">Content by category</p>
             </div>
           </div>
-          <div className="p-6 flex flex-col items-center">
+          <div className="flex flex-col items-center">
             <DonutChart data={platformData} size={180} />
 
             {/* Legend */}
@@ -634,8 +665,16 @@ export default function AdminDashboard() {
       {/* ==================== MIDDLE SECTION ==================== */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Quick Actions */}
-        <div className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-slate-800 mb-4">Quick Actions</h2>
+        <div className="p-6 rounded-2xl border transition-all hover:shadow-lg bg-white border-slate-200 shadow-sm">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-14 h-14 bg-amber-500/10 text-amber-600 rounded-2xl flex items-center justify-center">
+              <FiZap size={28} />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-800">Quick Actions</h2>
+              <p className="text-sm text-slate-500">Manage your platform</p>
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             {quickActions.map((action) => {
               const Icon = action.icon;
@@ -657,14 +696,22 @@ export default function AdminDashboard() {
         </div>
 
         {/* Top Content */}
-        <div className="bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm">
-          <div className="flex items-center justify-between p-6 border-b border-slate-100">
-            <h2 className="text-lg font-bold text-slate-800">Top Content</h2>
-            <Link href="/dashboard/admin/course" className="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1">
-              View All <FiArrowRight size={14} />
+        <div className="p-6 rounded-2xl border transition-all hover:shadow-lg bg-white border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-emerald-500/10 text-emerald-600 rounded-2xl flex items-center justify-center">
+                <FiAward size={28} />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-slate-800">Top Content</h2>
+                <p className="text-sm text-slate-500">Best selling courses</p>
+              </div>
+            </div>
+            <Link href="/dashboard/admin/course" className="px-3 py-1 bg-indigo-500/10 text-indigo-600 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+              View All <FiArrowRight size={10} />
             </Link>
           </div>
-          <div className="p-4 space-y-3">
+          <div className="space-y-3">
             {loading ? (
               <div className="text-center py-8 text-slate-400">
                 <FiRefreshCw className="animate-spin mx-auto mb-2" size={24} />
@@ -691,33 +738,33 @@ export default function AdminDashboard() {
         </div>
 
         {/* Live Stats */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50 to-white border border-slate-200/60 p-6 shadow-sm">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-indigo-100 to-transparent rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-purple-100 to-transparent rounded-full blur-3xl" />
-
-          <div className="relative">
-            <div className="flex items-center gap-2 mb-5">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-sm font-semibold text-slate-600">Live Statistics</span>
+        <div className="p-6 rounded-2xl border transition-all hover:shadow-lg bg-white border-slate-200 shadow-sm">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-14 h-14 bg-teal-500/10 text-teal-600 rounded-2xl flex items-center justify-center">
+              <FiActivity size={28} />
             </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-800">Live Statistics</h2>
+              <p className="text-sm text-slate-500">Real-time platform data</p>
+            </div>
+          </div>
 
-            <div className="space-y-3">
-              <div className="flex justify-between items-center p-3 rounded-xl bg-white border border-slate-100 shadow-sm">
-                <span className="text-sm text-slate-500">Today's Revenue</span>
-                <span className="text-lg font-bold text-slate-800">৳{dashboardData.todayRevenue.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between items-center p-3 rounded-xl bg-white border border-slate-100 shadow-sm">
-                <span className="text-sm text-slate-500">This Month</span>
-                <span className="text-lg font-bold text-slate-800">৳{dashboardData.monthlyRevenue.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between items-center p-3 rounded-xl bg-white border border-slate-100 shadow-sm">
-                <span className="text-sm text-slate-500">New Users</span>
-                <span className="text-lg font-bold text-emerald-600">+{dashboardData.newUsersThisMonth}</span>
-              </div>
-              <div className="flex justify-between items-center p-3 rounded-xl bg-white border border-slate-100 shadow-sm">
-                <span className="text-sm text-slate-500">Active Enrollments</span>
-                <span className="text-lg font-bold text-indigo-600">{dashboardData.activeEnrollments}</span>
-              </div>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+              <span className="text-sm text-slate-500">Today's Revenue</span>
+              <span className="text-lg font-bold text-slate-800">৳{dashboardData.todayRevenue.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+              <span className="text-sm text-slate-500">This Month</span>
+              <span className="text-lg font-bold text-slate-800">৳{dashboardData.monthlyRevenue.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+              <span className="text-sm text-slate-500">New Users</span>
+              <span className="text-lg font-bold text-emerald-600">+{dashboardData.newUsersThisMonth}</span>
+            </div>
+            <div className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+              <span className="text-sm text-slate-500">Active Enrollments</span>
+              <span className="text-lg font-bold text-indigo-600">{dashboardData.activeEnrollments}</span>
             </div>
           </div>
         </div>
