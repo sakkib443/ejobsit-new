@@ -13,29 +13,29 @@ const heroContentSchema = new Schema({
         showNew: { type: Boolean, default: true }
     },
     heading: {
-        line1: { type: String, default: 'Discover Premium' },
-        line1Bn: { type: String, default: 'আবিষ্কার করুন প্রিমিয়াম' },
-        line2: { type: String, default: 'Learn' },
-        line2Bn: { type: String, default: 'শিখুন' }
+        line1: { type: String, default: 'THE BEST' },
+        line1Bn: { type: String, default: 'সেরা' },
+        line2: { type: String, default: 'BUSINESS SOLUTION &' },
+        line2Bn: { type: String, default: 'বিজনেস সলিউশন' }
     },
     dynamicTexts: {
         type: [String],
-        default: ['Professional Courses', 'Software Tools', 'Web Development']
+        default: ['PREMIUM COURSES', 'Professional Courses', 'Software Tools', 'Web Development']
     },
     dynamicTextsBn: {
         type: [String],
-        default: ['প্রফেশনাল কোর্স', 'সফটওয়্যার টুলস', 'ওয়েব ডেভেলপমেন্ট']
+        default: ['প্রিমিয়াম কোর্স', 'প্রফেশনাল কোর্স', 'সফটওয়্যার টুলস', 'ওয়েব ডেভেলপমেন্ট']
     },
     description: {
         text: {
             type: String,
-            default: 'Access thousands of premium courses, software, and digital products. Built by experts, ready for you to launch in minutes.'
+            default: 'The most powerful learning and creative platform by'
         },
         textBn: {
             type: String,
-            default: 'হাজার হাজার প্রিমিয়াম কোর্স, সফটওয়্যার এবং ডিজিটাল প্রোডাক্ট অ্যাক্সেস করুন। বিশেষজ্ঞদের দ্বারা তৈরি।'
+            default: 'সবচেয়ে নির্ভরযোগ্য লার্নিং প্ল্যাটফর্ম'
         },
-        brandName: { type: String, default: 'eJobsIT' }
+        brandName: { type: String, default: 'ejobs it' }
     },
     features: [{
         text: { type: String },
@@ -53,6 +53,89 @@ const heroContentSchema = new Schema({
     }
 }, { _id: false });
 
+// Popular Course Section Schema
+const popularCourseContentSchema = new Schema({
+    badge: {
+        text: { type: String, default: 'Popular Courses' },
+        textBn: { type: String, default: 'জনপ্রিয় কোর্স' }
+    },
+    heading: {
+        text1: { type: String, default: 'Explore Our ' },
+        text1Bn: { type: String, default: 'আমাদের ' },
+        highlight: { type: String, default: 'Top Courses' },
+        highlightBn: { type: String, default: 'সেরা কোর্স' },
+        text2: { type: String, default: '' },
+        text2Bn: { type: String, default: ' সমূহ' }
+    },
+    description: {
+        text: { type: String, default: 'Premium courses crafted by industry experts.' },
+        textBn: { type: String, default: 'বিশেষজ্ঞ মেন্টরদের দ্বারা তৈরি প্রিমিয়াম কোর্স।' }
+    },
+    cta: {
+        buttonText: { type: String, default: 'View All Courses' },
+        buttonTextBn: { type: String, default: 'সব কোর্স দেখুন' },
+        footerText: { type: String, default: 'Thousands of learners joined' },
+        footerTextBn: { type: String, default: 'হাজার হাজার শিক্ষার্থী যোগ দিয়েছেন' }
+    }
+}, { _id: false });
+
+// Digital Products Section Schema
+const digitalProductsContentSchema = new Schema({
+    badge: {
+        text: { type: String, default: 'Digital Products' },
+        textBn: { type: String, default: 'ডিজিটাল প্রোডাক্ট' }
+    },
+    heading: {
+        text1: { type: String, default: 'Explore Our ' },
+        text1Bn: { type: String, default: 'আমাদের ' },
+        highlight: { type: String, default: 'Digital Products' },
+        highlightBn: { type: String, default: 'ডিজিটাল প্রোডাক্ট' }
+    },
+    description: {
+        text: { type: String, default: 'Premium software and website templates for your business.' },
+        textBn: { type: String, default: 'আপনার ব্যবসার জন্য প্রিমিয়াম সফটওয়্যার এবং ওয়েবসাইট টেমপ্লেট।' }
+    },
+    tabs: {
+        software: { type: String, default: 'Software' },
+        softwareBn: { type: String, default: 'সফটওয়্যার' },
+        website: { type: String, default: 'Websites' },
+        websiteBn: { type: String, default: 'ওয়েবসাইট' }
+    },
+    cta: {
+        viewAll: { type: String, default: 'View All' },
+        viewAllBn: { type: String, default: 'সব দেখুন' }
+    }
+}, { _id: false });
+
+// What We Provide Section Schema
+const whatWeProvideContentSchema = new Schema({
+    badge: {
+        text: { type: String, default: 'Why Choose Us' },
+        textBn: { type: String, default: 'কেন আমাদের বেছে নেবেন' }
+    },
+    heading: {
+        text1: { type: String, default: 'What We ' },
+        text1Bn: { type: String, default: 'আমরা যা ' },
+        highlight: { type: String, default: 'Provide' },
+        highlightBn: { type: String, default: 'প্রদান করি' }
+    },
+    description: {
+        text: { type: String, default: 'We are committed to providing the best learning experience.' },
+        textBn: { type: String, default: 'আমরা সেরা শেখার অভিজ্ঞতা প্রদান করতে প্রতিশ্রুতিবদ্ধ।' }
+    },
+    features: [{
+        title: { type: String },
+        titleBn: { type: String },
+        description: { type: String },
+        descriptionBn: { type: String },
+        emoji: { type: String, default: '🚀' }
+    }],
+    cta: {
+        text: { type: String, default: 'Learn More About Us' },
+        textBn: { type: String, default: 'আমাদের সম্পর্কে আরও জানুন' }
+    }
+}, { _id: false });
+
 const contactContentSchema = new Schema({
     hero: {
         badge: { type: String, default: 'Get In Touch' },
@@ -62,13 +145,13 @@ const contactContentSchema = new Schema({
         title2: { type: String, default: 'Connect' },
         title2Bn: { type: String, default: 'যোগাযোগ করুন' },
         subtitle: { type: String, default: 'Have questions? We would love to hear from you. Send us a message and we will respond as soon as possible.' },
-        subtitleBn: { type: String, default: 'কোনো প্রশ্ন আছে? আমাদের মেসেজ পাঠান, আমরা যত তাড়াতাড়ি সম্ভব উত্তর দেব।' }
+        subtitleBn: { type: String, default: 'কোনো প্রশ্ন আছে? আমাদের মেসেজ পাঠান, আমরা যত তাড়াতাড়ি সম্ভব উত্তর দেব।' }
     },
     contactInfo: {
         email: { type: String, default: 'info@ejobsit.com' },
         phone: { type: String, default: '+88 01730481212' },
         address: { type: String, default: 'Daisy Garden, House 14 (Level-5), Block A, Banasree, Dhaka' },
-        addressBn: { type: String, default: 'ডেইজি গার্ডেন, বাড়ি ১৪ (লেভেল-৫), ব্লক এ, বনশ্রী, ঢাকা' },
+        addressBn: { type: String, default: 'ডেইজি গার্ডেন, বাড়ি ১৪ (লেভেল-৫), ব্লক এ, বনশ্রী, ঢাকা' },
         officeHours: { type: String, default: 'Sat - Thu: 10:00 AM - 6:00 PM' },
         officeHoursBn: { type: String, default: 'শনি - বৃহস্পতি: সকাল ১০টা - সন্ধ্যা ৬টা' }
     },
@@ -98,11 +181,22 @@ const designSchema = new Schema<IDesign, DesignModel>(
         section: {
             type: String,
             required: true,
-            enum: ['hero', 'about', 'footer', 'topHeader', 'navbar', 'contact'],
+            enum: ['hero', 'about', 'footer', 'topHeader', 'navbar', 'contact', 'popularCourse', 'digitalProducts', 'whatWeProvide', 'aboutHero', 'aboutMission', 'aboutStats', 'aboutFeatures', 'aboutFounder', 'aboutGlobal', 'aboutCTA'],
             unique: true
         },
         heroContent: heroContentSchema,
+        popularCourseContent: popularCourseContentSchema,
+        digitalProductsContent: digitalProductsContentSchema,
+        whatWeProvideContent: whatWeProvideContentSchema,
         contactContent: contactContentSchema,
+        // About page sections - flexible Schema.Types.Mixed
+        aboutHeroContent: { type: Schema.Types.Mixed },
+        aboutMissionContent: { type: Schema.Types.Mixed },
+        aboutStatsContent: { type: Schema.Types.Mixed },
+        aboutFeaturesContent: { type: Schema.Types.Mixed },
+        aboutFounderContent: { type: Schema.Types.Mixed },
+        aboutGlobalContent: { type: Schema.Types.Mixed },
+        aboutCTAContent: { type: Schema.Types.Mixed },
         isActive: {
             type: Boolean,
             default: true
@@ -120,3 +214,4 @@ designSchema.statics.findBySection = async function (section: string) {
 };
 
 export const Design = model<IDesign, DesignModel>('Design', designSchema);
+

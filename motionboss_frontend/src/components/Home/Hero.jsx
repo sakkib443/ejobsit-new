@@ -80,9 +80,38 @@ const Hero = () => {
         fetchCounts();
     }, []);
 
-    const getHeading = () => language === 'bn' ? 'সেরা' : 'THE BEST';
-    const getHeadingLine2 = () => language === 'bn' ? 'বিজনেস সলিউশন' : 'BUSINESS SOLUTION &';
-    const getHeadingLine3 = () => language === 'bn' ? 'প্রিমিয়াম কোর্স' : 'PREMIUM COURSES';
+    // Get badge text from heroData or use default
+    const getBadgeText = () => {
+        if (heroData?.badge) {
+            return language === 'bn' ? (heroData.badge.textBn || 'প্রিমিয়াম লার্নিং প্ল্যাটফর্ম') : (heroData.badge.text || 'PREMIUM LEARNING PLATFORM');
+        }
+        return language === 'bn' ? 'প্রিমিয়াম লার্নিং প্ল্যাটফর্ম' : 'PREMIUM LEARNING PLATFORM';
+    };
+
+    // Get headings from heroData or use defaults
+    const getHeading = () => {
+        if (heroData?.heading?.line1) {
+            return language === 'bn' ? (heroData.heading.line1Bn || 'সেরা') : heroData.heading.line1;
+        }
+        return language === 'bn' ? 'সেরা' : 'THE BEST';
+    };
+
+    const getHeadingLine2 = () => {
+        if (heroData?.heading?.line2) {
+            return language === 'bn' ? (heroData.heading.line2Bn || 'বিজনেস সলিউশন') : heroData.heading.line2;
+        }
+        return language === 'bn' ? 'বিজনেস সলিউশন' : 'BUSINESS SOLUTION &';
+    };
+
+    const getHeadingLine3 = () => {
+        // Check if we have dynamic texts from heroData
+        if (heroData?.dynamicTexts && heroData.dynamicTexts.length > 0) {
+            return language === 'bn'
+                ? (heroData.dynamicTextsBn?.[0] || 'প্রিমিয়াম কোর্স')
+                : heroData.dynamicTexts[0];
+        }
+        return language === 'bn' ? 'প্রিমিয়াম কোর্স' : 'PREMIUM COURSES';
+    };
 
     const getDescriptionText = () => {
         if (heroData?.description) {
@@ -147,7 +176,7 @@ const Hero = () => {
                             <LuSparkles className="text-white" size={12} />
                         </div>
                         <span className={`text-[10px] font-bold tracking-[0.2em] uppercase text-gray-700 dark:text-gray-300 ${bengaliClass}`}>
-                            <TypingText text={language === 'bn' ? 'প্রিমিয়াম লার্নিং প্ল্যাটফর্ম' : 'PREMIUM LEARNING PLATFORM'} delay={0.2} speed={0.02} />
+                            <TypingText text={getBadgeText()} delay={0.2} speed={0.02} />
                         </span>
                     </motion.div>
 

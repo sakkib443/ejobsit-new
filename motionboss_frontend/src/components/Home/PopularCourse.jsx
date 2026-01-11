@@ -21,6 +21,7 @@ const cardVariants = {
 
 const PopularCourse = () => {
   const [stats, setStats] = useState(null);
+  const [content, setContent] = useState(null);
   const { language } = useLanguage();
   const bengaliClass = language === "bn" ? "hind-siliguri" : "";
 
@@ -34,8 +35,67 @@ const PopularCourse = () => {
         console.error('Error fetching stats:', error);
       }
     };
+
+    const fetchContent = async () => {
+      try {
+        const res = await fetch(`${API_URL}/design/popularCourse`);
+        const data = await res.json();
+        if (data.success && data.data?.popularCourseContent) {
+          setContent(data.data.popularCourseContent);
+        }
+      } catch (error) {
+        console.error('Error fetching content:', error);
+      }
+    };
+
     fetchStats();
+    fetchContent();
   }, []);
+
+  // Get dynamic text functions
+  const getBadge = () => {
+    if (content?.badge) {
+      return language === 'bn' ? (content.badge.textBn || 'জনপ্রিয় কোর্স') : (content.badge.text || 'Popular Courses');
+    }
+    return language === 'bn' ? 'জনপ্রিয় কোর্স' : 'Popular Courses';
+  };
+
+  const getHeading = () => {
+    if (content?.heading) {
+      const text1 = language === 'bn' ? content.heading.text1Bn : content.heading.text1;
+      const highlight = language === 'bn' ? content.heading.highlightBn : content.heading.highlight;
+      const text2 = language === 'bn' ? content.heading.text2Bn : content.heading.text2;
+      return { text1: text1 || '', highlight: highlight || '', text2: text2 || '' };
+    }
+    return language === 'bn'
+      ? { text1: 'আমাদের ', highlight: 'সেরা কোর্স', text2: ' সমূহ' }
+      : { text1: 'Explore Our ', highlight: 'Top Courses', text2: '' };
+  };
+
+  const getDescription = () => {
+    if (content?.description) {
+      return language === 'bn'
+        ? (content.description.textBn || 'বিশেষজ্ঞ মেন্টরদের দ্বারা তৈরি প্রিমিয়াম কোর্স।')
+        : (content.description.text || 'Premium courses crafted by industry experts.');
+    }
+    return language === 'bn' ? 'বিশেষজ্ঞ মেন্টরদের দ্বারা তৈরি প্রিমিয়াম কোর্স।' : 'Premium courses crafted by industry experts.';
+  };
+
+  const getButtonText = () => {
+    if (content?.cta) {
+      return language === 'bn' ? (content.cta.buttonTextBn || 'সব কোর্স দেখুন') : (content.cta.buttonText || 'View All Courses');
+    }
+    return language === 'bn' ? 'সব কোর্স দেখুন' : 'View All Courses';
+  };
+
+  const getFooterText = () => {
+    if (content?.cta) {
+      return language === 'bn' ? (content.cta.footerTextBn || 'হাজার হাজার শিক্ষার্থী যোগ দিয়েছেন') : (content.cta.footerText || 'Thousands of learners joined');
+    }
+    return language === 'bn' ? 'হাজার হাজার শিক্ষার্থী যোগ দিয়েছেন' : 'Thousands of learners joined';
+  };
+
+  const heading = getHeading();
 
   const statsData = [
     { icon: LuGraduationCap, value: stats?.breakdown?.courses || 0, label: language === 'bn' ? 'কোর্স সমূহ' : 'Courses', suffix: '+', color: 'teal' },
@@ -61,14 +121,14 @@ const PopularCourse = () => {
               <LuPlay className="text-[#41bfb8]" size={14} />
             </div>
             <span className={`text-xs font-black text-teal-600 dark:text-teal-400 uppercase tracking-[0.2em] ${bengaliClass}`}>
-              {language === 'bn' ? 'জনপ্রিয় কোর্স' : 'Popular Courses'}
+              {getBadge()}
             </span>
           </motion.div>
           <motion.h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-5 ${bengaliClass}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}>
-            {language === 'bn' ? <>আমাদের <span className="text-primary">সেরা কোর্স</span> সমূহ</> : <>Explore Our <span className="text-primary">Top Courses</span></>}
+            {heading.text1}<span className="text-primary">{heading.highlight}</span>{heading.text2}
           </motion.h2>
           <motion.p className={`text-gray-500 dark:text-gray-400 text-base lg:text-lg max-w-2xl mx-auto ${bengaliClass}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.3 }}>
-            {language === 'bn' ? 'বিশেষজ্ঞ মেন্টরদের দ্বারা তৈরি প্রিমিয়াম কোর্স।' : 'Premium courses crafted by industry experts.'}
+            {getDescription()}
           </motion.p>
         </motion.div>
 
@@ -102,7 +162,7 @@ const PopularCourse = () => {
 
         <motion.div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-16" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.5 }}>
           <Link href="/courses" className={`group relative bg-white dark:bg-[#0d0d0d] rounded-2xl px-8 py-4 border border-gray-200 dark:border-white/10 hover:-translate-y-1 hover:shadow-lg flex items-center gap-4 transition-all ${bengaliClass}`}>
-            <span className="font-bold text-gray-900 dark:text-white">{language === 'bn' ? 'সব কোর্স দেখুন' : 'View All Courses'}</span>
+            <span className="font-bold text-gray-900 dark:text-white">{getButtonText()}</span>
             <div className="w-10 h-10 rounded-xl bg-[#41bfb8]/10 flex items-center justify-center group-hover:bg-[#41bfb8]">
               <LuArrowRight size={18} className="text-[#41bfb8] group-hover:text-white" />
             </div>
@@ -116,7 +176,7 @@ const PopularCourse = () => {
               ))}
             </div>
             <p className={`text-sm font-medium text-gray-500 ${bengaliClass}`}>
-              {language === 'bn' ? 'হাজার হাজার শিক্ষার্থী যোগ দিয়েছেন' : 'Thousands of learners joined'}
+              {getFooterText()}
             </p>
           </div>
         </motion.div>

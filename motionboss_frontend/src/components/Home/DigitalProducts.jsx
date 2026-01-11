@@ -35,18 +35,78 @@ const ProductCardSkeleton = () => (
     </div>
 );
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://motionboss-backend.vercel.app/api';
+
 const DigitalProducts = () => {
     const dispatch = useDispatch();
     const { softwareList = [], loading: softwareLoading } = useSelector((state) => state.software || {});
     const { websiteList = [], loading: websiteLoading } = useSelector((state) => state.websites || {});
     const { language } = useLanguage();
     const [activeType, setActiveType] = useState('software');
+    const [content, setContent] = useState(null);
     const bengaliClass = language === "bn" ? "hind-siliguri" : "";
 
     useEffect(() => {
         dispatch(fetchSoftware());
         dispatch(fetchWebsites());
+
+        const fetchContent = async () => {
+            try {
+                const res = await fetch(`${API_URL}/design/digitalProducts`);
+                const data = await res.json();
+                if (data.success && data.data?.digitalProductsContent) {
+                    setContent(data.data.digitalProductsContent);
+                }
+            } catch (error) {
+                console.error('Error fetching content:', error);
+            }
+        };
+        fetchContent();
     }, [dispatch]);
+
+    // Get dynamic text functions
+    const getBadge = () => {
+        if (content?.badge) {
+            return language === 'bn' ? (content.badge.textBn || 'ডিজিটাল পণ্য') : (content.badge.text || 'Digital Products');
+        }
+        return language === 'bn' ? 'ডিজিটাল পণ্য' : 'Digital Products';
+    };
+
+    const getHeading = () => {
+        if (content?.heading) {
+            const text1 = language === 'bn' ? content.heading.text1Bn : content.heading.text1;
+            const highlight = language === 'bn' ? content.heading.highlightBn : content.heading.highlight;
+            return { text1: text1 || '', highlight: highlight || '' };
+        }
+        return language === 'bn'
+            ? { text1: 'আমাদের ', highlight: 'প্রিমিয়াম ডিজিটাল পণ্য' }
+            : { text1: 'Premium ', highlight: 'Digital Products' };
+    };
+
+    const getDescription = () => {
+        if (content?.description) {
+            return language === 'bn'
+                ? (content.description.textBn || 'আমাদের প্রিমিয়াম সফটওয়্যার এবং রেডিমেড ওয়েবসাইট কালেকশন আপনার ব্যবসা বাড়াতে সাহায্য করবে।')
+                : (content.description.text || 'Explore our collection of premium software and ready-made websites designed to scale your business.');
+        }
+        return language === 'bn' ? 'আমাদের প্রিমিয়াম সফটওয়্যার এবং রেডিমেড ওয়েবসাইট কালেকশন আপনার ব্যবসা বাড়াতে সাহায্য করবে।' : 'Explore our collection of premium software and ready-made websites designed to scale your business.';
+    };
+
+    const getSoftwareTab = () => {
+        if (content?.tabs) {
+            return language === 'bn' ? (content.tabs.softwareBn || 'সফটওয়্যার') : (content.tabs.software || 'Software');
+        }
+        return language === 'bn' ? 'সফটওয়্যার' : 'Software';
+    };
+
+    const getWebsiteTab = () => {
+        if (content?.tabs) {
+            return language === 'bn' ? (content.tabs.websiteBn || 'ওয়েবসাইট') : (content.tabs.website || 'Websites');
+        }
+        return language === 'bn' ? 'ওয়েবসাইট' : 'Websites';
+    };
+
+    const heading = getHeading();
 
     const displayList = activeType === 'software' ? softwareList.slice(0, 4) : websiteList.slice(0, 4);
     const isLoading = activeType === 'software' ? softwareLoading : websiteLoading;
@@ -103,7 +163,7 @@ const DigitalProducts = () => {
                             <LuSparkles className="text-[#F79952]" size={14} />
                         </div>
                         <span className={`text-xs font-black text-[#F79952] uppercase tracking-[0.2em] ${bengaliClass}`}>
-                            {language === 'bn' ? 'ডিজিটাল পণ্য' : 'Digital Products'}
+                            {getBadge()}
                         </span>
                     </div>
 
@@ -116,9 +176,7 @@ const DigitalProducts = () => {
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, delay: 0.2 }}
                         >
-                            {language === 'bn'
-                                ? <>আমাদের <span className="text-[#F79952]">প্রিমিয়াম</span> ডিজিটাল পণ্য</>
-                                : <>Premium <span className="text-[#F79952]">Digital</span> Products</>}
+                            {heading.text1}<span className="text-[#F79952]">{heading.highlight}</span>
                         </motion.h2>
                     </div>
 
@@ -129,9 +187,7 @@ const DigitalProducts = () => {
                         viewport={{ once: true }}
                         transition={{ duration: 0.6, delay: 0.3 }}
                     >
-                        {language === 'bn'
-                            ? 'আমাদের প্রিমিয়াম সফটওয়্যার এবং রেডিমেড ওয়েবসাইট কালেকশন আপনার ব্যবসা বাড়াতে সাহায্য করবে।'
-                            : 'Explore our collection of premium software and ready-made websites designed to scale your business.'}
+                        {getDescription()}
                     </motion.p>
                 </motion.div>
 
@@ -152,7 +208,7 @@ const DigitalProducts = () => {
                                 }`}
                         >
                             <LuCpu size={18} />
-                            <span className={bengaliClass}>{language === 'bn' ? 'সফটওয়্যার' : 'Software'}</span>
+                            <span className={bengaliClass}>{getSoftwareTab()}</span>
                             {activeType === 'software' && (
                                 <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#41bfb8] to-[#2dd4bf] rounded-b-xl"></div>
                             )}
@@ -165,7 +221,7 @@ const DigitalProducts = () => {
                                 }`}
                         >
                             <LuGlobe size={18} />
-                            <span className={bengaliClass}>{language === 'bn' ? 'ওয়েবসাইট' : 'Websites'}</span>
+                            <span className={bengaliClass}>{getWebsiteTab()}</span>
                             {activeType === 'website' && (
                                 <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#F79952] to-[#fb923c] rounded-b-xl"></div>
                             )}

@@ -98,6 +98,105 @@ const getDesignBySection = async (section: string): Promise<IDesign | null> => {
         });
     }
 
+    // If popularCourse section doesn't exist, create default
+    if (!design && section === 'popularCourse') {
+        design = await Design.create({
+            section: 'popularCourse',
+            popularCourseContent: {
+                badge: {
+                    text: 'Popular Courses',
+                    textBn: 'জনপ্রিয় কোর্স'
+                },
+                heading: {
+                    text1: 'Explore Our ',
+                    text1Bn: 'আমাদের ',
+                    highlight: 'Top Courses',
+                    highlightBn: 'সেরা কোর্স',
+                    text2: '',
+                    text2Bn: ' সমূহ'
+                },
+                description: {
+                    text: 'Premium courses crafted by industry experts.',
+                    textBn: 'বিশেষজ্ঞ মেন্টরদের দ্বারা তৈরি প্রিমিয়াম কোর্স।'
+                },
+                cta: {
+                    buttonText: 'View All Courses',
+                    buttonTextBn: 'সব কোর্স দেখুন',
+                    footerText: 'Thousands of learners joined',
+                    footerTextBn: 'হাজার হাজার শিক্ষার্থী যোগ দিয়েছেন'
+                }
+            },
+            isActive: true
+        });
+    }
+
+    // If digitalProducts section doesn't exist, create default
+    if (!design && section === 'digitalProducts') {
+        design = await Design.create({
+            section: 'digitalProducts',
+            digitalProductsContent: {
+                badge: {
+                    text: 'Digital Products',
+                    textBn: 'ডিজিটাল পণ্য'
+                },
+                heading: {
+                    text1: 'Premium ',
+                    text1Bn: 'আমাদের ',
+                    highlight: 'Digital Products',
+                    highlightBn: 'প্রিমিয়াম ডিজিটাল পণ্য'
+                },
+                description: {
+                    text: 'Explore our collection of premium software and ready-made websites designed to scale your business.',
+                    textBn: 'আমাদের প্রিমিয়াম সফটওয়্যার এবং রেডিমেড ওয়েবসাইট কালেকশন আপনার ব্যবসা বাড়াতে সাহায্য করবে।'
+                },
+                tabs: {
+                    software: 'Software',
+                    softwareBn: 'সফটওয়্যার',
+                    website: 'Websites',
+                    websiteBn: 'ওয়েবসাইট'
+                },
+                cta: {
+                    viewAll: 'View All',
+                    viewAllBn: 'সব দেখুন'
+                }
+            },
+            isActive: true
+        });
+    }
+
+    // If whatWeProvide section doesn't exist, create default
+    if (!design && section === 'whatWeProvide') {
+        design = await Design.create({
+            section: 'whatWeProvide',
+            whatWeProvideContent: {
+                badge: {
+                    text: 'Why Choose Us',
+                    textBn: 'কেন আমাদের বেছে নেবেন'
+                },
+                heading: {
+                    text1: 'What We ',
+                    text1Bn: 'আমরা যা ',
+                    highlight: 'Provide',
+                    highlightBn: 'প্রদান করি'
+                },
+                description: {
+                    text: 'We are committed to providing the best learning experience.',
+                    textBn: 'আমরা সেরা শেখার অভিজ্ঞতা প্রদান করতে প্রতিশ্রুতিবদ্ধ।'
+                },
+                features: [
+                    { title: 'Lifetime Support', titleBn: 'লাইফটাইম সাপোর্ট', description: 'Get lifetime support for all your purchases.', descriptionBn: 'আপনার সব ক্রয়ের জন্য লাইফটাইম সাপোর্ট পান।', emoji: '🚀' },
+                    { title: 'Job Placement', titleBn: 'চাকরি নিশ্চিতকরণ', description: 'We help you get placed in top companies.', descriptionBn: 'আমরা আপনাকে শীর্ষ কোম্পানিতে চাকরি পেতে সাহায্য করি।', emoji: '🎯' },
+                    { title: 'Certification', titleBn: 'সার্টিফিকেশন', description: 'Get industry recognized certification.', descriptionBn: 'ইন্ডাস্ট্রি স্বীকৃত সার্টিফিকেট পান।', emoji: '🏅' }
+                ],
+                cta: {
+                    text: 'Learn More About Us',
+                    textBn: 'আমাদের সম্পর্কে আরও জানুন'
+                }
+            },
+            isActive: true
+        });
+    }
+
     return design;
 };
 

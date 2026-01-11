@@ -154,7 +154,8 @@ const AdminSidebar = () => {
       icon: FiImage,
       gradient: 'from-pink-500 to-purple-500',
       submenu: [
-        { title: 'Hero Section', href: '/dashboard/admin/design/hero', icon: FiImage },
+        { title: 'Home Page', href: '/dashboard/admin/design/home', icon: FiHome },
+        { title: 'About Page', href: '/dashboard/admin/design/about', icon: FiGrid },
         { title: 'Contact Page', href: '/dashboard/admin/design/contact', icon: FiMessageSquare },
         { title: 'Top Header', href: '/dashboard/admin/design/topheader', icon: FiLayers },
       ],
