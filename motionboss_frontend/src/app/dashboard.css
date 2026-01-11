@@ -414,3 +414,134 @@
 .dark .dashboard-container .border-slate-100 {
     border-color: #1e293b !important;
 }
+
+/* =====================================================
+   FORM PAGES - CREATE/EDIT PAGES DARK MODE
+   ===================================================== */
+
+/* Page containers with min-h-screen */
+.dark .dashboard-container .min-h-screen.bg-slate-50,
+.dark .dashboard-container [class*="min-h-screen"][class*="bg-slate-50"] {
+    background-color: transparent !important;
+}
+
+/* Form cards - white backgrounds */
+.dark .dashboard-container form.bg-white,
+.dark .dashboard-container form[class*="bg-white"],
+.dark .dashboard-container div.bg-white {
+    background-color: #1e293b !important;
+}
+
+/* Step indicator backgrounds */
+.dark .dashboard-container .bg-slate-200 {
+    background-color: #334155 !important;
+}
+
+.dark .dashboard-container .bg-indigo-100 {
+    background-color: rgba(99, 102, 241, 0.2) !important;
+}
+
+.dark .dashboard-container .bg-purple-100 {
+    background-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+.dark .dashboard-container .bg-rose-100 {
+    background-color: rgba(244, 63, 94, 0.2) !important;
+}
+
+/* Info cards - amber/orange gradient */
+.dark .dashboard-container [class*="bg-gradient-to-r"][class*="from-amber-50"],
+.dark .dashboard-container [class*="from-amber-50"][class*="to-orange-50"] {
+    background: linear-gradient(to right, rgba(245, 158, 11, 0.1), rgba(249, 115, 22, 0.1)) !important;
+}
+
+.dark .dashboard-container .border-amber-100 {
+    border-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+/* Tab navigation */
+.dark .dashboard-container .border-b.border-slate-200 {
+    border-color: #334155 !important;
+}
+
+/* Hover states for tabs */
+.dark .dashboard-container .hover\:bg-slate-50:hover {
+    background-color: rgba(51, 65, 85, 0.5) !important;
+}
+
+/* Active tab backgrounds */
+.dark .dashboard-container [class*="bg-indigo-50"] {
+    background-color: rgba(99, 102, 241, 0.1) !important;
+}
+
+.dark .dashboard-container [class*="bg-purple-50"] {
+    background-color: rgba(168, 85, 247, 0.1) !important;
+}
+
+.dark .dashboard-container [class*="bg-rose-50"] {
+    background-color: rgba(244, 63, 94, 0.1) !important;
+}
+
+.dark .dashboard-container [class*="bg-pink-50"] {
+    background-color: rgba(236, 72, 153, 0.1) !important;
+}
+
+/* Section header gradients */
+.dark .dashboard-container [class*="bg-gradient-to-r"][class*="from-indigo-50"],
+.dark .dashboard-container [class*="from-indigo-50"][class*="to-purple-50"] {
+    background: linear-gradient(to right, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1)) !important;
+}
+
+.dark .dashboard-container [class*="bg-gradient-to-r"][class*="from-pink-50"],
+.dark .dashboard-container [class*="from-pink-50"][class*="to-rose-50"] {
+    background: linear-gradient(to right, rgba(236, 72, 153, 0.1), rgba(244, 63, 94, 0.1)) !important;
+}
+
+/* Input field backgrounds */
+.dark .dashboard-container .bg-slate-50 {
+    background-color: #0f172a !important;
+}
+
+/* Input focus states */
+.dark .dashboard-container input.focus\:bg-white:focus,
+.dark .dashboard-container textarea.focus\:bg-white:focus,
+.dark .dashboard-container select.focus\:bg-white:focus {
+    background-color: #1e293b !important;
+}
+
+/* =====================================================
+   INPUT FIELDS - DARK MODE BORDERS & STYLING
+   ===================================================== */
+
+/* All input, textarea, select with slate-200 border */
+.dark .dashboard-container input,
+.dark .dashboard-container textarea,
+.dark .dashboard-container select {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+.dark .dashboard-container input::placeholder,
+.dark .dashboard-container textarea::placeholder {
+    color: #64748b !important;
+}
+
+/* Focus states with visible border */
+.dark .dashboard-container input:focus,
+.dark .dashboard-container textarea:focus,
+.dark .dashboard-container select:focus {
+    border-color: #6366f1 !important;
+    background-color: #1e293b !important;
+}
+
+/* Override specific border classes */
+.dark .dashboard-container .border-slate-200 {
+    border-color: #334155 !important;
+}
+
+/* Checkbox styling */
+.dark .dashboard-container input[type="checkbox"] {
+    background-color: #1e293b !important;
+    border-color: #475569 !important;
+}
