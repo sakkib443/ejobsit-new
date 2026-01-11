@@ -26,7 +26,7 @@ const AboutMission = () => {
     ];
 
     return (
-        <section ref={sectionRef} className="py-24 lg:py-48 relative overflow-hidden bg-white dark:bg-[#020202] transition-colors duration-700">
+        <section ref={sectionRef} className="py-24 lg:py-48 relative overflow-hidden bg-white dark:bg-[#1E293B] transition-colors duration-700">
             {/* Professional Grid Background */}
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent" />
 

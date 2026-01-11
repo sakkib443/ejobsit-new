@@ -35,7 +35,7 @@ const AboutStats = () => {
     const headingFont = "font-outfit";
 
     return (
-        <section ref={sectionRef} className="bg-white dark:bg-[#020202] transition-colors duration-700 relative">
+        <section ref={sectionRef} className="bg-white dark:bg-[#1E293B] transition-colors duration-700 relative py-16 lg:py-24">
             <div className="container mx-auto px-4 lg:px-16 relative z-10">
                 {/* Minimal Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">

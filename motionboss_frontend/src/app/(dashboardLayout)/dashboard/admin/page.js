@@ -13,6 +13,7 @@ import {
   FiTarget, FiZap, FiStar, FiHeart, FiCode, FiGlobe,
   FiLayers, FiCreditCard
 } from 'react-icons/fi';
+import { useTheme } from '@/providers/ThemeProvider';
 
 // ==================== ANIMATED COUNTER ====================
 const AnimatedCounter = ({ value, duration = 2000, prefix = '', suffix = '' }) => {
@@ -40,38 +41,46 @@ const AnimatedCounter = ({ value, duration = 2000, prefix = '', suffix = '' }) =
 };
 
 // ==================== PREMIUM STATS CARD ====================
-const StatsCard = ({ title, value, change, changeType, icon: Icon, gradient, loading, subtitle }) => (
-  <div className="relative group">
-    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-    <div className="relative bg-white rounded-2xl border border-slate-200/60 p-6 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-      <div className={`absolute -right-8 -top-8 w-32 h-32 bg-gradient-to-br ${gradient} opacity-10 rounded-full blur-2xl`} />
+const StatsCard = ({ title, value, change, changeType, icon: Icon, gradient, loading, subtitle }) => {
+  const { isDark } = useTheme();
+  return (
+    <div className="relative group">
+      <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className={`relative rounded-2xl p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden border ${isDark
+        ? 'bg-slate-800 border-slate-700 shadow-none'
+        : 'bg-white/80 backdrop-blur-sm border-gray-100/50 shadow-lg shadow-gray-200/50'
+        }`}>
+        <div className={`absolute -right-8 -top-8 w-32 h-32 bg-gradient-to-br ${gradient} opacity-10 rounded-full blur-2xl`} />
 
-      <div className="relative flex items-start justify-between">
-        <div className="flex-1">
-          <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">{title}</p>
-          <p className="text-3xl font-bold text-slate-800 mb-1">
-            {loading ? (
-              <span className="inline-block w-24 h-9 bg-gradient-to-r from-slate-200 to-slate-100 animate-pulse rounded-lg" />
-            ) : (
-              <AnimatedCounter value={value} prefix={title.includes('Revenue') ? '৳' : ''} />
+        <div className="relative flex items-start justify-between">
+          <div className="flex-1">
+            <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">{title}</p>
+            <p className={`text-3xl font-bold mb-1 ${isDark ? 'text-white' : 'text-slate-800'}`}>
+              {loading ? (
+                <span className={`inline-block w-24 h-9 animate-pulse rounded-lg ${isDark ? 'bg-slate-700' : 'bg-gradient-to-r from-slate-200 to-slate-100'}`} />
+              ) : (
+                <AnimatedCounter value={value} prefix={title.includes('Revenue') ? '৳' : ''} />
+              )}
+            </p>
+            {subtitle && <p className="text-xs text-slate-400 mb-2">{subtitle}</p>}
+            {change && (
+              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${changeType === 'up'
+                ? (isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-600')
+                : (isDark ? 'bg-red-500/20 text-red-400' : 'bg-red-50 text-red-500')
+                }`}>
+                {changeType === 'up' ? <FiTrendingUp size={12} /> : <FiTrendingDown size={12} />}
+                <span>{change}</span>
+              </div>
             )}
-          </p>
-          {subtitle && <p className="text-xs text-slate-400 mb-2">{subtitle}</p>}
-          {change && (
-            <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${changeType === 'up' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
-              }`}>
-              {changeType === 'up' ? <FiTrendingUp size={12} /> : <FiTrendingDown size={12} />}
-              <span>{change}</span>
-            </div>
-          )}
-        </div>
-        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
-          <Icon className="text-2xl text-white" />
+          </div>
+          <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
+            <Icon className="text-2xl text-white" />
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 
 // ==================== PROFESSIONAL AREA CHART ====================
@@ -148,17 +157,9 @@ const AreaChart = ({ data, height = 250 }) => {
           >
             <defs>
               <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#818CF8" stopOpacity="0.3" />
-                <stop offset="50%" stopColor="#A5B4FC" stopOpacity="0.15" />
-                <stop offset="100%" stopColor="#C7D2FE" stopOpacity="0.05" />
+                <stop offset="5%" stopColor="#6366F1" stopOpacity="0.2" />
+                <stop offset="95%" stopColor="#6366F1" stopOpacity="0" />
               </linearGradient>
-              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="0.5" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
             </defs>
 
             {/* Area Fill */}
@@ -168,40 +169,16 @@ const AreaChart = ({ data, height = 250 }) => {
               className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
             />
 
-            {/* Curve Line */}
+            {/* Curve Line - thin and smooth */}
             <path
               d={generateCurvePath()}
               fill="none"
-              stroke="#818CF8"
-              strokeWidth="0.8"
+              stroke="#6366F1"
+              strokeWidth="0.4"
               strokeLinecap="round"
               strokeLinejoin="round"
-              filter="url(#glow)"
               className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
             />
-
-            {/* Data points */}
-            {getPoints().map((point, i) => (
-              <g key={i} className={`transition-all duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`} style={{ transitionDelay: `${i * 80}ms` }}>
-                {/* Outer glow */}
-                <circle
-                  cx={point.x}
-                  cy={point.y}
-                  r="2"
-                  fill="#818CF8"
-                  fillOpacity="0.2"
-                />
-                {/* Inner circle */}
-                <circle
-                  cx={point.x}
-                  cy={point.y}
-                  r="1.2"
-                  fill="white"
-                  stroke="#818CF8"
-                  strokeWidth="0.5"
-                />
-              </g>
-            ))}
           </svg>
         </div>
 
@@ -301,6 +278,7 @@ const ActivityItem = ({ icon: Icon, title, description, time, color, isNew }) =>
 
 // ==================== MAIN DASHBOARD ====================
 export default function AdminDashboard() {
+  const { isDark } = useTheme();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
@@ -524,14 +502,17 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       {/* ==================== COMPACT HEADER BAR ==================== */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm">
+      <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl border p-5 ${isDark
+        ? 'bg-slate-800 border-slate-700 shadow-none'
+        : 'bg-white border-slate-200/60 shadow-sm'
+        }`}>
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
             <FiGrid className="text-white text-xl" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-800">Dashboard Overview</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>Dashboard Overview</h1>
+            <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
               {hasMounted ? new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'Loading date...'}
             </p>
           </div>
@@ -540,7 +521,10 @@ export default function AdminDashboard() {
           <button
             onClick={fetchDashboardData}
             disabled={refreshing}
-            className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-medium transition-all disabled:opacity-50"
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all disabled:opacity-50 ${isDark
+              ? 'bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800'
+              : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+              }`}
           >
             <FiRefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
             {refreshing ? 'Syncing...' : 'Reload'}
@@ -562,74 +546,95 @@ export default function AdminDashboard() {
       {/* ==================== CHARTS SECTION ==================== */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Area Chart - Revenue Overview */}
-        <div className="lg:col-span-2 p-6 rounded-2xl border transition-all hover:shadow-lg bg-white border-slate-200 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-indigo-500/10 text-indigo-600 rounded-2xl flex items-center justify-center">
-                <FiBarChart2 size={28} />
-              </div>
-              <div>
-                <h2 className="text-lg font-bold text-slate-800">Revenue Overview</h2>
-                <p className="text-sm text-slate-500">Monthly revenue and sales</p>
-              </div>
+        <div className={`lg:col-span-2 rounded-2xl border overflow-hidden ${isDark
+          ? 'bg-slate-800 border-slate-700'
+          : 'bg-white border-slate-200 shadow-sm'
+          }`}>
+          {/* Header */}
+          <div className={`flex items-center justify-between p-6 border-b ${isDark ? 'border-slate-700' : 'border-slate-100'}`}>
+            <div>
+              <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>Revenue Overview</h3>
+              <p className="text-sm text-slate-500">Monthly revenue and sales</p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500" />
-                <span className="text-xs text-slate-500">Revenue</span>
+            <div className="flex items-center gap-4 text-xs">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-indigo-500"></div>
+                <span className="text-slate-500">Revenue</span>
               </div>
-              <div className="px-3 py-1 bg-emerald-500/10 text-emerald-600 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+              <div className="px-2 py-1 bg-emerald-500/10 text-emerald-600 rounded-full text-[10px] font-bold flex items-center gap-1">
                 <FiTrendingUp size={10} />
                 +18.2%
               </div>
             </div>
           </div>
-          <div>
-            <AreaChart
-              data={chartData}
-              height={280}
-            />
-            <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
-              <div className="text-sm text-slate-500">
-                Total Revenue: <span className="font-bold text-slate-800">৳{dashboardData.totalRevenue.toLocaleString()}</span>
+
+          {/* Chart Area */}
+          <div className="p-6">
+            <div className="h-[280px] w-full">
+              <AreaChart
+                data={chartData}
+                height={280}
+              />
+            </div>
+
+            {/* Footer Stats */}
+            <div className={`flex items-center justify-between mt-6 pt-4 border-t ${isDark ? 'border-slate-700' : 'border-slate-100'}`}>
+              <div className="flex items-center gap-6">
+                <div className="flex flex-col">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Total Revenue</span>
+                  <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>৳{dashboardData.totalRevenue.toLocaleString()}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">This Month</span>
+                  <span className="text-sm font-bold text-emerald-600">৳{dashboardData.monthlyRevenue.toLocaleString()}</span>
+                </div>
               </div>
-              <div className="text-sm text-slate-500">
-                This Month: <span className="font-bold text-emerald-600">৳{dashboardData.monthlyRevenue.toLocaleString()}</span>
+              <div className="text-right">
+                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Today</p>
+                <p className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>৳{dashboardData.todayRevenue.toLocaleString()}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Donut Chart - Platform Distribution */}
-        <div className="p-6 rounded-2xl border transition-all hover:shadow-lg bg-white border-slate-200 shadow-sm">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 bg-purple-500/10 text-purple-600 rounded-2xl flex items-center justify-center">
-              <FiLayers size={28} />
+        <div className={`rounded-2xl border overflow-hidden ${isDark
+          ? 'bg-slate-800 border-slate-700'
+          : 'bg-white border-slate-200 shadow-sm'
+          }`}>
+          {/* Header */}
+          <div className={`flex items-center gap-3 p-6 border-b ${isDark ? 'border-slate-700' : 'border-slate-100'}`}>
+            <div className={`p-2 ${isDark ? 'bg-slate-700' : 'bg-purple-50'} rounded-lg`}>
+              <FiLayers className="text-purple-500" size={18} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-800">Platform Distribution</h2>
+              <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>Platform Distribution</h3>
               <p className="text-sm text-slate-500">Content by category</p>
             </div>
           </div>
-          <div className="flex flex-col items-center">
-            <DonutChart data={platformData} size={180} />
 
-            {/* Legend */}
-            <div className="mt-6 w-full space-y-3">
-              {platformData.map((item, i) => (
-                <div key={i} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span className="text-sm text-slate-600">{item.name}</span>
+          {/* Chart Content */}
+          <div className="p-6">
+            <div className="flex flex-col items-center">
+              <DonutChart data={platformData} size={180} />
+
+              {/* Legend */}
+              <div className="mt-6 w-full space-y-3">
+                {platformData.map((item, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                      <span className={`text-sm ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{item.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>{item.value}</span>
+                      <span className="text-xs text-slate-400">
+                        {Math.round((item.value / platformData.reduce((a, b) => a + b.value, 0)) * 100)}%
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-slate-800">{item.value}</span>
-                    <span className="text-xs text-slate-400">
-                      {Math.round((item.value / platformData.reduce((a, b) => a + b.value, 0)) * 100)}%
-                    </span>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -847,6 +852,6 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

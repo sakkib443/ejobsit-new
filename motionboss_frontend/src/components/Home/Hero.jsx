@@ -141,7 +141,7 @@ const Hero = () => {
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.5 }}
-                        className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/70 dark:bg-white/5 border border-gray-200 dark:border-white/10 mb-6 backdrop-blur-xl shadow-lg"
+                        className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/70 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-700/50 mb-6 backdrop-blur-xl shadow-lg"
                     >
                         <div className="w-6 h-6 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 flex items-center justify-center">
                             <LuSparkles className="text-white" size={12} />
@@ -210,7 +210,7 @@ const Hero = () => {
                             >
                                 <div className="relative group">
                                     <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl opacity-0 group-hover:opacity-30 blur transition-opacity duration-500" />
-                                    <div className="relative flex items-center bg-white dark:bg-white/5 border border-gray-400/20 dark:border-white/30 rounded-2xl overflow-hidden backdrop-blur-xl shadow-lg">
+                                    <div className="relative flex items-center bg-white dark:bg-gray-900/80 border border-gray-400/20 dark:border-gray-700/50 rounded-2xl overflow-hidden backdrop-blur-xl shadow-lg">
                                         <div className="absolute left-5 w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center">
                                             <LuSearch className="w-5 h-5 text-teal-500" />
                                         </div>
@@ -250,7 +250,7 @@ const Hero = () => {
                                 </Link>
 
                                 <button className="flex items-center gap-4 group">
-                                    <div className="relative w-14 h-14 rounded-2xl border-2 border-gray-400/20 flex items-center justify-center bg-white dark:bg-white/5 shadow-lg group-hover:bg-[#F79952] group-hover:border-transparent transition-all">
+                                    <div className="relative w-14 h-14 rounded-2xl border-2 border-gray-400/20 dark:border-gray-700/50 flex items-center justify-center bg-white dark:bg-gray-900/80 shadow-lg group-hover:bg-[#F79952] group-hover:border-transparent transition-all">
                                         <LuPlay className="ml-1 text-[#F79952] group-hover:text-white" size={20} />
                                     </div>
                                     <div className="flex flex-col items-start">
@@ -289,13 +289,13 @@ const Hero = () => {
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     whileHover={{ y: -5, scale: 1.02 }}
                                     transition={{ delay: item.delay, duration: 0.5 }}
-                                    className={`group relative p-8 rounded-3xl bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 ${item.borderGlow}`}
+                                    className={`group relative p-8 rounded-3xl bg-white/50 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-700/50 shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 ${item.borderGlow}`}
                                 >
                                     {/* Hover Gradient Background */}
                                     <div className={`absolute inset-0 opacity-0 transition-opacity duration-300 ${item.bgGlow}`} />
 
                                     <div className="relative z-10">
-                                        <div className={`w-14 h-14 rounded-2xl bg-white dark:bg-white/10 flex items-center justify-center mb-5 shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+                                        <div className={`w-14 h-14 rounded-2xl bg-white dark:bg-gray-800/80 flex items-center justify-center mb-5 shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
                                             <item.icon className={item.color} size={28} />
                                         </div>
                                         <div className={`${headingFont} text-4xl font-black mb-1 text-gray-900 dark:text-white tracking-tight`}>
@@ -322,9 +322,9 @@ const Hero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 3.2, duration: 0.8 }}
             >
-                <div className="relative border-y border-gray-100 dark:border-white/20 bg-white/70 dark:bg-black/70 backdrop-blur-2xl py-6">
-                    <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white dark:from-black to-transparent z-10" />
-                    <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white dark:from-black to-transparent z-10" />
+                <div className="relative border-y border-gray-100 dark:border-gray-800 bg-white/70 dark:bg-gray-950/90 backdrop-blur-2xl py-6">
+                    <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white dark:from-gray-950 to-transparent z-10" />
+                    <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white dark:from-gray-950 to-transparent z-10" />
 
                     <motion.div
                         className="flex items-center gap-16 whitespace-nowrap min-w-full"

@@ -106,7 +106,7 @@ const CategoryMegaMenu = ({ closeMobileMenu, language, bengaliClass }) => {
   return (
     <div className="flex">
       {/* Left Side - Parent Categories */}
-      <div className="w-[220px] bg-gray-50 dark:bg-[#0a0a0a] p-3 border-r border-gray-100 dark:border-white/5">
+      <div className="w-[220px] bg-gray-50 dark:bg-gray-900 p-3 border-r border-gray-100 dark:border-gray-700/50">
         <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3 px-3">
           {language === 'bn' ? 'ক্যাটাগরি' : 'Categories'}
         </p>
@@ -120,8 +120,8 @@ const CategoryMegaMenu = ({ closeMobileMenu, language, bengaliClass }) => {
                 onMouseEnter={() => setActiveParent(category._id)}
                 onClick={() => handleCategoryClick(category.slug, category.type)}
                 className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-all ${isActive
-                  ? 'bg-white dark:bg-white/10 text-teal-600 dark:text-teal-400 shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-white/5'
+                  ? 'bg-white dark:bg-gray-800 text-teal-600 dark:text-teal-400 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50'
                   }`}
               >
                 <div className="flex items-center gap-3">
@@ -149,7 +149,7 @@ const CategoryMegaMenu = ({ closeMobileMenu, language, bengaliClass }) => {
         {activeCategory && (
           <>
             {/* Active Parent Header */}
-            <div className="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100 dark:border-white/5">
+            <div className="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100 dark:border-gray-700/50">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
                 {(() => {
                   const Icon = getIcon(activeCategory.slug);
@@ -184,7 +184,7 @@ const CategoryMegaMenu = ({ closeMobileMenu, language, bengaliClass }) => {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-8 text-center">
-                <div className="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3">
+                <div className="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3">
                   <LuLayers className="text-gray-400" size={24} />
                 </div>
                 <p className={`text-sm text-gray-500 dark:text-gray-400 ${bengaliClass}`}>
@@ -470,8 +470,8 @@ const Navbar = () => {
 
       <nav
         className={`sticky top-0 z-50 transition-all duration-300 ${isSticky
-          ? "bg-white/90 dark:bg-[#020202] backdrop-blur-xl dark:backdrop-blur-0 shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] py-2 border-b border-gray-200/50 dark:border-white/5"
-          : "bg-white dark:bg-[#020202] py-4"
+          ? "bg-white/90 dark:bg-[#1E293B] backdrop-blur-xl shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] py-2"
+          : "bg-white dark:bg-[#1E293B] py-4"
           }`}
       >
         <div className="container mx-auto px-4 lg:px-6">
@@ -489,7 +489,7 @@ const Navbar = () => {
 
               {/* Category Dropdown - Desktop */}
               <div className="hidden lg:block relative group">
-                <button className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-gray-50/70 dark:bg-[#0d0d0d] border border-gray-100 dark:border-white/10 text-gray-700 dark:text-gray-100 hover:bg-white dark:hover:bg-[#151515] transition-all duration-300">
+                <button className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-gray-50/70 dark:bg-[#1E293B] border border-gray-100 dark:border-gray-600/50 text-gray-700 dark:text-gray-100 hover:bg-white dark:hover:bg-[#334155] transition-all duration-300">
                   <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
                     <BiCategory size={18} />
                   </div>
@@ -500,20 +500,20 @@ const Navbar = () => {
                 </button>
 
                 {/* Categories Mega Menu */}
-                <div className="absolute top-full left-0 mt-4 w-[600px] bg-white dark:bg-[#0d0d0d] rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gray-100 dark:border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 translate-y-4 transition-all duration-500 z-50 overflow-hidden">
+                <div className="absolute top-full left-0 mt-4 w-[600px] bg-white dark:bg-[#1E293B] rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gray-100 dark:border-gray-600/50 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 translate-y-4 transition-all duration-500 z-50 overflow-hidden">
                   <CategoryMegaMenu closeMobileMenu={closeMobileMenu} language={language} bengaliClass={bengaliClass} />
                 </div>
               </div>
             </div>
 
             {/* Center: Navigation Links - Desktop */}
-            <div className="hidden xl:flex items-center bg-gray-50/70 dark:bg-[#0d0d0d] p-1.5 rounded-full border border-gray-100 dark:border-white/10">
+            <div className="hidden xl:flex items-center bg-gray-50/70 dark:bg-[#1E293B] p-1.5 rounded-full border border-gray-100 dark:border-gray-600/50">
               {menu.map(({ href, label }) => (
                 <Link
                   key={href}
                   href={href}
                   className={`px-5 py-2 rounded-full text-[14px] font-outfit transition-all duration-300 ${pathname === href
-                    ? "bg-white dark:bg-white/20 text-teal-600 dark:text-white shadow-sm font-bold"
+                    ? "bg-white dark:bg-[#334155] text-teal-600 dark:text-white shadow-sm font-bold"
                     : "text-gray-600 dark:text-gray-300 hover:text-teal-600 dark:hover:text-white font-semibold"
                     } ${language === 'bn' ? 'hind-siliguri' : ''}`}
                 >
@@ -527,7 +527,7 @@ const Navbar = () => {
               {/* 1. Dark Mode Toggle */}
               <button
                 onClick={toggleDarkMode}
-                className="hidden lg:flex w-10 h-10 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-all duration-300 group"
+                className="hidden lg:flex w-10 h-10 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-[#1E293B] dark:hover:bg-[#334155] transition-all duration-300 group"
                 aria-label="Toggle dark mode"
               >
                 {mounted && (
@@ -551,7 +551,7 @@ const Navbar = () => {
               </div>
 
               {/* 3. Cart */}
-              <Link href="/cart" className="relative w-10 h-10 flex items-center justify-center rounded-full text-gray-600 hover:bg-teal-50 hover:text-teal-600 transition-all group">
+              <Link href="/cart" className="relative w-10 h-10 flex items-center justify-center rounded-full text-gray-600 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-[#334155] hover:text-teal-600 transition-all group">
                 <LuShoppingCart size={20} className="group-hover:scale-110 transition-transform" />
                 {mounted && items.length > 0 && (
                   <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-amber-500 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-md">
@@ -565,7 +565,7 @@ const Navbar = () => {
                 <div className="profile-dropdown-container relative hidden sm:block">
                   <button
                     onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-50 hover:bg-gray-100 border border-gray-100 transition-all"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-50 dark:bg-[#1E293B] hover:bg-gray-100 dark:hover:bg-[#334155] border border-gray-100 dark:border-gray-600/50 transition-all"
                   >
                     <div className="w-8 h-8 rounded-full border-2 border-teal-500/30 overflow-hidden">
                       {user.image ? (
@@ -576,7 +576,7 @@ const Navbar = () => {
                         </div>
                       )}
                     </div>
-                    <span className={`text-sm font-semibold text-gray-700 max-w-[100px] truncate ${bengaliClass}`}>
+                    <span className={`text-sm font-semibold text-gray-700 dark:text-gray-200 max-w-[100px] truncate ${bengaliClass}`}>
                       {user.name || user.gmail?.split('@')[0] || 'User'}
                     </span>
                     <LuChevronDown className={`text-gray-400 transition-transform duration-300 ${isProfileDropdownOpen ? 'rotate-180' : ''}`} size={16} />
@@ -590,10 +590,10 @@ const Navbar = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50"
+                        className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-[#1E293B] rounded-2xl shadow-xl border border-gray-100 dark:border-gray-600/50 overflow-hidden z-50"
                       >
                         {/* User Info Header */}
-                        <div className="p-4 bg-gradient-to-br from-teal-500/10 to-amber-500/5 border-b border-gray-100">
+                        <div className="p-4 bg-gradient-to-br from-teal-500/10 to-amber-500/5 border-b border-gray-100 dark:border-gray-600/50">
                           <div className="flex items-center gap-3">
                             <div className="w-12 h-12 rounded-full border-2 border-white shadow-md overflow-hidden bg-teal-500">
                               {user.image ? (
@@ -605,7 +605,7 @@ const Navbar = () => {
                               )}
                             </div>
                             <div>
-                              <p className={`font-bold text-gray-900 text-sm ${bengaliClass}`}>{user.name || user.gmail?.split('@')[0]}</p>
+                              <p className={`font-bold text-gray-900 dark:text-white text-sm ${bengaliClass}`}>{user.name || user.gmail?.split('@')[0]}</p>
                               <p className="text-[10px] text-teal-600 font-semibold uppercase tracking-wide">{user.role || 'Member'}</p>
                             </div>
                           </div>
@@ -616,7 +616,7 @@ const Navbar = () => {
                           <Link
                             href={user.role === 'admin' ? "/dashboard/admin" : user.role === 'mentor' ? "/dashboard/mentor" : "/dashboard/user"}
                             onClick={() => setIsProfileDropdownOpen(false)}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-all group"
+                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-teal-50 dark:hover:bg-teal-500/10 hover:text-teal-700 dark:hover:text-teal-400 transition-all group"
                           >
                             <LuLayoutDashboard size={18} className="text-gray-400 group-hover:text-teal-600" />
                             <span className={`text-sm font-semibold ${bengaliClass}`}>Dashboard</span>
@@ -626,7 +626,7 @@ const Navbar = () => {
                               setIsProfileDropdownOpen(false);
                               handleLogout();
                             }}
-                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-rose-600 hover:bg-rose-50 transition-all group"
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all group"
                           >
                             <LuLogOut size={18} className="text-rose-400 group-hover:text-rose-600" />
                             <span className="text-sm font-semibold">Logout</span>

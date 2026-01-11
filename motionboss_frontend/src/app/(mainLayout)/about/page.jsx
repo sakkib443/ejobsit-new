@@ -127,7 +127,7 @@ const AboutPage = () => {
   const heroBlur = useTransform(smoothProgress, [0, 0.15], ["0px", "20px"]);
 
   return (
-    <div className="relative min-h-screen bg-white dark:bg-black selection:bg-teal-500 selection:text-black font-poppins antialiased">
+    <div className="relative min-h-screen bg-white dark:bg-[#0F172A] selection:bg-teal-500 selection:text-black font-poppins antialiased">
       <MouseLight />
 
       {/* Scroll Progress Indicator */}
@@ -137,7 +137,7 @@ const AboutPage = () => {
 
       <main className="relative">
         {/* Layer 0: Original Sticky Hero */}
-        <section className={`${isMobile ? 'relative' : 'sticky top-0'} h-[50vh] lg:h-screen w-full overflow-hidden z-0 bg-white dark:bg-black`}>
+        <section className={`${isMobile ? 'relative' : 'sticky top-0'} h-[50vh] lg:h-screen w-full overflow-hidden z-0 bg-white dark:bg-[#0F172A]`}>
           <motion.div
             style={isMobile ? {} : {
               scale: heroScale,
@@ -152,28 +152,50 @@ const AboutPage = () => {
         </section>
 
         {/* Following Sections with Stabilized Transitions */}
-        <section className={`relative z-10 bg-white dark:bg-[#020202] ${isMobile ? '' : 'shadow-[0_-80px_100px_rgba(0,0,0,0.1)] dark:shadow-[0_-80px_100px_rgba(0,0,0,0.6)] rounded-t-[50px] lg:rounded-t-[100px]'}`}>
-          {/* First Section - Extra top padding for rounded area */}
-          <ScrollSection className="pt-16 lg:pt-24 pb-12 lg:pb-16">
+        <section className={`relative z-10 bg-white dark:bg-[#1E293B] ${isMobile ? '' : 'shadow-[0_-80px_100px_rgba(0,0,0,0.1)] dark:shadow-[0_-80px_100px_rgba(0,0,0,0.6)] rounded-t-[50px] lg:rounded-t-[100px]'}`}>
+
+          {/* Founder Section - Hero below with generous padding */}
+          <ScrollSection className="pt-20 lg:pt-32 pb-16 lg:pb-24">
             <AboutFounder />
           </ScrollSection>
 
-          {/* Features - Larger section with sticky sidebar */}
-          <ScrollSection className="py-12 lg:py-16">
+          {/* Section Divider */}
+          <div className="container mx-auto px-4 lg:px-16">
+            <div className="h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent" />
+          </div>
+
+          {/* Features Section */}
+          <ScrollSection className="py-16 lg:py-24">
             <AboutFeatures />
           </ScrollSection>
 
-          {/* Middle Sections - Consistent spacing */}
-          <ScrollSection className="py-12 lg:py-16">
+          {/* Section Divider */}
+          <div className="container mx-auto px-4 lg:px-16">
+            <div className="h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent" />
+          </div>
+
+          {/* Stats Section */}
+          <ScrollSection className="py-16 lg:py-24">
             <AboutStats />
           </ScrollSection>
 
-          <ScrollSection>
+          {/* Section Divider */}
+          <div className="container mx-auto px-4 lg:px-16">
+            <div className="h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent" />
+          </div>
+
+          {/* Global Section */}
+          <ScrollSection className="py-16 lg:py-24">
             <AboutGlobal />
           </ScrollSection>
 
-          {/* Last Section - Extra bottom padding before footer */}
-          <ScrollSection className="pt-12 lg:pt-16 pb-20 lg:pb-28">
+          {/* Section Divider */}
+          <div className="container mx-auto px-4 lg:px-16">
+            <div className="h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent" />
+          </div>
+
+          {/* CTA Section - Extra bottom padding */}
+          <ScrollSection className="pt-16 lg:pt-24 pb-24 lg:pb-36">
             <AboutCTA />
           </ScrollSection>
         </section>

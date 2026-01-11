@@ -30,7 +30,7 @@ const FeaturePair = ({ pair, pairIdx, headingFont, bengaliClass, language }) => 
                     style={{ scale, opacity }}
                     className="w-full md:w-1/2"
                 >
-                    <div className="p-10 lg:p-12 h-full bg-[#fafafa] dark:bg-[#080808] rounded-[60px] border border-gray-100 dark:border-white/5 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.08)] dark:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] transition-all duration-700 hover:border-teal-500/30 group relative overflow-hidden">
+                    <div className="p-10 lg:p-12 h-full bg-[#fafafa] dark:bg-[#1E293B] rounded-[60px] border border-gray-100 dark:border-gray-600/30 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.08)] dark:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] transition-all duration-700 hover:border-teal-500/30 group relative overflow-hidden">
                         {/* Interactive Border Glow */}
                         <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
@@ -114,7 +114,7 @@ const AboutFeatures = () => {
     }
 
     return (
-        <section ref={sectionRef} className="bg-white dark:bg-[#020202] relative transition-colors duration-700">
+        <section ref={sectionRef} className="bg-white dark:bg-[#1E293B] relative transition-colors duration-700 py-16 lg:py-24">
             <div className="container mx-auto px-4 lg:px-16 relative z-10">
                 <div className="grid lg:grid-cols-12 gap-16 lg:gap-24 items-start">
                     {/* Sticky Sidebar */}

@@ -19,7 +19,7 @@ const AboutHero = () => {
     const headingFont = "font-outfit";
 
     return (
-        <section ref={containerRef} className="relative min-h-[80vh] flex items-center overflow-hidden bg-white dark:bg-[#020202] transition-colors duration-700 pt-8">
+        <section ref={containerRef} className="relative min-h-[80vh] flex items-center overflow-hidden bg-white dark:bg-[#0F172A] transition-colors duration-700 pt-8">
             {/* Background Texture & Decorative Elements */}
             <div className="absolute inset-0 pointer-events-none">
                 <motion.div
@@ -128,7 +128,7 @@ const AboutHero = () => {
 
             {/* Refined Professional Marquee with Brand Secondary Accents */}
             <div className="absolute bottom-0 left-0 w-full overflow-hidden py-10 z-20">
-                <div className="relative border-y border-gray-100 dark:border-white/5 bg-white/50 dark:bg-black/50 backdrop-blur-2xl py-6">
+                <div className="relative border-y border-gray-100 dark:border-gray-700/50 bg-white/50 dark:bg-[#1E293B]/50 backdrop-blur-2xl py-6">
                     <div className="flex whitespace-nowrap animate-marquee-professional">
                         {[1, 2, 3, 4].map((i) => (
                             <div key={i} className="flex items-center gap-16 px-8">

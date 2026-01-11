@@ -6,13 +6,16 @@ import DashboardHeader from '@/components/Admin/DashboardHeader';
 import ProtectedRoute from '@/app/providers/protectedRoutes';
 import { ThemeProvider, useTheme } from '@/providers/ThemeProvider';
 
+// Import dashboard-specific CSS (separate from frontend)
+import '@/app/dashboard.css';
+
 const AdminLayoutContent = ({ children }) => {
   const { isDark } = useTheme();
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 dashboard-fonts ${isDark
-        ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800'
-        : 'bg-gradient-to-br from-slate-50 via-white to-slate-100'
+    <div className={`dashboard-container min-h-screen transition-colors duration-300 dashboard-fonts ${isDark
+      ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800'
+      : 'bg-gradient-to-br from-slate-50 via-white to-slate-100'
       }`}>
       {/* Sidebar */}
       <AdminSidebar />

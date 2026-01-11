@@ -39,7 +39,7 @@ const WebsiteContent = () => {
     if (!mounted) return <LoadingFallback />;
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-300 relative">
+        <div className="min-h-screen bg-gray-50 dark:bg-[#0F172A] transition-colors duration-300 relative">
             {/* Hero Header Section (Synced with Course/Software Hero - Compact) */}
             <section className="relative bg-gradient-to-br from-[#e8f9f9] via-white to-[#e8f9f9] dark:from-[#020202] dark:via-[#050505] dark:to-[#020202] overflow-hidden border-b border-gray-200 dark:border-white/5">
                 {/* Background Pattern */}

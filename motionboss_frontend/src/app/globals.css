@@ -622,3 +622,510 @@ html:not(.dark) .bg-slate-900 {
   background-color: var(--color-primary-20);
   color: var(--color-primary);
 }
+
+/* =====================================================
+   HERO SECTION - DARK MODE FIXES
+   ===================================================== */
+
+/* Hero Badge - Dark Mode */
+.dark .hero-badge,
+.dark section[class*="min-h-[90vh]"] .inline-flex[class*="bg-white/70"] {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Hero Stats Cards - Dark Mode (Software/Website cards) */
+.dark section[class*="min-h-[90vh]"] .bg-white\/50 {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Icon container inside stats cards - Dark Mode */
+.dark section[class*="min-h-[90vh]"] .bg-white\/50 .bg-white {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Hero Search Bar - Dark Mode */
+.dark section[class*="min-h-[90vh]"] .bg-white[class*="border-gray-400"] {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Search Bar Input - Dark Mode */
+.dark section[class*="min-h-[90vh]"] input[type="text"] {
+  background: transparent !important;
+  color: #e5e7eb !important;
+}
+
+.dark section[class*="min-h-[90vh]"] input::placeholder {
+  color: #6b7280 !important;
+}
+
+/* Play Button - Dark Mode */
+.dark section[class*="min-h-[90vh]"] .bg-white[class*="dark:bg-white/5"] {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Bottom Carousel/Marquee - Dark Mode */
+.dark section[class*="min-h-[90vh]"] .bg-white\/70 {
+  background: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Carousel Edge Gradients - Dark Mode */
+.dark section[class*="min-h-[90vh]"] .from-white {
+  --tw-gradient-from: #000000 !important;
+}
+
+/* =====================================================
+   HERO GENERAL DARK MODE ENHANCEMENTS
+   ===================================================== */
+
+/* Ensure all card/box elements have dark backgrounds */
+.dark .hero-card,
+.dark .hero-search,
+.dark .hero-stats {
+  background: rgba(10, 10, 10, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(20px);
+}
+
+/* Text colors in dark mode */
+.dark section[class*="min-h-[90vh]"] .text-gray-700 {
+  color: #d1d5db !important;
+}
+
+.dark section[class*="min-h-[90vh]"] .text-gray-800 {
+  color: #e5e7eb !important;
+}
+
+/* Carousel Text in Dark Mode */
+.dark section[class*="min-h-[90vh]"] .text-gray-800.uppercase {
+  color: #e5e7eb !important;
+}
+
+/* =====================================================
+   FRONTEND ONLY - DARK MODE FIXES (CUSTOM CSS)
+   =====================================================
+   IMPORTANT: These styles are for Frontend (mainLayout) pages ONLY.
+   Dashboard pages use separate CSS file (dashboard.css) with 
+   .dashboard-container scope to avoid conflicts.
+   ===================================================== */
+
+/* =====================================================
+   NAVBAR - DARK MODE FIXES (Frontend Only)
+   ===================================================== */
+
+/* Force dark background on navbar element itself */
+.dark nav,
+.dark nav.sticky,
+html.dark nav {
+  background: #1E293B !important;
+  background-color: #1E293B !important;
+}
+
+/* Sticky state background fix */
+.dark nav[class*="bg-white"],
+.dark nav[class*="bg-white/90"] {
+  background: #1E293B !important;
+  background-color: #1E293B !important;
+}
+
+/* Main Navigation Menu Bar Container */
+.dark nav .bg-gray-50\/70,
+.dark nav [class*="bg-gray-50"] {
+  background: #1E293B !important;
+  border-color: rgba(55, 65, 81, 0.5) !important;
+}
+
+/* Category Dropdown Button */
+.dark nav .bg-gray-50\/70[class*="rounded-full"],
+.dark nav button[class*="bg-gray-50"] {
+  background: #1E293B !important;
+  border-color: rgba(55, 65, 81, 0.5) !important;
+}
+
+/* Active Menu Item in Navigation */
+.dark nav .bg-white {
+  background: #334155 !important;
+}
+
+/* Category Mega Menu Dropdown Container */
+.dark nav .bg-white[class*="rounded-3xl"],
+.dark nav [class*="shadow-"][class*="bg-white"] {
+  background: #1E293B !important;
+  border-color: rgba(55, 65, 81, 0.5) !important;
+}
+
+/* Category Mega Menu - Left Side Panel */
+.dark nav .bg-gray-50 {
+  background: #1E293B !important;
+  border-color: rgba(55, 65, 81, 0.5) !important;
+}
+
+/* Category Item Active State */
+.dark nav .bg-white[class*="shadow-sm"] {
+  background: #334155 !important;
+}
+
+/* Category Item Icon Container */
+.dark nav .bg-gray-100 {
+  background: #334155 !important;
+}
+
+/* Profile Button */
+.dark nav .profile-dropdown-container .bg-gray-50,
+.dark nav .profile-dropdown-container button {
+  background: #1E293B !important;
+  border-color: rgba(55, 65, 81, 0.5) !important;
+}
+
+/* Profile Dropdown Menu */
+.dark nav .profile-dropdown-container>div[class*="absolute"] {
+  background: #1E293B !important;
+  border-color: rgba(55, 65, 81, 0.5) !important;
+}
+
+/* Mobile Menu Toggle Button */
+.dark nav button.bg-gray-50 {
+  background: #1E293B !important;
+  border-color: rgba(55, 65, 81, 0.5) !important;
+}
+
+/* Dark Mode Toggle Button */
+.dark nav button.bg-gray-100,
+.dark nav .bg-gray-100 {
+  background: #334155 !important;
+}
+
+/* Cart Button Hover */
+.dark nav .hover\:bg-teal-50:hover {
+  background: rgba(20, 184, 166, 0.1) !important;
+}
+
+/* Text Colors in Navbar */
+.dark nav .text-gray-700 {
+  color: #d1d5db !important;
+}
+
+.dark nav .text-gray-600 {
+  color: #9ca3af !important;
+}
+
+/* Border Colors */
+.dark nav .border-gray-100,
+.dark nav .border-gray-200 {
+  border-color: rgba(55, 65, 81, 0.5) !important;
+}
+
+/* =====================================================
+   NAVBAR - STICKY STATE FIXES
+   ===================================================== */
+
+/* Remove bottom border when navbar is sticky */
+.dark nav.sticky,
+.dark nav[class*="sticky"] {
+  border-bottom: none !important;
+}
+
+/* Fix sticky navbar background in dark mode */
+.dark nav.sticky,
+.dark nav[class*="sticky"][class*="bg-white"] {
+  background: #1E293B !important;
+  border-bottom-color: transparent !important;
+}
+
+/* Remove the border-b class effect in dark mode for navbar */
+.dark nav .border-b,
+.dark nav.border-b,
+.dark nav[class*="border-b"] {
+  border-bottom-color: transparent !important;
+}
+
+/* Ensure no visible border transition effect */
+.dark nav {
+  border-bottom: none !important;
+  border-bottom-color: transparent !important;
+}
+
+/* Sticky state specific - force no border */
+html.dark nav[class*="shadow-sm"] {
+  border-bottom: none !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Light mode sticky border fix too */
+nav.sticky .border-b,
+nav[class*="sticky"] .border-b {
+  border-bottom-color: transparent !important;
+}
+
+nav.sticky,
+nav[class*="sticky"] {
+  border-bottom-color: transparent !important;
+}
+
+/* =====================================================
+   FOOTER - DARK MODE FIXES (CUSTOM CSS)
+   ===================================================== */
+
+/* Footer Main Background */
+.dark footer {
+  background: linear-gradient(to bottom, #0F172A, #1E293B, #0F172A) !important;
+}
+
+/* Footer All Backgrounds */
+.dark footer .bg-white,
+.dark footer .bg-white\/50,
+.dark footer [class*="bg-white"] {
+  background: #1E293B !important;
+}
+
+.dark footer .bg-gray-50,
+.dark footer [class*="from-gray-50"],
+.dark footer [class*="via-white"],
+.dark footer [class*="to-gray-100"] {
+  background: transparent !important;
+}
+
+/* Footer Borders */
+.dark footer .border-gray-200,
+.dark footer .border-gray-100,
+.dark footer [class*="border-gray-200"],
+.dark footer [class*="border-gray-100"] {
+  border-color: rgba(71, 85, 105, 0.5) !important;
+}
+
+/* Footer Text Colors - Headings */
+.dark footer .text-gray-800,
+.dark footer h3,
+.dark footer h4 {
+  color: #FFFFFF !important;
+}
+
+/* Footer Text Colors - Body */
+.dark footer .text-gray-700,
+.dark footer .text-gray-600,
+.dark footer .text-gray-500 {
+  color: #94A3B8 !important;
+}
+
+.dark footer .text-gray-400 {
+  color: #64748B !important;
+}
+
+/* Footer Links */
+.dark footer a.text-gray-600,
+.dark footer a .text-gray-600 {
+  color: #94A3B8 !important;
+}
+
+.dark footer a:hover .text-gray-700,
+.dark footer a:hover.text-gray-700 {
+  color: #41bfb8 !important;
+}
+
+/* Footer Input */
+.dark footer input {
+  background: #1E293B !important;
+  border-color: rgba(71, 85, 105, 0.5) !important;
+  color: #E2E8F0 !important;
+}
+
+.dark footer input::placeholder {
+  color: #64748B !important;
+}
+
+/* Footer Social Icons Container */
+.dark footer .bg-white.border {
+  background: #1E293B !important;
+  border-color: rgba(71, 85, 105, 0.5) !important;
+}
+
+/* Footer Icon Text */
+.dark footer .text-gray-500.group-hover\:text-white {
+  color: #94A3B8 !important;
+}
+
+/* Footer Bottom Bar */
+.dark footer .bg-white\/50 {
+  background: rgba(15, 23, 42, 0.8) !important;
+}
+
+/* Footer CTA Box */
+.dark footer [class*="from-[#41bfb8]/10"] {
+  background: linear-gradient(to right, rgba(65, 191, 184, 0.2), rgba(247, 153, 82, 0.2)) !important;
+}
+
+/* Footer Contact Icons Background */
+.dark footer [class*="bg-[#41bfb8]/10"],
+.dark footer [class*="bg-[#F79952]/10"] {
+  background: rgba(65, 191, 184, 0.2) !important;
+}
+
+/* =====================================================
+   PAGE HEROES - DARK MODE FIXES (Courses, Software, Website)
+   ===================================================== */
+
+/* Hero Section Background - Force Dark Gradient */
+.dark section[class*="from-[#e8f9f9]"],
+.dark section[class*="bg-gradient-to-br"][class*="from-[#e8f9f9]"] {
+  background: linear-gradient(to bottom right, #0F172A, #1E293B, #0F172A) !important;
+}
+
+/* Main Page Background */
+.dark .min-h-screen.bg-gray-50,
+.dark .min-h-screen[class*="bg-gray-50"] {
+  background: #0F172A !important;
+}
+
+/* Hero Section Elements */
+.dark section[class*="from-[#e8f9f9]"] .bg-white,
+.dark section[class*="from-[#e8f9f9]"] [class*="via-white"] {
+  background: transparent !important;
+}
+
+/* Hero Badge */
+.dark section[class*="from-[#e8f9f9]"] [class*="bg-[#41bfb8]/10"] {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border-color: rgba(71, 85, 105, 0.5) !important;
+}
+
+/* Hero Title */
+.dark section[class*="from-[#e8f9f9]"] h1.text-gray-800 {
+  color: #FFFFFF !important;
+}
+
+/* Hero Description */
+.dark section[class*="from-[#e8f9f9]"] p.text-gray-500 {
+  color: #94A3B8 !important;
+}
+
+/* Hero Stats Card Background */
+.dark section[class*="from-[#e8f9f9]"] [class*="bg-[#41bfb8]/10"].rounded-md,
+.dark section[class*="from-[#e8f9f9]"] [class*="bg-[#F79952]/10"].rounded-md {
+  background: rgba(30, 41, 59, 0.8) !important;
+}
+
+/* Hero Stats Text */
+.dark section[class*="from-[#e8f9f9]"] .text-gray-800.outfit {
+  color: #FFFFFF !important;
+}
+
+/* Hero Stats Subtitle */
+.dark section[class*="from-[#e8f9f9]"] p.text-gray-500.work {
+  color: #94A3B8 !important;
+}
+
+/* Hero Divider Line */
+.dark section[class*="from-[#e8f9f9]"] .bg-gray-200 {
+  background: rgba(71, 85, 105, 0.3) !important;
+}
+
+/* Badge Text */
+.dark section[class*="from-[#e8f9f9]"] span.text-gray-700 {
+  color: #E2E8F0 !important;
+}
+
+/* Hero Border */
+.dark section[class*="from-[#e8f9f9]"].border-b {
+  border-color: rgba(71, 85, 105, 0.3) !important;
+}
+
+/* Mobile Filter Button */
+.dark button.bg-white.border-gray-200 {
+  background: #1E293B !important;
+  border-color: rgba(71, 85, 105, 0.5) !important;
+}
+
+.dark button.bg-white.border-gray-200 span.text-gray-700 {
+  color: #E2E8F0 !important;
+}
+
+/* =====================================================
+   ABOUT PAGE - DARK MODE FIXES
+   ===================================================== */
+
+/* About Page Main Background */
+.dark [class*="bg-black"] {
+  background: #0F172A !important;
+}
+
+/* About Sections Background */
+.dark [class*="bg-020202"] {
+  background: #1E293B !important;
+}
+
+/* About Page Text Colors */
+.dark section .text-gray-900,
+.dark section .text-gray-800 {
+  color: #F1F5F9 !important;
+}
+
+.dark section .text-gray-700 {
+  color: #CBD5E1 !important;
+}
+
+.dark section .text-gray-600 {
+  color: #94A3B8 !important;
+}
+
+.dark section .text-gray-500 {
+  color: #64748B !important;
+}
+
+/* About Cards */
+.dark section .bg-white {
+  background: #1E293B !important;
+  border-color: rgba(71, 85, 105, 0.5) !important;
+}
+
+.dark section .bg-gray-50 {
+  background: #0F172A !important;
+}
+
+/* About Borders */
+.dark section .border-gray-200,
+.dark section .border-gray-100 {
+  border-color: rgba(71, 85, 105, 0.5) !important;
+}
+
+/* About Feature Cards */
+.dark section [class*="bg-gradient-to-br"][class*="from-white"] {
+  background: linear-gradient(to bottom right, #1E293B, #0F172A) !important;
+}
+
+/* About Stats Cards */
+.dark section [class*="bg-white/80"],
+.dark section [class*="bg-white/50"] {
+  background: rgba(30, 41, 59, 0.8) !important;
+}
+
+/* About Feature Cards - Fix Dark Mode */
+.dark section [class*="bg-[#fafafa]"],
+.dark section .bg-\[\#fafafa\],
+.dark [class*="rounded-[60px]"][class*="bg-"] {
+  background: #1E293B !important;
+  border-color: rgba(71, 85, 105, 0.5) !important;
+}
+
+/* Feature Card Icon Container */
+.dark section [class*="bg-white"][class*="rounded-3xl"],
+.dark section .bg-white.rounded-3xl {
+  background: #0F172A !important;
+}
+
+/* Feature Card Hover Border */
+.dark section [class*="rounded-[60px]"]:hover {
+  border-color: rgba(20, 184, 166, 0.3) !important;
+}
+
+/* Feature Card Inner Elements */
+.dark section [class*="bg-[#fafafa]"] .bg-white {
+  background: #0F172A !important;
+}
+
+/* About Cards Progress Line */
+.dark section [class*="bg-gray-100"] {
+  background: rgba(71, 85, 105, 0.3) !important;
+}
