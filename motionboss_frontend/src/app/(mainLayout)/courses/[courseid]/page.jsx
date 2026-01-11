@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCoursesData, fetchSingleCourse, toggleCourseLike } from "@/redux/CourseSlice";
-import { fetchMentorsData } from "@/redux/mentorSlice";
 import { useLanguage } from "@/context/LanguageContext";
 import { addToCart } from "@/redux/cartSlice";
 import {
@@ -53,7 +52,6 @@ const SingleCourse = () => {
   const dispatch = useDispatch();
   const { t, language } = useLanguage();
   const { courses = [], currentCourse: reduxCourse, loading } = useSelector((state) => state.courses || {});
-  const { mentors = [] } = useSelector((state) => state.mentors || {});
 
   const [activeTab, setActiveTab] = useState("overview");
   const [currentCourse, setCurrentCourse] = useState(null);
@@ -67,19 +65,17 @@ const SingleCourse = () => {
   useEffect(() => {
     dispatch(fetchSingleCourse(id));
     dispatch(fetchCoursesData());
-    dispatch(fetchMentorsData());
   }, [dispatch, id]);
 
   useEffect(() => {
     if (reduxCourse) {
       setCurrentCourse(reduxCourse);
-
-      if (reduxCourse.mentor && mentors.length > 0) {
-        const foundMentor = mentors.find(m => m._id === reduxCourse.mentor || m.id === reduxCourse.mentor || (typeof reduxCourse.mentor === 'object' && reduxCourse.mentor._id === m._id));
-        setInstructor(foundMentor);
+      // Set instructor from course data if available
+      if (reduxCourse.instructor) {
+        setInstructor(reduxCourse.instructor);
       }
     }
-  }, [reduxCourse, mentors]);
+  }, [reduxCourse]);
 
   useEffect(() => {
     if (courses && courses.length > 0) {

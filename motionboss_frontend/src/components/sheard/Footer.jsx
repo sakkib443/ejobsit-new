@@ -20,7 +20,6 @@ const Footer = () => {
     { to: "/about", label: t("navbar.about") },
     { to: "/courses", label: t("navbar.courses") },
     { to: "/success-story", label: t("navbar.successHistory") },
-    { to: "/mentors", label: t("navbar.mentors") },
     { to: "/contact", label: t("navbar.contact") },
   ];
 

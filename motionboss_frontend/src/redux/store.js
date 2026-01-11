@@ -1,7 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import courseReducer from "./CourseSlice";
 import categoryReducer from "./categorySlice";
-import mentorReducer from "./mentorSlice";
 import softwareReducer from "./softwareSlice";
 import websiteReducer from "./websiteSlice";
 import cartReducer from "./cartSlice";
@@ -15,7 +14,6 @@ export default configureStore({
   reducer: {
     courses: courseReducer,
     categories: categoryReducer,
-    mentors: mentorReducer,
     software: softwareReducer,
     websites: websiteReducer,
     cart: cartReducer,
