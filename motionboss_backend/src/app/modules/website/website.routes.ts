@@ -32,28 +32,28 @@ router.get('/slug/:slug', optionalAuth, WebsiteController.getWebsiteBySlug);
 // ADMIN ROUTES - Website Management
 // ===================================================================
 
-// GET /api/websites/admin/all-list - Get all websites for admin dashboard
+// GET /api/websites/admin/all-list - Get all websites for admin/mentor dashboard
 router.get(
     '/admin/all-list',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     WebsiteController.getAdminAllWebsites
 );
 
-// POST /api/websites/admin - Create new website
+// POST /api/websites/admin - Create new website (Admin and Mentor)
 router.post(
     '/admin',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(createWebsiteValidation),
     WebsiteController.createWebsite
 );
 
-// PATCH /api/websites/admin/managed/:id - Update website
+// PATCH /api/websites/admin/managed/:id - Update website (Admin and Mentor)
 router.patch(
     '/admin/managed/:id',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(updateWebsiteValidation),
     WebsiteController.updateWebsite
 );
@@ -70,19 +70,19 @@ router.delete(
 // ADMIN ROUTES (Must be BEFORE /:id to avoid route conflict)
 // ===================================================================
 
-// GET /api/websites/admin/all - Get all websites (with status filter)
+// GET /api/websites/admin/all - Get all websites (with status filter) (Admin and Mentor)
 router.get(
     '/admin/all',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     WebsiteController.getAdminWebsites
 );
 
-// PATCH /api/websites/admin/:id/status - Approve/Reject website
+// PATCH /api/websites/admin/:id/status - Approve/Reject website (Admin and Mentor)
 router.patch(
     '/admin/:id/status',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     WebsiteController.updateWebsiteStatus
 );
 

@@ -29,20 +29,20 @@ router.get(
 
 // ==================== Admin Only Routes ====================
 
-// Create new module
+// Create new module (Admin and Mentor)
 router.post(
     '/',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(ModuleValidation.createModuleSchema),
     ModuleController.createModule
 );
 
-// Update module
+// Update module (Admin and Mentor)
 router.patch(
     '/:id',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(ModuleValidation.updateModuleSchema),
     ModuleController.updateModule
 );

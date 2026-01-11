@@ -86,6 +86,7 @@ const UserManagement = () => {
   const getRoleBadge = (role) => {
     const styles = {
       admin: 'bg-gradient-to-r from-rose-500 to-pink-500 text-white',
+      mentor: 'bg-gradient-to-r from-amber-500 to-orange-500 text-white',
       student: 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white',
     };
     return styles[role] || 'bg-slate-200 text-slate-600';
@@ -188,6 +189,7 @@ const UserManagement = () => {
                         className="px-3 py-1.5 rounded-lg border border-slate-300 text-sm focus:border-indigo-500 outline-none"
                       >
                         <option value="student">Student</option>
+                        <option value="mentor">Mentor</option>
                         <option value="admin">Admin</option>
                       </select>
                     ) : (

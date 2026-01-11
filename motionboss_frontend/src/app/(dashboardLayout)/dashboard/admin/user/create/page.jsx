@@ -161,6 +161,7 @@ export default function CreateUserPage() {
                             className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all appearance-none"
                         >
                             <option value="student">Student</option>
+                            <option value="mentor">Mentor</option>
                             <option value="admin">Admin</option>
                         </select>
                     </div>

@@ -32,28 +32,28 @@ router.get('/slug/:slug', optionalAuth, SoftwareController.getSoftwareBySlug);
 // ADMIN ROUTES - Software Management
 // ===================================================================
 
-// GET /api/software/admin/my - Get admin's software
+// GET /api/software/admin/my - Get admin/mentor's software
 router.get(
     '/admin/my',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     SoftwareController.getMySoftware
 );
 
-// POST /api/software/admin - Create new software
+// POST /api/software/admin - Create new software (Admin and Mentor)
 router.post(
     '/admin',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(createSoftwareValidation),
     SoftwareController.createSoftware
 );
 
-// PATCH /api/software/admin/managed/:id - Update software
+// PATCH /api/software/admin/managed/:id - Update software (Admin and Mentor)
 router.patch(
     '/admin/managed/:id',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(updateSoftwareValidation),
     SoftwareController.updateSoftware
 );
@@ -70,19 +70,19 @@ router.delete(
 // ADMIN ROUTES (Must be BEFORE /:id to avoid route conflict)
 // ===================================================================
 
-// GET /api/software/admin/all - Get all software (with status filter)
+// GET /api/software/admin/all - Get all software (with status filter) (Admin and Mentor)
 router.get(
     '/admin/all',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     SoftwareController.getAdminSoftware
 );
 
-// PATCH /api/software/admin/:id/status - Approve/Reject software
+// PATCH /api/software/admin/:id/status - Approve/Reject software (Admin and Mentor)
 router.patch(
     '/admin/:id/status',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     SoftwareController.updateSoftwareStatus
 );
 

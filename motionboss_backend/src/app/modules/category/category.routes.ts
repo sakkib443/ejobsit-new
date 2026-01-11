@@ -34,44 +34,44 @@ router.get('/slug/:slug', CategoryController.getCategoryBySlug);
 // ADMIN ROUTES
 // ===================================================================
 
-// GET /api/categories/admin/all - Get all categories with filters
+// GET /api/categories/admin/all - Get all categories with filters (Admin and Mentor)
 router.get(
     '/admin/all',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     CategoryController.getAllCategories
 );
 
-// GET /api/categories/admin/parents - Get parent categories (Admin)
+// GET /api/categories/admin/parents - Get parent categories (Admin and Mentor)
 router.get(
     '/admin/parents',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     CategoryController.getParentCategories
 );
 
-// GET /api/categories/admin/:id - Get single category
+// GET /api/categories/admin/:id - Get single category (Admin and Mentor)
 router.get(
     '/admin/:id',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     CategoryController.getCategoryById
 );
 
-// POST /api/categories/admin - Create new category
+// POST /api/categories/admin - Create new category (Admin and Mentor)
 router.post(
     '/admin',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(createCategoryValidation),
     CategoryController.createCategory
 );
 
-// PATCH /api/categories/admin/:id - Update category
+// PATCH /api/categories/admin/:id - Update category (Admin and Mentor)
 router.patch(
     '/admin/:id',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(updateCategoryValidation),
     CategoryController.updateCategory
 );

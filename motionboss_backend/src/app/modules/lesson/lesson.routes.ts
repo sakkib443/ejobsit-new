@@ -69,54 +69,54 @@ router.get(
 
 // ==================== Admin Only Routes ====================
 
-// Get all lessons (admin only)
+// Get all lessons (admin and mentor)
 router.get(
     '/',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     LessonController.getAllLessons
 );
 
-// Create new lesson
+// Create new lesson (Admin and Mentor)
 router.post(
     '/',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(LessonValidation.createLessonSchema),
     LessonController.createLesson
 );
 
-// Bulk create lessons
+// Bulk create lessons (Admin and Mentor)
 router.post(
     '/bulk',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(LessonValidation.bulkCreateLessonsSchema),
     LessonController.bulkCreateLessons
 );
 
-// Reorder lessons
+// Reorder lessons (Admin and Mentor)
 router.patch(
     '/reorder',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(LessonValidation.reorderLessonsSchema),
     LessonController.reorderLessons
 );
 
-// Toggle publish status
+// Toggle publish status (Admin and Mentor)
 router.patch(
     '/:id/toggle-publish',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     LessonController.togglePublishStatus
 );
 
-// Update lesson
+// Update lesson (Admin and Mentor)
 router.patch(
     '/:id',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(LessonValidation.updateLessonSchema),
     LessonController.updateLesson
 );
@@ -131,28 +131,28 @@ router.delete(
 
 // ==================== Question Routes (Admin) ====================
 
-// Add question to lesson
+// Add question to lesson (Admin and Mentor)
 router.post(
     '/:id/questions',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(LessonValidation.addQuestionSchema),
     LessonController.addQuestion
 );
 
-// Reorder questions (must be before :questionId route)
+// Reorder questions (must be before :questionId route) (Admin and Mentor)
 router.patch(
     '/:id/questions/reorder',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     LessonController.reorderQuestions
 );
 
-// Update question
+// Update question (Admin and Mentor)
 router.patch(
     '/:id/questions/:questionId',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(LessonValidation.updateQuestionSchema),
     LessonController.updateQuestion
 );
@@ -167,20 +167,20 @@ router.delete(
 
 // ==================== Document Routes (Admin) ====================
 
-// Add document to lesson
+// Add document to lesson (Admin and Mentor)
 router.post(
     '/:id/documents',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(LessonValidation.addDocumentSchema),
     LessonController.addDocument
 );
 
-// Update document
+// Update document (Admin and Mentor)
 router.patch(
     '/:id/documents/:documentId',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     LessonController.updateDocument
 );
 
@@ -194,20 +194,20 @@ router.delete(
 
 // ==================== TextBlock Routes (Admin) ====================
 
-// Add text block to lesson
+// Add text block to lesson (Admin and Mentor)
 router.post(
     '/:id/text-blocks',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(LessonValidation.addTextBlockSchema),
     LessonController.addTextBlock
 );
 
-// Update text block
+// Update text block (Admin and Mentor)
 router.patch(
     '/:id/text-blocks/:textBlockId',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     LessonController.updateTextBlock
 );
 

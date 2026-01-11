@@ -80,20 +80,20 @@ router.post(
 // ==================== Admin Only Routes ====================
 // শুধুমাত্র Admin এই routes access করতে পারবে
 
-// Create new course
+// Create new course (Admin and Mentor)
 router.post(
     '/',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(CourseValidation.createCourseSchema),
     CourseController.createCourse
 );
 
-// Update course
+// Update course (Admin and Mentor)
 router.patch(
     '/:id',
     authMiddleware,
-    authorizeRoles('admin'),
+    authorizeRoles('admin', 'mentor'),
     validateRequest(CourseValidation.updateCourseSchema),
     CourseController.updateCourse
 );
