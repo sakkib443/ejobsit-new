@@ -33,6 +33,7 @@ import {
   FiBell,
   FiLock,
   FiTag,
+  FiEdit3,
 } from 'react-icons/fi';
 import { useTheme } from '@/providers/ThemeProvider';
 
@@ -136,6 +137,15 @@ const AdminSidebar = () => {
       href: '/dashboard/admin/coupons',
       icon: FiTag,
       gradient: 'from-amber-500 to-orange-500'
+    },
+    {
+      title: 'Blog',
+      icon: FiEdit3,
+      gradient: 'from-teal-500 to-cyan-500',
+      submenu: [
+        { title: 'All Blogs', href: '/dashboard/admin/blog', icon: FiEdit3 },
+        { title: 'Create Blog', href: '/dashboard/admin/blog/create', icon: FiFileText },
+      ],
     },
     {
       title: 'Like & Rating',

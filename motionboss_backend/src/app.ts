@@ -38,6 +38,7 @@ import { StatsRoutes } from './app/modules/stats/stats.routes';
 import { CouponRoutes } from './app/modules/coupon/coupon.routes';
 import { SiteContentRoutes } from './app/modules/siteContent/siteContent.routes';
 import { PageContentRoutes } from './app/modules/pageContent/pageContent.routes';
+import { BlogRoutes } from './app/modules/blog/blog.routes';
 
 // ==================== App Initialization ====================
 const app: Application = express();
@@ -170,6 +171,9 @@ app.use('/api/site-content', SiteContentRoutes);
 
 // Page Content routes (dynamic page content management)
 app.use('/api/page-content', PageContentRoutes);
+
+// Blog routes (blog posts and comments)
+app.use('/api/blogs', BlogRoutes);
 
 // ==================== Error Handling ====================
 // 404 Not Found handler (must be after all routes)

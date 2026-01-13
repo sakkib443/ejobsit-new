@@ -319,6 +319,7 @@ const Navbar = () => {
     { href: "/courses", label: t("navbar.courses") },
     { href: "/software", label: t("navbar.software") },
     { href: "/website", label: t("navbar.website") },
+    { href: "/blog", label: language === 'bn' ? "ব্লগ" : "Blog" },
     { href: "/about", label: t("navbar.about") },
     { href: "/contact", label: t("navbar.contact") },
   ];

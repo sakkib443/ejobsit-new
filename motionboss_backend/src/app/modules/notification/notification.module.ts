@@ -6,7 +6,7 @@ import sendResponse from '../../utils/sendResponse';
 
 // ============ INTERFACE ============
 export interface INotification extends Document {
-    type: 'order' | 'enrollment' | 'review' | 'user' | 'course' | 'system' | 'like';
+    type: 'order' | 'enrollment' | 'review' | 'user' | 'course' | 'system' | 'like' | 'blog';
     title: string;
     message: string;
     data?: {
@@ -15,6 +15,7 @@ export interface INotification extends Document {
         courseId?: Types.ObjectId;
         enrollmentId?: Types.ObjectId;
         reviewId?: Types.ObjectId;
+        blogId?: Types.ObjectId;
         amount?: number;
         link?: string;
     };
@@ -30,7 +31,7 @@ const NotificationSchema = new Schema<INotification>(
     {
         type: {
             type: String,
-            enum: ['order', 'enrollment', 'review', 'user', 'course', 'system', 'like'],
+            enum: ['order', 'enrollment', 'review', 'user', 'course', 'system', 'like', 'blog'],
             required: true,
         },
         title: {

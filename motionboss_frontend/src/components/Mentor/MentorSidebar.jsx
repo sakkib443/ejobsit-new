@@ -33,6 +33,7 @@ import {
     FiLock,
     FiTag,
     FiUser,
+    FiEdit3,
 } from 'react-icons/fi';
 import { useTheme } from '@/providers/ThemeProvider';
 
@@ -121,6 +122,15 @@ const MentorSidebar = () => {
             href: '/dashboard/mentor/coupons',
             icon: FiTag,
             gradient: 'from-amber-500 to-orange-500'
+        },
+        {
+            title: 'Blog',
+            icon: FiEdit3,
+            gradient: 'from-teal-500 to-cyan-500',
+            submenu: [
+                { title: 'My Blogs', href: '/dashboard/mentor/blog', icon: FiEdit3 },
+                { title: 'Write Blog', href: '/dashboard/mentor/blog/create', icon: FiFileText },
+            ],
         },
         {
             title: 'Like & Rating',
