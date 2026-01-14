@@ -5,47 +5,73 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
-    FiSearch,
     FiClock,
-    FiUser,
-    FiHeart,
-    FiMessageCircle,
     FiTrendingUp,
     FiBookOpen,
     FiArrowRight,
-    FiEye,
     FiCalendar,
     FiChevronLeft,
     FiChevronRight,
-    FiStar,
-    FiZap,
+    FiFacebook,
+    FiTwitter,
+    FiInstagram,
+    FiYoutube,
+    FiLinkedin,
 } from 'react-icons/fi';
 import { API_BASE_URL } from '@/config/api';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function BlogPage() {
+    const { language } = useLanguage();
     const [blogs, setBlogs] = useState([]);
     const [featuredBlogs, setFeaturedBlogs] = useState([]);
     const [popularBlogs, setPopularBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [activeCategory, setActiveCategory] = useState('all');
+    const [activeTab, setActiveTab] = useState('popular');
 
-    const categories = [
-        { id: 'all', name: 'সব পোস্ট', nameEn: 'All Posts' },
-        { id: 'technology', name: 'টেকনোলজি', nameEn: 'Technology' },
-        { id: 'design', name: 'ডিজাইন', nameEn: 'Design' },
-        { id: 'tutorial', name: 'টিউটোরিয়াল', nameEn: 'Tutorial' },
-        { id: 'career', name: 'ক্যারিয়ার', nameEn: 'Career' },
-    ];
+    // Translations
+    const t = {
+        bn: {
+            popular: 'জনপ্রিয়',
+            recent: 'সাম্প্রতিক',
+            editorsPick: 'সম্পাদকের পছন্দ',
+            trending: 'ট্রেন্ডিং',
+            aboutUs: 'আমাদের সম্পর্কে',
+            aboutDesc: 'আমরা প্রযুক্তি, ডিজাইন এবং ক্যারিয়ার সম্পর্কে মানসম্মত কন্টেন্ট তৈরি করি। আমাদের লক্ষ্য হলো আপনাদের সাথে সেরা জ্ঞান শেয়ার করা।',
+            popularPosts: 'জনপ্রিয় পোস্ট',
+            followUs: 'আমাদের ফলো করুন',
+            noBlogsFound: 'কোনো ব্লগ পাওয়া যায়নি',
+            comingSoon: 'শীঘ্রই নতুন কন্টেন্ট আসছে!',
+            min: 'মিনিট',
+            heroTitle: 'ব্লগ',
+            heroSubtitle: 'প্রযুক্তি, ডিজাইন এবং ক্যারিয়ার সম্পর্কে আমাদের সেরা আর্টিকেল পড়ুন',
+        },
+        en: {
+            popular: 'Popular',
+            recent: 'Recent',
+            editorsPick: "Editor's Pick",
+            trending: 'Trending',
+            aboutUs: 'About Us',
+            aboutDesc: 'We create quality content about technology, design, and career. Our goal is to share the best knowledge with you.',
+            popularPosts: 'Popular Posts',
+            followUs: 'Follow Us',
+            noBlogsFound: 'No blogs found',
+            comingSoon: 'New content coming soon!',
+            min: 'min',
+            heroTitle: 'Blog',
+            heroSubtitle: 'Read our best articles about technology, design and career',
+        }
+    };
+
+    const text = t[language] || t.bn;
 
     useEffect(() => {
         const fetchBlogs = async () => {
             setLoading(true);
             try {
                 let url = `${API_BASE_URL}/blogs?status=published&page=${currentPage}&limit=9`;
-                if (searchTerm) url += `&searchTerm=${searchTerm}`;
 
                 const res = await fetch(url);
                 const data = await res.json();
@@ -54,7 +80,7 @@ export default function BlogPage() {
                     setTotalPages(data.meta?.totalPages || 1);
                 }
 
-                const featuredRes = await fetch(`${API_BASE_URL}/blogs/featured?limit=3`);
+                const featuredRes = await fetch(`${API_BASE_URL}/blogs/featured?limit=5`);
                 const featuredData = await featuredRes.json();
                 if (featuredData.success) setFeaturedBlogs(featuredData.data || []);
 
@@ -68,473 +94,330 @@ export default function BlogPage() {
             }
         };
         fetchBlogs();
-    }, [currentPage, searchTerm]);
+    }, [currentPage]);
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.1 }
-        }
+    const formatDate = (date) => {
+        return new Date(date).toLocaleDateString(language === 'bn' ? 'bn-BD' : 'en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     };
 
-    const itemVariants = {
-        hidden: { opacity: 0, y: 30 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-    };
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-white dark:bg-[#0a0a0a] flex items-center justify-center">
+                <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-12 h-12 border-4 border-[#41bfb8]/30 border-t-[#41bfb8] rounded-full"
+                />
+            </div>
+        );
+    }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-300">
 
-            {/* Stunning Hero Section */}
-            <section className="relative overflow-hidden">
-                {/* Animated Background */}
-                <div className="absolute inset-0">
-                    <div className="absolute inset-0 bg-gradient-to-br from-teal-600 via-cyan-600 to-blue-700" />
-                    <div className="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-10" />
-
-                    {/* Floating Elements */}
-                    <motion.div
-                        animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-                        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute top-20 left-[10%] w-72 h-72 bg-white/10 rounded-full blur-3xl"
-                    />
-                    <motion.div
-                        animate={{ y: [0, 20, 0], rotate: [0, -5, 0] }}
-                        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute bottom-10 right-[15%] w-96 h-96 bg-amber-500/20 rounded-full blur-3xl"
-                    />
-                    <motion.div
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-400/10 rounded-full blur-3xl"
-                    />
+            {/* Clean Hero Section */}
+            <section className="relative py-12 lg:py-16 overflow-hidden bg-white dark:bg-[#020202]">
+                {/* Subtle Background Effects */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute top-0 left-[15%] w-[400px] h-[400px] bg-gradient-to-br from-teal-500/15 to-cyan-500/5 rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-0 right-[15%] w-[350px] h-[350px] bg-gradient-to-br from-[#F79952]/10 to-amber-500/5 rounded-full blur-3xl"></div>
+                    {/* Subtle Grid Pattern */}
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(20,184,166,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(20,184,166,0.015)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
                 </div>
 
-                <div className="relative z-10 container mx-auto px-4 py-24 md:py-32">
+                <div className="container mx-auto px-4 lg:px-16 relative z-10">
                     <motion.div
-                        initial={{ opacity: 0, y: 40 }}
+                        initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="text-center max-w-4xl mx-auto"
+                        transition={{ duration: 0.6 }}
+                        className="text-center max-w-2xl mx-auto"
                     >
-                        {/* Badge */}
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.2 }}
-                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-sm font-semibold mb-8"
-                        >
-                            <FiZap className="text-amber-300" />
-                            <span>নতুন আর্টিকেল প্রতিদিন</span>
-                            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                        </motion.div>
-
-                        {/* Title */}
-                        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font-outfit text-white mb-6 leading-tight">
-                            জ্ঞানের{' '}
-                            <span className="relative">
-                                <span className="bg-gradient-to-r from-amber-300 via-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                                    ভান্ডার
-                                </span>
-                                <motion.svg
-                                    initial={{ pathLength: 0 }}
-                                    animate={{ pathLength: 1 }}
-                                    transition={{ duration: 1, delay: 0.5 }}
-                                    className="absolute -bottom-2 left-0 w-full"
-                                    viewBox="0 0 200 10"
-                                >
-                                    <motion.path
-                                        d="M0,5 Q50,0 100,5 T200,5"
-                                        stroke="rgba(251,191,36,0.6)"
-                                        strokeWidth="3"
-                                        fill="none"
-                                    />
-                                </motion.svg>
+                        {/* Simple Badge */}
+                        <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-teal-500/10 border border-teal-500/20">
+                            <FiBookOpen className="text-teal-500" size={14} />
+                            <span className="text-xs font-semibold text-teal-600 dark:text-teal-400 uppercase tracking-wide">
+                                {language === 'bn' ? 'ব্লগ' : 'Blog'}
                             </span>
+                        </div>
+
+                        {/* Title - Smaller */}
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight">
+                            {language === 'bn' ? 'জ্ঞান ও ' : 'Knowledge & '}
+                            <span className="text-teal-500">{language === 'bn' ? 'অনুপ্রেরণা' : 'Inspiration'}</span>
                         </h1>
 
-                        <p className="text-xl md:text-2xl text-white/80 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
-                            টেকনোলজি, ডিজাইন এবং ক্যারিয়ার সম্পর্কে বিশেষজ্ঞদের লেখা আর্টিকেল পড়ুন
+                        {/* Description - Compact */}
+                        <p className="text-sm lg:text-base text-gray-500 dark:text-gray-400 max-w-lg mx-auto leading-relaxed">
+                            {text.heroSubtitle}
                         </p>
-
-                        {/* Search Bar - Premium */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4 }}
-                            className="max-w-2xl mx-auto"
-                        >
-                            <div className="relative group">
-                                <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500" />
-                                <div className="relative flex items-center bg-white dark:bg-slate-800 rounded-2xl shadow-2xl">
-                                    <FiSearch className="absolute left-6 text-slate-400" size={22} />
-                                    <input
-                                        type="text"
-                                        placeholder="আর্টিকেল খুঁজুন..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="w-full pl-16 pr-6 py-5 rounded-2xl bg-transparent text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none text-lg"
-                                    />
-                                    <button className="absolute right-3 px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all">
-                                        Search
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        {/* Stats */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.6 }}
-                            className="flex flex-wrap justify-center gap-8 md:gap-16 mt-12"
-                        >
-                            {[
-                                { number: '150+', label: 'আর্টিকেল' },
-                                { number: '50+', label: 'লেখক' },
-                                { number: '10K+', label: 'পাঠক' },
-                            ].map((stat, idx) => (
-                                <div key={idx} className="text-center">
-                                    <div className="text-3xl md:text-4xl font-bold text-white">{stat.number}</div>
-                                    <div className="text-white/60 text-sm mt-1">{stat.label}</div>
-                                </div>
-                            ))}
-                        </motion.div>
                     </motion.div>
-                </div>
-
-                {/* Wave Divider */}
-                <div className="absolute bottom-0 left-0 right-0">
-                    <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0,60 C360,120 1080,0 1440,60 L1440,120 L0,120 Z" className="fill-slate-50 dark:fill-slate-900" />
-                    </svg>
                 </div>
             </section>
 
-            {/* Category Tabs */}
-            <section className="py-8 -mt-4 relative z-10">
-                <div className="container mx-auto px-4">
-                    <div className="flex justify-center">
-                        <div className="inline-flex items-center gap-2 p-2 bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700">
-                            {categories.map((cat) => (
-                                <button
-                                    key={cat.id}
-                                    onClick={() => setActiveCategory(cat.id)}
-                                    className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${activeCategory === cat.id
-                                            ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg shadow-teal-500/30'
-                                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
-                                        }`}
-                                >
-                                    {cat.name}
-                                </button>
+            <div className="container mx-auto px-4 lg:px-16 py-8">
+
+                {/* Featured Section - Main Featured Post + Popular/Recent Sidebar */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+
+                    {/* Main Featured Post - Image Top, Content Below */}
+                    <div className="lg:col-span-2 h-full">
+                        {featuredBlogs[0] || blogs[0] ? (
+                            <Link href={`/blog/${(featuredBlogs[0] || blogs[0]).slug}`} className="group block h-full">
+                                <div className="bg-white dark:bg-white/5 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-white/10 h-full flex flex-col">
+                                    {/* Image */}
+                                    <div className="relative h-[350px] overflow-hidden">
+                                        {(featuredBlogs[0] || blogs[0]).thumbnail ? (
+                                            <Image
+                                                src={(featuredBlogs[0] || blogs[0]).thumbnail}
+                                                alt={(featuredBlogs[0] || blogs[0]).title}
+                                                fill
+                                                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-br from-teal-600 to-cyan-700" />
+                                        )}
+                                        {/* Category Badge on Image */}
+                                        <span className="absolute top-4 left-4 px-4 py-1.5 rounded-full bg-teal-500 text-white text-xs font-bold uppercase tracking-wide">
+                                            {(featuredBlogs[0] || blogs[0]).category?.name || 'Featured'}
+                                        </span>
+                                    </div>
+
+                                    {/* Content Below Image */}
+                                    <div className="p-6 flex-1 flex flex-col">
+                                        {/* Title */}
+                                        <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 leading-tight group-hover:text-teal-500 transition-colors line-clamp-2">
+                                            {(featuredBlogs[0] || blogs[0]).title}
+                                        </h2>
+
+                                        {/* Excerpt */}
+                                        <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 flex-1">
+                                            {(featuredBlogs[0] || blogs[0]).excerpt || 'Read our latest featured article...'}
+                                        </p>
+
+                                        {/* Author & Date */}
+                                        <div className="flex items-center gap-4 text-sm pt-4 border-t border-gray-100 dark:border-white/10">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 flex items-center justify-center text-white text-xs font-bold">
+                                                    {(featuredBlogs[0] || blogs[0]).author?.firstName?.[0] || 'A'}
+                                                </div>
+                                                <span className="font-medium text-gray-700 dark:text-gray-300">{(featuredBlogs[0] || blogs[0]).author?.firstName}</span>
+                                            </div>
+                                            <span className="text-gray-300 dark:text-gray-600">•</span>
+                                            <span className="text-gray-500 dark:text-gray-400">{formatDate((featuredBlogs[0] || blogs[0]).publishedAt || (featuredBlogs[0] || blogs[0]).createdAt)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        ) : (
+                            <div className="h-full min-h-[400px] rounded-2xl bg-gray-200 dark:bg-slate-800 flex items-center justify-center">
+                                <FiBookOpen className="text-gray-400 dark:text-slate-500" size={48} />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Popular/Recent Sidebar */}
+                    <div className="bg-white dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/10 p-5 min-h-[400px] flex flex-col">
+                        {/* Tabs */}
+                        <div className="flex gap-2 mb-5">
+                            <button
+                                onClick={() => setActiveTab('popular')}
+                                className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'popular'
+                                    ? 'bg-teal-500 text-white shadow-md'
+                                    : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10'
+                                    }`}
+                            >
+                                {text.popular}
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('recent')}
+                                className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'recent'
+                                    ? 'bg-teal-500 text-white shadow-md'
+                                    : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10'
+                                    }`}
+                            >
+                                {text.recent}
+                            </button>
+                        </div>
+
+                        {/* Posts List - Equal Height Cards with Excerpt */}
+                        <div className="flex-1 flex flex-col">
+                            {(activeTab === 'popular' ? popularBlogs : blogs).slice(0, 4).map((blog, index) => (
+                                <Link key={blog._id} href={`/blog/${blog.slug}`} className={`group flex-1 flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors ${index !== 3 ? 'border-b border-gray-100 dark:border-white/5' : ''}`}>
+                                    <div className="w-20 h-20 relative rounded-lg overflow-hidden flex-shrink-0">
+                                        {blog.thumbnail ? (
+                                            <Image
+                                                src={blog.thumbnail}
+                                                alt={blog.title}
+                                                fill
+                                                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-br from-teal-100 to-cyan-100 dark:from-slate-600 dark:to-slate-700 flex items-center justify-center">
+                                                <FiBookOpen className="text-teal-400 dark:text-slate-500" size={18} />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0 py-1">
+                                        <h4 className="font-semibold text-gray-800 dark:text-white text-sm leading-snug line-clamp-1 group-hover:text-teal-500 transition-colors">
+                                            {blog.title}
+                                        </h4>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                                            {blog.excerpt ? `${blog.excerpt.substring(0, 60)}...` : 'Read this article to learn more about this topic...'}
+                                        </p>
+                                        <p className="text-xs text-teal-500 font-medium mt-1.5">
+                                            {formatDate(blog.publishedAt || blog.createdAt)}
+                                        </p>
+                                    </div>
+                                </Link>
                             ))}
                         </div>
                     </div>
                 </div>
-            </section>
 
-            {/* Featured Section - Premium Cards */}
-            {featuredBlogs.length > 0 && (
-                <section className="py-16">
-                    <div className="container mx-auto px-4">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            className="flex items-center justify-between mb-10"
-                        >
-                            <div>
-                                <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white">
-                                        <FiStar size={20} />
-                                    </div>
-                                    <span className="text-amber-600 dark:text-amber-400 font-semibold text-sm uppercase tracking-wider">Featured</span>
-                                </div>
-                                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white font-outfit">
-                                    বিশেষ আর্টিকেল
-                                </h2>
-                            </div>
-                            <Link href="/blog?featured=true" className="hidden md:flex items-center gap-2 text-teal-600 dark:text-teal-400 font-semibold hover:gap-3 transition-all">
-                                সব দেখুন <FiArrowRight />
-                            </Link>
-                        </motion.div>
+                {/* Blog Cards Section Header */}
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
+                        {language === 'bn' ? 'সকল আর্টিকেল' : 'All Articles'}
+                    </h2>
+                </div>
 
-                        <motion.div
-                            variants={containerVariants}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-                        >
-                            {/* Main Featured */}
-                            {featuredBlogs[0] && (
-                                <motion.div variants={itemVariants} className="lg:row-span-2">
-                                    <Link href={`/blog/${featuredBlogs[0].slug}`} className="group block h-full">
-                                        <div className="relative h-full min-h-[500px] rounded-3xl overflow-hidden shadow-2xl">
-                                            {featuredBlogs[0].thumbnail ? (
+                {/* Blog Grid */}
+                {blogs.length === 0 ? (
+                    <div className="text-center py-20 bg-white dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10">
+                        <div className="w-20 h-20 mx-auto mb-6 bg-teal-500/10 rounded-2xl flex items-center justify-center">
+                            <FiBookOpen className="text-teal-500" size={32} />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">{text.noBlogsFound}</h3>
+                        <p className="text-gray-500 dark:text-gray-400">{text.comingSoon}</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {(activeTab === 'popular' ? popularBlogs : blogs).map((blog, index) => (
+                            <motion.div
+                                key={blog._id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                className="group"
+                            >
+                                <Link href={`/blog/${blog.slug}`} className="block">
+                                    <div className="bg-white dark:bg-white/5 rounded-2xl overflow-hidden border border-gray-100 dark:border-white/10 hover:border-teal-500/30 dark:hover:border-teal-500/30 transition-all duration-500 hover:shadow-2xl hover:shadow-teal-500/10 hover:-translate-y-2">
+                                        {/* Image Container */}
+                                        <div className="relative h-52 overflow-hidden">
+                                            {blog.thumbnail ? (
                                                 <Image
-                                                    src={featuredBlogs[0].thumbnail}
-                                                    alt={featuredBlogs[0].title}
+                                                    src={blog.thumbnail}
+                                                    alt={blog.title}
                                                     fill
                                                     className="object-cover group-hover:scale-110 transition-transform duration-700"
                                                 />
                                             ) : (
-                                                <div className="w-full h-full bg-gradient-to-br from-teal-500 to-cyan-600" />
+                                                <div className="w-full h-full bg-gradient-to-br from-teal-500/20 via-cyan-500/10 to-teal-500/5 dark:from-teal-500/10 dark:via-white/5 dark:to-cyan-500/5 flex items-center justify-center">
+                                                    <FiBookOpen className="text-teal-400 dark:text-teal-500/50" size={40} />
+                                                </div>
                                             )}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                                            {/* Gradient Overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                                            {/* Badge */}
-                                            <div className="absolute top-6 left-6">
-                                                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-bold shadow-lg">
-                                                    <FiStar size={14} /> Featured
+                                            {/* Category Badge */}
+                                            <div className="absolute top-4 left-4">
+                                                <span className="px-3 py-1.5 rounded-lg bg-white/90 dark:bg-black/60 backdrop-blur-md text-xs font-bold text-gray-800 dark:text-white border border-white/20">
+                                                    {blog.category?.name || (language === 'bn' ? 'ব্লগ' : 'Blog')}
                                                 </span>
                                             </div>
 
-                                            {/* Content */}
-                                            <div className="absolute bottom-0 left-0 right-0 p-8">
-                                                <div className="flex items-center gap-4 mb-4 text-white/70">
-                                                    <span className="flex items-center gap-1.5">
-                                                        <FiUser size={14} />
-                                                        {featuredBlogs[0].author?.firstName} {featuredBlogs[0].author?.lastName}
-                                                    </span>
-                                                    <span className="flex items-center gap-1.5">
-                                                        <FiClock size={14} />
-                                                        {featuredBlogs[0].readingTime} min
-                                                    </span>
-                                                </div>
-                                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 group-hover:text-amber-300 transition-colors line-clamp-2">
-                                                    {featuredBlogs[0].title}
-                                                </h3>
-                                                <p className="text-white/70 line-clamp-2 mb-6">
-                                                    {featuredBlogs[0].excerpt}
-                                                </p>
-                                                <div className="inline-flex items-center gap-2 text-amber-400 font-semibold group-hover:gap-4 transition-all">
-                                                    পড়ুন <FiArrowRight />
-                                                </div>
+                                            {/* Reading Time Badge */}
+                                            <div className="absolute top-4 right-4">
+                                                <span className="px-3 py-1.5 rounded-lg bg-teal-500/90 backdrop-blur-md text-xs font-bold text-white flex items-center gap-1.5">
+                                                    <FiClock size={12} />
+                                                    5 {text.min}
+                                                </span>
                                             </div>
                                         </div>
-                                    </Link>
-                                </motion.div>
-                            )}
 
-                            {/* Secondary Featured */}
-                            <div className="space-y-6">
-                                {featuredBlogs.slice(1, 3).map((blog, index) => (
-                                    <motion.div key={blog._id} variants={itemVariants}>
-                                        <Link href={`/blog/${blog.slug}`} className="group flex gap-5 p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-teal-500/30 transition-all duration-300">
-                                            <div className="w-40 h-32 relative rounded-xl overflow-hidden flex-shrink-0">
-                                                {blog.thumbnail ? (
-                                                    <Image src={blog.thumbnail} alt={blog.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
-                                                ) : (
-                                                    <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600" />
-                                                )}
-                                            </div>
-                                            <div className="flex-1 flex flex-col justify-center">
-                                                <div className="flex items-center gap-3 mb-2 text-sm text-slate-500 dark:text-slate-400">
-                                                    <span className="flex items-center gap-1"><FiClock size={12} /> {blog.readingTime} min</span>
-                                                    <span className="flex items-center gap-1"><FiEye size={12} /> {blog.totalViews || 0}</span>
+                                        {/* Content */}
+                                        <div className="p-6">
+                                            {/* Meta Info */}
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-teal-500/30">
+                                                    {blog.author?.firstName?.[0] || 'A'}
                                                 </div>
-                                                <h4 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors line-clamp-2 mb-2">
-                                                    {blog.title}
-                                                </h4>
-                                                <p className="text-slate-500 dark:text-slate-400 text-sm line-clamp-2">
-                                                    {blog.excerpt}
-                                                </p>
-                                            </div>
-                                        </Link>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </motion.div>
-                    </div>
-                </section>
-            )}
-
-            {/* Main Blog Grid */}
-            <section className="py-16 bg-slate-50/50 dark:bg-slate-800/30">
-                <div className="container mx-auto px-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                        {/* Blog Grid - 2/3 */}
-                        <div className="lg:col-span-2">
-                            <div className="flex items-center justify-between mb-8">
-                                <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-outfit">
-                                    সাম্প্রতিক পোস্ট
-                                </h2>
-                            </div>
-
-                            {loading ? (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {[1, 2, 3, 4].map((i) => (
-                                        <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl p-5 animate-pulse">
-                                            <div className="h-48 bg-slate-200 dark:bg-slate-700 rounded-xl mb-4" />
-                                            <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-3" />
-                                            <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2" />
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : blogs.length === 0 ? (
-                                <div className="text-center py-20 bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700">
-                                    <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-teal-500/20 to-cyan-500/20 flex items-center justify-center">
-                                        <FiBookOpen className="text-teal-500" size={32} />
-                                    </div>
-                                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">কোনো ব্লগ পাওয়া যায়নি</h3>
-                                    <p className="text-slate-500">শীঘ্রই নতুন কন্টেন্ট আসছে!</p>
-                                </div>
-                            ) : (
-                                <motion.div
-                                    variants={containerVariants}
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true }}
-                                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                                >
-                                    {blogs.map((blog) => (
-                                        <motion.div key={blog._id} variants={itemVariants}>
-                                            <Link href={`/blog/${blog.slug}`} className="group block bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700 hover:shadow-2xl hover:border-teal-500/30 hover:-translate-y-1 transition-all duration-300">
-                                                <div className="relative h-52 overflow-hidden">
-                                                    {blog.thumbnail ? (
-                                                        <Image src={blog.thumbnail} alt={blog.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
-                                                    ) : (
-                                                        <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center">
-                                                            <FiBookOpen className="text-slate-400" size={40} />
-                                                        </div>
-                                                    )}
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                </div>
-                                                <div className="p-5">
-                                                    <div className="flex items-center gap-3 mb-3 text-sm text-slate-500 dark:text-slate-400">
-                                                        <span className="flex items-center gap-1"><FiCalendar size={12} /> {new Date(blog.createdAt).toLocaleDateString('bn-BD')}</span>
-                                                        <span className="flex items-center gap-1"><FiClock size={12} /> {blog.readingTime} min</span>
-                                                    </div>
-                                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors line-clamp-2 mb-3">
-                                                        {blog.title}
-                                                    </h3>
-                                                    <p className="text-slate-500 dark:text-slate-400 text-sm line-clamp-2 mb-4">
-                                                        {blog.excerpt}
+                                                <div>
+                                                    <p className="text-sm font-semibold text-gray-800 dark:text-white">
+                                                        {blog.author?.firstName || 'Author'}
                                                     </p>
-                                                    {blog.tags?.length > 0 && (
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {blog.tags.slice(0, 3).map((tag, idx) => (
-                                                                <span key={idx} className="px-3 py-1 text-xs font-medium rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400">
-                                                                    #{tag}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    )}
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                        {formatDate(blog.publishedAt || blog.createdAt)}
+                                                    </p>
                                                 </div>
-                                            </Link>
-                                        </motion.div>
-                                    ))}
-                                </motion.div>
-                            )}
+                                            </div>
 
-                            {/* Pagination */}
-                            {totalPages > 1 && (
-                                <div className="flex justify-center items-center gap-3 mt-12">
-                                    <button
-                                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                        disabled={currentPage === 1}
-                                        className="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-400 disabled:opacity-50 hover:border-teal-500 hover:text-teal-600 transition-all"
-                                    >
-                                        <FiChevronLeft size={20} />
-                                    </button>
-                                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1).map((page) => (
-                                        <button
-                                            key={page}
-                                            onClick={() => setCurrentPage(page)}
-                                            className={`w-12 h-12 rounded-xl font-semibold transition-all ${currentPage === page
-                                                    ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg shadow-teal-500/30'
-                                                    : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-teal-500'
-                                                }`}
-                                        >
-                                            {page}
-                                        </button>
-                                    ))}
-                                    <button
-                                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                        disabled={currentPage === totalPages}
-                                        className="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-400 disabled:opacity-50 hover:border-teal-500 hover:text-teal-600 transition-all"
-                                    >
-                                        <FiChevronRight size={20} />
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+                                            {/* Title */}
+                                            <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-teal-500 transition-colors duration-300 line-clamp-2 mb-3 leading-snug">
+                                                {blog.title}
+                                            </h3>
 
-                        {/* Sidebar - 1/3 */}
-                        <aside className="space-y-8">
-                            {/* Popular Posts */}
-                            {popularBlogs.length > 0 && (
-                                <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-100 dark:border-slate-700 shadow-lg">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center text-white">
-                                            <FiTrendingUp size={18} />
-                                        </div>
-                                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">জনপ্রিয় পোস্ট</h3>
-                                    </div>
-                                    <div className="space-y-4">
-                                        {popularBlogs.map((blog, index) => (
-                                            <Link key={blog._id} href={`/blog/${blog.slug}`} className="group flex items-start gap-4">
-                                                <span className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-lg group-hover:from-teal-500 group-hover:to-cyan-500 group-hover:text-white transition-all">
-                                                    {String(index + 1).padStart(2, '0')}
+                                            {/* Excerpt */}
+                                            <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed mb-5">
+                                                {blog.excerpt || 'Click to read more about this interesting topic...'}
+                                            </p>
+
+                                            {/* Read More */}
+                                            <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-white/10">
+                                                <span className="text-sm font-semibold text-teal-500 group-hover:text-teal-600 transition-colors flex items-center gap-2">
+                                                    {language === 'bn' ? 'আরো পড়ুন' : 'Read More'}
+                                                    <FiArrowRight className="group-hover:translate-x-1 transition-transform" size={16} />
                                                 </span>
-                                                <div className="flex-1">
-                                                    <h4 className="font-semibold text-slate-900 dark:text-white line-clamp-2 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors text-sm">
-                                                        {blog.title}
-                                                    </h4>
-                                                    <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
-                                                        <span className="flex items-center gap-1"><FiEye size={10} /> {blog.totalViews || 0}</span>
-                                                        <span className="flex items-center gap-1"><FiHeart size={10} /> {blog.likeCount || 0}</span>
-                                                    </div>
+                                                <div className="flex items-center gap-1 text-gray-400">
+                                                    <FiTrendingUp size={14} />
+                                                    <span className="text-xs font-medium">{blog.views || 0}</span>
                                                 </div>
-                                            </Link>
-                                        ))}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            )}
-
-                            {/* Newsletter CTA */}
-                            <div className="relative overflow-hidden rounded-3xl p-8">
-                                <div className="absolute inset-0 bg-gradient-to-br from-teal-500 via-cyan-500 to-blue-600" />
-                                <div className="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-10" />
-                                <motion.div
-                                    animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-                                    transition={{ duration: 4, repeat: Infinity }}
-                                    className="absolute top-0 right-0 w-40 h-40 bg-white/20 rounded-full blur-2xl"
-                                />
-                                <div className="relative z-10">
-                                    <div className="text-4xl mb-4">📬</div>
-                                    <h3 className="text-xl font-bold text-white mb-2">নিউজলেটার সাবস্ক্রাইব করুন</h3>
-                                    <p className="text-white/80 text-sm mb-6">সাপ্তাহিক আপডেট পেতে সাবস্ক্রাইব করুন</p>
-                                    <Link
-                                        href="/contact"
-                                        className="block text-center py-3.5 px-6 bg-white text-teal-600 font-bold rounded-xl hover:bg-white/90 hover:shadow-xl transition-all"
-                                    >
-                                        সাবস্ক্রাইব করুন
-                                    </Link>
-                                </div>
-                            </div>
-
-                            {/* Tags Cloud */}
-                            <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-100 dark:border-slate-700">
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">ট্যাগসমূহ</h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {['javascript', 'react', 'nextjs', 'typescript', 'nodejs', 'design', 'css', 'tutorial'].map((tag) => (
-                                        <Link
-                                            key={tag}
-                                            href={`/blog?tag=${tag}`}
-                                            className="px-4 py-2 text-sm font-medium rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-teal-500 hover:text-white transition-all"
-                                        >
-                                            #{tag}
-                                        </Link>
-                                    ))}
-                                </div>
-                            </div>
-                        </aside>
+                                </Link>
+                            </motion.div>
+                        ))}
                     </div>
-                </div>
-            </section>
-        </div>
+                )}
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-3 mt-14">
+                        <button
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            className="w-12 h-12 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-gray-400 disabled:opacity-40 hover:bg-teal-500 hover:border-teal-500 hover:text-white transition-all shadow-sm"
+                        >
+                            <FiChevronLeft size={20} />
+                        </button>
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1).map((page) => (
+                            <button
+                                key={page}
+                                onClick={() => setCurrentPage(page)}
+                                className={`w-12 h-12 rounded-xl font-bold text-sm transition-all ${currentPage === page
+                                    ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30'
+                                    : 'bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:bg-teal-500 hover:border-teal-500 hover:text-white'
+                                    }`}
+                            >
+                                {page}
+                            </button>
+                        ))}
+                        <button
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            className="w-12 h-12 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-gray-400 disabled:opacity-40 hover:bg-teal-500 hover:border-teal-500 hover:text-white transition-all shadow-sm"
+                        >
+                            <FiChevronRight size={20} />
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div >
     );
 }
+
